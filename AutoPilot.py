@@ -120,16 +120,43 @@ statusFile.write("START")
 statusFile.close() 
 AutoPilotStatus = 1
 
+print "*********************************************************************"
+print "Starting AutoPilot"
+print "*********************************************************************"
+print ""
+print "Using Configuration : ", Configuration
+print "Sensor Configuration : ", Sensor
+
+if IsTelescope:
+        print "Tracking Telescope Included"
+if IsSampic:
+        print "SAMPIC readout Included"
+if IsVME:
+        print "VME readout Included" 
+if (IsDT5742):
+        print "DT5742 DRS Desktop Digitizer readout Included"
+if (IsTekScope):
+        print "Tektronix Scope readout Included"
+if (IsKeySightScope):
+        print "Keysight Scope readout Included"
+print ""
+print ""
+print "*********************************************************************"
+print ""
+print ""
+
+
+
 while (AutoPilotStatus == 1):
-        print "AutoPilotStatus: ", AutoPilotStatus
 
 	##sync local run number file with ftbf-daq-08
 	tp.GetRunFile()
 	time.sleep(5)
 	RunNumber = tp.GetRunNumber()
-
+	print "Starting Run %i " % (RunNumber)
+        print ""
 	############ Wait for safe time to start run ##########
-	
+
 
 	ScopeIncludedThisRun = False
 
@@ -142,13 +169,17 @@ while (AutoPilotStatus == 1):
 			   ScopeIncludedThisRun = True
 			   WaitForScopeStart()
 		   print("Scope has started.")
+                else:
+                   print("Scope still busy. Excluding scope from the next run\n")
 
 	wait_until(StartSeconds)
 	tp.UpdateRunNumber(RunNumber+1) ##must be called after scope start.
 	tp.SendRunFile()
+
 	################### Starting the run ###################
 	StartTime = datetime.now()  
-	print "\nStarting run %i at %s" % (RunNumber,StartTime)
+	print "\nRun %i started at %s" % (RunNumber,StartTime)
+        print ""
 	if not Debug: tp.start_ots(False)
 
 	## Minimum run duration
@@ -162,8 +193,11 @@ while (AutoPilotStatus == 1):
 	if not Debug: tp.stop_ots(False)
 
 	StopTime = datetime.now()
-	print "Stopped run %i at %s" % (RunNumber,StopTime)
-		
+	print "\nRun %i stopped at %s" % (RunNumber,StopTime)
+        print ""
+        print "*********************************************************************"
+        print ""
+
 	Duration = int((StopTime - StartTime).total_seconds())
 
 	if pf.QueryGreenSignal(True): 
@@ -180,8 +214,7 @@ while (AutoPilotStatus == 1):
         #################################################
         tmpStatusFile = open("AutoPilot.status","r") 
         tmpString = (tmpStatusFile.read().split())[0]
-        print "tempstring: ", tmpString
         if (tmpString == "STOP" or tmpString == "stop"):
-                print "Stopping AutoPilot..."
+                print "Detected stop signal.\n Stopping AutoPilot...\n\n"
                 AutoPilotStatus = 0
 

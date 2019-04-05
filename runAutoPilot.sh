@@ -1,5 +1,5 @@
 IncludeTelescope=1
-IncludeVME=1
+IncludeVME=0
 IncludeSampic=0
 IncludeDesktopDRS=1
 IncludeTekScope=0
