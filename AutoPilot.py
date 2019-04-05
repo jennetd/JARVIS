@@ -12,188 +12,209 @@ from AllModules import *
 
 StartSeconds = 9
 StopSeconds = 40
-NumSpillsPerRun = 2
-
+NumSpillsPerRun = 1
 
 #################################Parsing arguments######################################
 
-parser = argparse.ArgumentParser(description='Information for running the AutoPilot program. /n /n General Instructions: If using OTSDAQ make sure the start and stop seconds in the beginning of the program are hard coded correctly. /n Make sure to add sensor and configuration after each controlled access and pass it as an argument to this script. /n/n /n TekScope Specific Instructions: /n Make sure you hard code the dpo_fastframe path. /n If using the OTSDAQ with TekScope make sure the Use_otsdaq boolean is True in dpo_fastframe script. /n Make Sure you pass all four Scope trigger and channel settings. /n /n Other Digitizer Specific Instructions: /n If not running the TekScope make sure that the run file name in TCP_com is correct.')
-parser.add_argument('-rtm', '--RunTableMode', type=int, default = 1, help='Give 1 if you are using the run table', required=False)
-parser.add_argument('-ac', '--AlreadyConfigured', type=int, default = 0, help='Give 1 if the OTSDAQ is already configured', required=False)
+parser = argparse.ArgumentParser(description='Information for running the AutoPilot program. /n /n General Instructions: Start OTSDAQ and Configure by hand. If using OTSDAQ make sure the start and stop seconds in the beginning of the program are hard coded correctly. /n Make sure to add sensor and configuration after each controlled access and pass it as an argument to this script. /n/n /n TekScope Specific Instructions: /n Make sure you hard code the dpo_fastframe path. /n If using the OTSDAQ with TekScope make sure the Use_otsdaq boolean is True in dpo_fastframe script. /n Make Sure you pass all four Scope trigger and channel settings. /n /n Other Digitizer Specific Instructions: /n If not running the TekScope make sure that the run file name in TCP_com is correct.')
 parser.add_argument('-de', '--Debug', type=int, default = 0, required=False)
-parser.add_argument('-io', '--IsOTSDAQ', type=int, default=0, help = 'Give 1 if using OTSDAQ',required=False)
-parser.add_argument('-it', '--IsTelescope', type=int,default=0, help = 'Give 1 if using the telescope',required=False)
-parser.add_argument('-di', '--Digitizer', type=str,default= 'TekScope', help = 'Give VME or DT5742 or TekScope', required =False)
-parser.add_argument('-se', '--Sensor', type=int, help = 'Make sure to add the sensor record in the run table. Give sensor S/N from the run table',required=False)
+parser.add_argument('-it', '--IsTelescope', type=int,default=1, help = 'Give 1 if using the telescope',required=False)
 parser.add_argument('-conf', '--Configuration', type=int, help = 'Make sure to add the configuration in the run table. Give COnfiguration S/N from the run table',required=False)
-parser.add_argument('-sac', '--StopAndContinue', type=int, default = 0, help = 'This bool should be 1 if the OTSDAQ is already in the running state and you want to stop and it and continue running it.',required=False)
+parser.add_argument('-se', '--Sensor', type=int, help = 'Make sure to add the sensor record in the run table. Give sensor S/N from the run table',required=False)
 
 ############################## Digitizers ##################################
+## we want to remove these
 parser.add_argument('-iv', '--IsVME', type=int, default = 0, help = 'Give 1 if using VME, 0 otherwise.', required =False)
 parser.add_argument('-is', '--IsSampic', type=int, default = 0, help = 'Give 1 if using Sampic, 0 otherwise.', required =False)
 parser.add_argument('-its', '--IsTekScope', type=int, default = 0, help = 'Give 1 if using TekScope, 0 otherwise.', required =False)
 parser.add_argument('-iks', '--IsKeySightScope', type=int, default = 0, help = 'Give 1 if using KeySightScope, 0 otherwise.', required =False)
 parser.add_argument('-idt', '--IsDT5742', type=int, default = 0, help = 'Give 1 if using DT5742, 0 otherwise.', required =False)
 
-######################### Only care about this if using TekScope #########################
-parser.add_argument('-tl', '--TriggerLevel', type=float,default= -0.01, help = 'Trigger level in volts', required =False)
-parser.add_argument('-tc', '--TriggerChannel', type=str, default= 'CH4', help = 'Channel to trigger on',required=False)
-parser.add_argument('-ne', '--NumEvents', type=int,default=50000, help = 'Number of events',required=False)
-parser.add_argument('-tne', '--TotalNumEvents', type=int,default=50000, help = 'Total number of events',required=False)
 
 args = parser.parse_args()
-RunTableMode = args.RunTableMode
-AlreadyConfigured = args.AlreadyConfigured
 Debug = args.Debug
-IsOTS = args.IsOTSDAQ
 IsTelescope = args.IsTelescope
-Digitizer = args.Digitizer
-Sensor = args.Sensor
 Configuration = args.Configuration
-StopAndContinue = args.StopAndContinue
-TriggerLevel = args.TriggerLevel
-TriggerChannel = args.TriggerChannel
-NumEvents = args.NumEvents
-TotalNumEvents = args.TotalNumEvents
 IsSampic = args.IsSampic
 IsVME = args.IsVME
 IsTekScope = args.IsTekScope
 IsKeySightScope = args.IsKeySightScope
 IsDT5742 = args.IsDT5742
 
+Sensor = args.Sensor
 
 ########################### Only when Run table is used ############################
 DigitizerList = []
-StartTekCMD = "python %s --trig=%f --trigCh=%s --numFrames=%i --totalNumber=%i" % (DPOFastFramePath, TriggerLevel, TriggerChannel, NumEvents, TotalNumEvents)
-StartKeySightCMD = "python %s --trig=%f --trigCh=%s --numFrames=%i --totalNumber=%i" % (DPOFastFramePath, TriggerLevel, TriggerChannel, NumEvents, TotalNumEvents)
-StartSampicCMD = "python %s --trig=%f --trigCh=%s --numFrames=%i --totalNumber=%i" % (DPOFastFramePath, TriggerLevel, TriggerChannel, NumEvents, TotalNumEvents)
 
-if IsTekScope or IsSampic or IsKeySightScope:
-    IsScope = True
+if IsTekScope or IsKeySightScope:
+	IsScope = True
 else:
-    IsScope = False
+	IsScope = False
 
-if RunTableMode:
+##initialize progress fields on run table
+if IsTelescope:
+	Tracking = 'Not started'
+else:
+	Tracking = 'N/A'
 
-        if IsTelescope:
-                Tracking = 'Not started'
-        else:
-                Tracking = 'N/A'
-        if IsVME:
-            TimingDAQVME = 'Not started'
-            TimingDAQNoTracksVME = 'Not started'
-            DigitizerList.append('VME')
-        else:
-            TimingDAQVME = 'N/A'
-            TimingDAQNoTracksVME = 'N/A'
+if IsVME:
+	TimingDAQVME = 'Not started'
+	TimingDAQNoTracksVME = 'Not started'
+	DigitizerList.append('VME')
+else:
+	TimingDAQVME = 'N/A'
+	TimingDAQNoTracksVME = 'N/A'
 
-        if IsDT5742:
-            TimingDAQDT5742 = 'Not started'
-            TimingDAQNoTracksDT5742 = 'Not started'
-            DigitizerList.append('DT5742')
-        else:
-            TimingDAQDT5742 = 'Not started'
-            TimingDAQNoTracksDT5742 = 'Not started'
+if IsDT5742:
+	TimingDAQDT5742 = 'Not started'
+	TimingDAQNoTracksDT5742 = 'Not started'
+	DigitizerList.append('DT5742')
+else:
+	TimingDAQDT5742 = 'Not started'
+	TimingDAQNoTracksDT5742 = 'Not started'
 
-        if IsTekScope:
-            ConversionTekScope = 'Not started'
-            TimingDAQTekScope = 'Not started'
-            TimingDAQNoTracksTekScope = 'Not started'
-            DigitizerList.append('TekScope')
-        else:
-            ConversionTekScope = 'N/A'
-            TimingDAQTekScope = 'N/A'
-            TimingDAQNoTracksTekScope = 'N/A'
+if IsTekScope:
+	ConversionTekScope = 'Not started'
+	TimingDAQTekScope = 'Not started'
+	TimingDAQNoTracksTekScope = 'Not started'
+	DigitizerList.append('TekScope')
+else:
+	ConversionTekScope = 'N/A'
+	TimingDAQTekScope = 'N/A'
+	TimingDAQNoTracksTekScope = 'N/A'
 
-        if IsKeySightScope:
-            ConversionKeySightScope = 'Not started'
-            TimingDAQKeySightScope = 'Not started'
-            TimingDAQNoTracksKeySightScope = 'Not started'
-            DigitizerList.append('KeySightScope')
-        else:
-            ConversionKeySightScope = 'N/A'
-            TimingDAQKeySightScope = 'N/A'
-            TimingDAQNoTracksKeySightScope = 'N/A'
+if IsKeySightScope:
+	ConversionKeySightScope = 'Not started'
+	TimingDAQKeySightScope = 'Not started'
+	TimingDAQNoTracksKeySightScope = 'Not started'
+	DigitizerList.append('KeySightScope')
+else:
+	ConversionKeySightScope = 'N/A'
+	TimingDAQKeySightScope = 'N/A'
+	TimingDAQNoTracksKeySightScope = 'N/A'
 
-        if IsSampic:
-            ConversionSampic = 'Not started'
-            TimingDAQSampic = 'Not started'
-            TimingDAQNoTracksSampic = 'Not started'
-            DigitizerList.append('Sampic')
-        else:
-            ConversionSampic = 'N/A'
-            TimingDAQSampic = 'N/A'
-            TimingDAQNoTracksSampic = 'N/A'
+if IsSampic:
+	ConversionSampic = 'Not started'
+	TimingDAQSampic = 'Not started'
+	TimingDAQNoTracksSampic = 'Not started'
+	DigitizerList.append('Sampic')
+else:
+	ConversionSampic = 'N/A'
+	TimingDAQSampic = 'N/A'
+	TimingDAQNoTracksSampic = 'N/A'
 
-    # Get Sensor ID and Configuration ID list
-        if pf.QueryGreenSignal(True):
-            SensorID = pf.GetFieldIDOtherTable('Sensor', 'Configuration number', str(Sensor), False)
-            ConfigID = pf.GetFieldIDOtherTable('Config', 'Configuration number', str(Configuration), False)
+# Get Sensor ID and Configuration ID list
 
-        if not SensorID or not ConfigID:
-            raise Exception('\n The sensor and configuration you passed as argument are not in the table!!!!!!!!!!!!!!!!!!!! \n')
-            ##### Exit the program ######
+if pf.QueryGreenSignal(True):
+	SensorID = pf.GetFieldIDOtherTable('Sensor', 'Configuration number', str(Sensor), False)
+	ConfigID = pf.GetFieldIDOtherTable('Config', 'Configuration number', str(Configuration), False)
+
+if not ConfigID: #not SensorID or 
+	raise Exception('\n The sensor and configuration you passed as argument are not in the table!!!!!!!!!!!!!!!!!!!! \n')
+	##### Exit the program ######
+
+# Use Status file to tell autopilot when to stop.
+os.remove("AutoPilot.status")
+statusFile = open("AutoPilot.status","w") 
+statusFile.write("START") 
+statusFile.close() 
+AutoPilotStatus = 1
+
+print "*********************************************************************"
+print "Starting AutoPilot"
+print "*********************************************************************"
+print ""
+print "Using Configuration : ", Configuration
+print "Sensor Configuration : ", Sensor
+
+if IsTelescope:
+        print "Tracking Telescope Included"
+if IsSampic:
+        print "SAMPIC readout Included"
+if IsVME:
+        print "VME readout Included" 
+if (IsDT5742):
+        print "DT5742 DRS Desktop Digitizer readout Included"
+if (IsTekScope):
+        print "Tektronix Scope readout Included"
+if (IsKeySightScope):
+        print "Keysight Scope readout Included"
+print ""
+print ""
+print "*********************************************************************"
+print ""
+print ""
 
 
-#################### CONFIGURING AND INITIALIZING THE OTSDAQ ######################
 
-if not Debug and not AlreadyConfigured and not StopAndContinue and IsOTS:
-    print '############################### INTITIALIZING THE OTS-DAQ ##############################'
-    tp.init_ots()
+while (AutoPilotStatus == 1):
 
-if not Debug and not AlreadyConfigured and not StopAndContinue and IsOTS:
-    print '############################### CONFIGURING THE OTS-DAQ ################################\n\n'
-    tp.config_ots()
-    time.sleep(25)
-
-while True:
-
-        tp.GetRunFile()
-        if not IsScope and IsOTS and StopAndContinue:
-
-                ############### Wait until stop time ##################
-                wait_until(StopSeconds)
-                print "\nStopping run at %s\n" % (datetime.now().time())
-                if not Debug: tp.stop_ots(False)
-                StopAndContinue = False
-                time.sleep(20)
-
-        elif not StopAndContinue:
-
-                ############ Wait for safe time to start run ##########
-                wait_until(StartSeconds)
+	##sync local run number file with ftbf-daq-08
+	tp.GetRunFile()
+	time.sleep(5)
+	RunNumber = tp.GetRunNumber()
+	print "Starting Run %i " % (RunNumber)
+        print ""
+	############ Wait for safe time to start run ##########
 
 
+	ScopeIncludedThisRun = False
 
-                if not Debug and IsScope:
+	if IsScope:
+		currentScopeState = ScopeState() 
+		if currentScopeState == 'ready': 
+		   print("Sending start command to scope.")
+		   if not Debug:
+			   ScopeStatusAutoPilot()
+			   ScopeIncludedThisRun = True
+			   WaitForScopeStart()
+		   print("Scope has started.")
+                else:
+                   print("Scope still busy. Excluding scope from the next run\n")
 
-                    ScopeState = ScopeState() 
-                    if ScopeState == 'ready': 
-                       print("Sending start command to scope.")
-                       ScopeStatusAutoPilot()
-                       WaitForScopeStart()
-                       print("Scope has started.")
-                if IsOTS:
+	wait_until(StartSeconds)
+	tp.UpdateRunNumber(RunNumber+1) ##must be called after scope start.
+	tp.SendRunFile()
 
-                    ################### Starting the run ###################
-                    StartTime = datetime.now()
+	################### Starting the run ###################
+	StartTime = datetime.now()  
+	print "\nRun %i started at %s" % (RunNumber,StartTime)
+        print ""
+	if not Debug: tp.start_ots(False)
 
-                    print "\nStarting run %s at %s\n" % (GetRunNumber(),StartTime)
-                    tp.UpdateRunNumber()
+	## Minimum run duration
+	time.sleep(60*(NumSpillsPerRun-1))
 
-                    RunNumber = tp.start_ots(False)
+	### Don't stop run until scope has acquired all events (OK if still writing events disk, though)
+	if IsScope and ScopeIncludedThisRun:
+		WaitForScopeFinishAcquisition()
+		
+	wait_until(StopSeconds)
+	if not Debug: tp.stop_ots(False)
 
-                    time.sleep(60*(NumSpillsPerRun-1))
+	StopTime = datetime.now()
+	print "\nRun %i stopped at %s" % (RunNumber,StopTime)
+        print ""
+        print "*********************************************************************"
+        print ""
 
-                    wait_until(StopSeconds)
-                    StopTime = datetime.now()
+	Duration = int((StopTime - StartTime).total_seconds())
 
-                    print "Stopping run at %s" % (StopTime)
-                    if not Debug: tp.stop_ots(False)
+	if pf.QueryGreenSignal(True): 
+		DigiListThisRun = DigitizerList
+		if not ScopeIncludedThisRun:
+			if "TekScope" in DigiListThisRun: DigiListThisRun.remove("TekScope")
+			if "KeySightScope" in DigiListThisRun: DigiListThisRun.remove("KeySightScope")
 
-                    if RunTableMode:
+		pf.NewRunRecord(RunNumber, StartTime, str(Duration), DigiListThisRun, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, SensorID, ConfigID, False)
+		
+        
+        #################################################
+        #Check for Stop signal in AutoPilot.status file
+        #################################################
+        tmpStatusFile = open("AutoPilot.status","r") 
+        tmpString = (tmpStatusFile.read().split())[0]
+        if (tmpString == "STOP" or tmpString == "stop"):
+                print "Detected stop signal.\n Stopping AutoPilot...\n\n"
+                AutoPilotStatus = 0
 
-                            Duration = (StopTime - StartTime).total_seconds()
-
-                            if pf.QueryGreenSignal(True): pf.NewRunRecord(RunNumber, StartTime, str(Duration), DigitizerList, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, SensorID, ConfigID, False)
-        tp.SendRunFile()
