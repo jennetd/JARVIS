@@ -113,8 +113,15 @@ if not ConfigID: #not SensorID or
 	raise Exception('\n The sensor and configuration you passed as argument are not in the table!!!!!!!!!!!!!!!!!!!! \n')
 	##### Exit the program ######
 
+# Use Status file to tell autopilot when to stop.
+os.remove("AutoPilot.status")
+statusFile = open("AutoPilot.status","w") 
+statusFile.write("START") 
+statusFile.close() 
+AutoPilotStatus = 1
 
-while True:
+while (AutoPilotStatus == 1):
+        print "AutoPilotStatus: ", AutoPilotStatus
 
 	##sync local run number file with ftbf-daq-08
 	tp.GetRunFile()
@@ -167,3 +174,14 @@ while True:
 
 		pf.NewRunRecord(RunNumber, StartTime, str(Duration), DigiListThisRun, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, SensorID, ConfigID, False)
 		
+        
+        #################################################
+        #Check for Stop signal in AutoPilot.status file
+        #################################################
+        tmpStatusFile = open("AutoPilot.status","r") 
+        tmpString = (tmpStatusFile.read().split())[0]
+        print "tempstring: ", tmpString
+        if (tmpString == "STOP" or tmpString == "stop"):
+                print "Stopping AutoPilot..."
+                AutoPilotStatus = 0
+
