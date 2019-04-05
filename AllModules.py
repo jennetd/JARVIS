@@ -40,7 +40,7 @@ LocalSSH = 'daq@timingdaq02.dhcp.fnal.gov'
 ################## Paths on timingdaq02 #####################
 ConfigFileBasePath = '/home/daq/TimingDAQ/config/FNAL_TestBeam_1811/'
 ScopeStateFileName = '/home/daq/fnal_tb_18_11/LocalData/RECO/ETL_Agilent_MSO-X-92004A/Acquisition/RunLog.txt'
-ScopeStatusFileName = '/home/daq/fnal_tb_18_11/LocalData/RECO/ETL_Agilent_MSO-X-92004A/Acquisition/ScopeStatus.txt'
+ScopeCommFileName = '/home/daq/fnal_tb_18_11/LocalData/RECO/ETL_Agilent_MSO-X-92004A/Acquisition/ScopeStatus.txt'
 BaseTrackDirLocal = '/home/daq/fnal_tb_18_11/Tracks/'
 RawStageTwoLocalPathScope = '/home/daq/fnal_tb_18_11/LocalData/ROOT/'
 RawStageOneLocalPathScope = '/home/daq/fnal_tb_18_11/ScopeMount/'
@@ -68,10 +68,26 @@ def wait_until(nseconds):
     return
 def ScopeState():
     ScopeStateHandle = open(ScopeStateFileName, "r")
-    ScopeState = str(ScopeStateHandle.read())
+    ScopeState = str(ScopeStateHandle.read().strip())
     return ScopeState
 
 def ScopeStatusAutoPilot():
-    ScopeStatusFile = open(ScopeStatusFileName, "w")
-    ScopeStatusFile.write(str(1))
+    ScopeCommFile = open(ScopeCommFileName, "w")
+    ScopeCommFile.write(str(1))
+    return
+
+def WaitForScopeStart():
+    while True:
+        ScopeStateHandle = open(ScopeCommFileName, "r")
+        ScopeState = str(ScopeStateHandle.read().strip())
+        if ScopeState=="0": break
+        time.sleep(0.5)
+    return
+
+def WaitForScopeFinishAcquisition():
+    while True:
+        ScopeStateHandle = open(ScopeStateFileName, "r")
+        ScopeState = str(ScopeStateHandle.read().strip())
+        if ScopeState=="writing" or ScopeState=="ready": break
+        time.sleep(0.5)
     return
