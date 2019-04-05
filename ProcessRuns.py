@@ -1,24 +1,31 @@
 import ParseFunctions as pf
 import AllModules as am
 
-def TrackingRuns(Debug):
-    RunList = []                                                                                                                                                                                                                                                                         
-    FieldIDList = []                                                                                                                                                                                                                                                                     
+def TrackingRuns(RunNumber, Debug):
+    RunList = []  
+    FieldIDList = [] 
+    print "run = ", RunNumber
+    if (RunNumber == -1):
+        #Retrieve the list of all runs that have not been processed yet
 
-    FilterByFormula = pf.ORFunc(['Tracking','Tracking'],['Not started', 'Retry'])                                                                 
+        FilterByFormula = pf.ORFunc(['Tracking','Tracking'],['Not started', 'Retry'])                                                                 
+        headers = {'Authorization': 'Bearer %s' % am.MyKey, } 
+    
+        if pf.QueryGreenSignal(True): response = am.requests.get(am.CurlBaseCommand  + '?filterByFormula=' + FilterByFormula, headers=headers)
 
-    headers = {'Authorization': 'Bearer %s' % am.MyKey, } 
-                                                                                                                                                                                                                              
-    if pf.QueryGreenSignal(True): response = am.requests.get(am.CurlBaseCommand  + '?filterByFormula=' + FilterByFormula, headers=headers)                                                                                                                                                                               
+        ResponseDict = am.ast.literal_eval(response.text)  
+        if Debug: return ResponseDict, FilterByFormula
 
-    ResponseDict = am.ast.literal_eval(response.text)                                                                                                                                                                                                                                       
-    if Debug: return ResponseDict, FilterByFormula
+        for i in ResponseDict["records"]: 
+            RunList.append(i['fields']['Run number']) 
+            FieldIDList.append(i['id']) 
+                                                                             
+    else: 
+        #If RunNumber is specified, then run only on that run
+        RunList.append(RunNumber)
+        FieldIDList.append(pf.GetFieldID("Run number", RunNumber, False))
 
-    for i in ResponseDict["records"]:                                                                                                                                                                                                                                                    
-        RunList.append(i['fields']['Run number'])                                                                                                                                                                                                                                        
-        FieldIDList.append(i['id'])                                                                                                                                                                                                                                                      
-        
-    return RunList, FieldIDList                                                                                                                                                                                                                   
+    return RunList, FieldIDList 
 
 
 def ConversionRuns(Debug):
