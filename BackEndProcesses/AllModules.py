@@ -39,6 +39,8 @@ BaseTrackDirLocal = '/home/daq/fnal_tb_18_11/Tracks/'
 HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScriptFastTrigger_NewGeo_18_12_11.sh'
 RulinuxSSH = 'otsdaq@rulinux04.dhcp.fnal.gov'
 LocalSSH = 'daq@timingdaq02.dhcp.fnal.gov'
+ResultTrackFileNameBeforeRunNumber = 'Run' ###########'Run%d_CMSTiming_converted.root' 
+ResultTrackFileNameAfterRunNumber = '_CMSTiming_converted.root'
 
 ################ Scope Control from AutoPilot Paths ################
 ScopeStateFileName = '/home/daq/fnal_tb_18_11/LocalData/RECO/ETL_Agilent_MSO-X-92004A/Acquisition/RunLog.txt'
@@ -70,15 +72,15 @@ TwoStageRecoDigitizers = {
                                             'RawConversionLocalPath' : '%sTekScope/TekScopeMount/' % (BaseTestbeamDir),
                                             'RawTimingDAQLocalPath'  : '%sTekScope/RecoData/ConversionRECO/'  % (BaseTestbeamDir),
                                             'RecoTimingDAQLocalPath' : '%sTekScope/RecoData/TimingDAQRECO/' % (BaseTestbeamDir),
-
+                                            'RawTimingDAQFileNameFormat' : 'run_scope' ##### run_scope<run>.root
                                             }
                          'KeySightScope'     :  {
 
-                                            'ConversionCMD'          : 'python %sKeySightScope/ %sKeySightScopeMount/run_scope' % (BaseTestbeamDir,BaseTestbeamDir), 
+                                            'ConversionCMD'          : 'python %sKeySightScope/...... %sKeySightScopeMount/run_scope' % (BaseTestbeamDir,BaseTestbeamDir), 
                                             'RawConversionLocalPath' : '%sKeySightScope/KeySightScopeMount/' % (BaseTestbeamDir),
                                             'RawTimingDAQLocalPath'  : '%sKeySightScope/RecoData/ConversionRECO/'  % (BaseTestbeamDir),
                                             'RecoTimingDAQLocalPath' : '%sKeySightScope/RecoData/TimingDAQRECO/' % (BaseTestbeamDir),
-
+                                            'RawTimingDAQFileNameFormat' : 'run_scope' ##### run_scope<run>.root
                                             }
                          'Sampic'     :  {
 
@@ -86,11 +88,19 @@ TwoStageRecoDigitizers = {
                                             'RawConversionLocalPath' : '%sSampic/SampicMount/' % (BaseTestbeamDir),
                                             'RawTimingDAQLocalPath'  : '%sSampic/RecoData/ConversionRECO/'  % (BaseTestbeamDir),
                                             'RecoTimingDAQLocalPath' : '%sSampic/RecoData/TimingDAQRECO/' % (BaseTestbeamDir),
+                                            'RawTimingDAQFileNameFormat' : 'run_scope' ##### run_scope<run>.root
 
                                             }
 
                         }
 
+DigitizerDict = {
+                    0 : 'VME'
+                    1 : 'DT5742'
+                    2 : 'TekScope'
+                    3 : 'KeySightScope'
+                    4 : 'Sampic'
+                }
 
 
 def wait_until(nseconds):

@@ -11,6 +11,8 @@ import AllModules as am
 
 def TrackingCMDs(RunNumber, MyKey, Debug):
     MyKey = MyKey
+    RunNumber = RunNumber
+    
     RunList, FieldIDList = pr.TrackingRuns(RunNumber, MyKey, False)
     TrackingCMDList = []
     ResultFileLocationList = []
@@ -19,15 +21,18 @@ def TrackingCMDs(RunNumber, MyKey, Debug):
         
         for run in RunList: 
 
-            TrackingCMDList.append('source %s %d' % (am.HyperscriptPath, run))
-            ResultFileLocationList.append(am.BaseTrackDirLocal + 'Run%d_CMSTiming_converted.root' % run)
+            TrackingCMDList.append('source %s %d' % (am.HyperscriptPath, run)) #####Modify Hyperscript to scp the result file on the local machine
+            ResultFileLocationList.append(am.BaseTrackDirLocal + am.ResultTrackFileNameBeforeRunNumber + str(run) + am.ResultTrackFileNameAfterRunNumber)
 
     return TrackingCMDList, ResultFileLocationList, RunList, FieldIDList
 
 
 def ConversionCMDs(RunNumber, Digitizer, MyKey, Debug):
+    MyKey = MyKey
+    RunNumber = RunNumber
+    Digitizer = Digitizer
 
-    RunList, FieldIDList = pr.ConversionRuns(False)
+    RunList, FieldIDList = pr.ConversionRuns(RunNumber, Digitizer, MyKey, False)
     ConversionCMDList = []
     ResultFileLocationList = []
 
@@ -35,8 +40,8 @@ def ConversionCMDs(RunNumber, Digitizer, MyKey, Debug):
         
         for run in RunList: 
 
-            ConversionCMDList.append(am.ConversionCMDDict[Digitizer] + str(run))
-            ResultFileLocationList.append(am.RawStageTwoLocalPathScope + 'run_scope' + str(run) + '.root')
+            ConversionCMDList.append(am.TwoStageRecoDigitizers[Digitizer]['ConversionCMD'] + str(run))
+            ResultFileLocationList.append(am.TwoStageRecoDigitizers[Digitizer]['RawTimingDAQLocalPath'] + am.TwoStageRecoDigitizers[Digitizer]['RawTimingDAQFileNameFormat'] + str(run) + '.root')
 
     return ConversionCMDList, ResultFileLocationList, RunList, FieldIDList
 

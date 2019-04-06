@@ -5,7 +5,7 @@ def TrackingRuns(RunNumber, MyKey, Debug):
     RunList = []  
     FieldIDList = [] 
     print "run = ", RunNumber
-    if (RunNumber == -1):
+    if RunNumber == -1:
         #Retrieve the list of all runs that have not been processed yet
 
         FilterByFormula = pf.ORFunc(['Tracking','Tracking'],['Not started', 'Retry'])                                                                 
@@ -29,23 +29,27 @@ def TrackingRuns(RunNumber, MyKey, Debug):
 
 def ConversionRuns(RunNumber, Digitizer, MyKey, Debug):
     RunList = []                                                                                                                                                                                                                                                                         
-    FieldIDList = []                                                                                                                                                                                                                                                                     
+    FieldIDList = []   
+    if RunNumber == -1:                                                                                                                                                                                                                                                                  
 
-    ColumnName = 'Conversion' + Digitizer
-    FilterByFormula = pf.ORFunc([ColumnName, ColumnName],['Not started', 'Retry'])                                                                 
+        ColumnName = 'Conversion' + Digitizer
+        FilterByFormula = pf.ORFunc([ColumnName, ColumnName],['Not started', 'Retry'])                                                                 
 
-    headers = {'Authorization': 'Bearer %s' % MyKey, }                                                                                                                                                                                                                                
-    if pf.QueryGreenSignal(True): response = am.requests.get(am.CurlBaseCommand  + '?filterByFormula=' + FilterByFormula, headers=headers)                                                                                                                                                                                
-    ResponseDict = am.ast.literal_eval(response.text)                                                                                                                                                                                                                                       
-    if Debug: return ResponseDict, FilterByFormula
+        headers = {'Authorization': 'Bearer %s' % MyKey, }                                                                                                                                                                                                                                
+        if pf.QueryGreenSignal(True): response = am.requests.get(am.CurlBaseCommand  + '?filterByFormula=' + FilterByFormula, headers=headers)                                                                                                                                                                                
+        ResponseDict = am.ast.literal_eval(response.text)                                                                                                                                                                                                                                       
+        if Debug: return ResponseDict, FilterByFormula
 
-    for i in ResponseDict["records"]:                                                                                                                                                                                                                                                    
-        RunList.append(i['fields']['Run number'])                                                                                                                                                                                                                                        
-        FieldIDList.append(i['id'])                                                                                                                                                                                                                                                      
-        
+        for i in ResponseDict["records"]:                                                                                                                                                                                                                                                    
+            RunList.append(i['fields']['Run number'])                                                                                                                                                                                                                                        
+            FieldIDList.append(i['id'])                                                                                                                                                                                                                                                      
+    else:
+        RunList.append(RunNumber)
+        FieldIDList.append(pf.GetFieldID("Run number", RunNumber, False))
+
     return RunList, FieldIDList                                                                                                                                                                                                                   
 
-def TimingDAQRuns(DoTracking, Digitizer, MyKey, Debug):                                                                                                                                                                                                                                               
+def TimingDAQRuns(RunNumber, DoTracking, Digitizer, MyKey, Debug):                                                                                                                                                                                                                                               
     RunList = []                                                                                                                                                                                                                                                                         
     FieldIDList = []                                                                                                                                                                                                                                                                     
     DigitizerList = []                                                                                                                                                                                                                                                                   
@@ -60,26 +64,29 @@ def TimingDAQRuns(DoTracking, Digitizer, MyKey, Debug):
     ProcessName = ProcessName + Digitizer
     ColumnName = ColumnName + Digitizer
 
-    OR1 = pf.ORFunc([ColumnName,ColumnName],['Complete', 'N/A'])                                                                 
-    OR2 = pf.ORFunc(['Tracking','Tracking'],['Complete', 'N/A'])                                                                                                                                                              
-    OR3 = pf.ORFunc([ProcessName, ProcessName,'Redo'],['Not started', 'Retry','Redo'])                                                                                                                                                                                                  
+    if RunNumber == -1:
 
-    FilterByFormula = 'AND(' + OR1 + ',' + OR3   
-    if DoTracking: FilterByFormula = FilterByFormula + ',' + OR2 
-    FilterByFormula = FilterByFormula + ')'
+        OR1 = pf.ORFunc([ColumnName,ColumnName],['Complete', 'N/A'])                                                                 
+        OR2 = pf.ORFunc(['Tracking','Tracking'],['Complete', 'N/A'])                                                                                                                                                              
+        OR3 = pf.ORFunc([ProcessName, ProcessName,'Redo'],['Not started', 'Retry','Redo'])                                                                                                                                                                                                  
 
-    headers = {'Authorization': 'Bearer %s' % MyKey, }                                                                                                                                                                                                                                
-    if pf.QueryGreenSignal(True): response = am.requests.get(am.CurlBaseCommand  + '?filterByFormula=' + FilterByFormula, headers=headers)                                                                                                                                                                               
-    ResponseDict = am.ast.literal_eval(response.text)  
-    if Debug: return ResponseDict, FilterByFormula                                                                                                                                                                                                                                    
-    
-    for i in ResponseDict["records"]:                                                                                                                                                                                                                                                    
-        RunList.append(i['fields']['Run number'])                                                                                                                                                                                                                                        
-        FieldIDList.append(i['id'])                                                                                                                                                                                                                                                      
-        DigitizerList.append(i['fields']['Digitizer'])                                                                                                                                                                                                                                   
-        RedoList.append(i['fields']['Redo'])                                                                                                                                                                                                                                             
-        VersionList.append(i['fields']['Version'])                                                                                                                                                                                                                                       
+        FilterByFormula = 'AND(' + OR1 + ',' + OR3   
+        if DoTracking: FilterByFormula = FilterByFormula + ',' + OR2 
+        FilterByFormula = FilterByFormula + ')'
+
+        headers = {'Authorization': 'Bearer %s' % MyKey, }                                                                                                                                                                                                                                
+        if pf.QueryGreenSignal(True): response = am.requests.get(am.CurlBaseCommand  + '?filterByFormula=' + FilterByFormula, headers=headers)                                                                                                                                                                               
+        ResponseDict = am.ast.literal_eval(response.text)  
+        if Debug: return ResponseDict, FilterByFormula                                                                                                                                                                                                                                    
         
+        for i in ResponseDict["records"]:                                                                                                                                                                                                                                                    
+            RunList.append(i['fields']['Run number'])                                                                                                                                                                                                                                        
+            FieldIDList.append(i['id'])                                                                                                                                                                                                                                                      
+            DigitizerList.append(i['fields']['Digitizer'])                                                                                                                                                                                                                                   
+            RedoList.append(i['fields']['Redo'])                                                                                                                                                                                                                                             
+            VersionList.append(i['fields']['Version'])         
+
+    else:
     return RunList, FieldIDList, DigitizerList, RedoList, VersionList                                                                                                                                                                                                                   
   
 

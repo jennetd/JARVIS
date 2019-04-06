@@ -28,74 +28,29 @@ def FileSizeBool(FilePath, SizeCut):
 		return am.os.stat(FilePath).st_size < SizeCut
 	else: return True
 
-def ProcessExec(OrderOfExecution, PID, SaveWaveformBool, Version, RunNumber = -1): #PID is 1 for Tracking, 2 for Conversion, 3 for TimingDAQ
+def ProcessExec(OrderOfExecution, PID, SaveWaveformBool, Version, RunNumber = -1, DigitizerKey = -1 , MyKey): #PID is 1 for Tracking, 2 for Conversion, 3 for TimingDAQ, Refer all modules for digitizer keys
 	
+	Digitizer = am.DigitizerDict[DigitizerKey]
 	SaveWaveformBool = SaveWaveformBool
 	Version = Version
-
+	RunNumber = RunNumber
+	MyKey = MyKey 
+	
 	if PID == 1:
 		ProcessName = 'Tracking'
-		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.TrackingCMDs(RunNumber, False)
+		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.TrackingCMDs(RunNumber, MyKey, False)
 		SizeCut = 10000
 	elif PID == 2:
-		ProcessName = 'ConversionSampic'
-		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.ConversionCMDs(False)
-		SizeCut = 10000
-	elif PID == 2:
-		ProcessName = 'ConversionTekScope'
-		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.ConversionCMDs(False)
-		SizeCut = 10000
-	elif PID == 2:
-		ProcessName = 'ConversionKeySightScope'
-		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.ConversionCMDs(False)
+		ProcessName = 'Conversion' + Digitizer
+		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.ConversionCMDs(RunNumber, Digitizer, MyKey, False)
 		SizeCut = 10000
 	elif PID == 3:
-		ProcessName = 'TimingDAQVME'	
-		DoTracking = True
-		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.TimingDAQCMDs(SaveWaveformBool, Version, DoTracking, False)
-		SizeCut = 20000
-	elif PID == 3:
-		ProcessName = 'TimingDAQDT5742'	
-		DoTracking = True
-		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.TimingDAQCMDs(SaveWaveformBool, Version, DoTracking, False)
-		SizeCut = 20000
-	elif PID == 3:
-		ProcessName = 'TimingDAQSampic'	
-		DoTracking = True
-		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.TimingDAQCMDs(SaveWaveformBool, Version, DoTracking, False)
-		SizeCut = 20000
-	elif PID == 3:
-		ProcessName = 'TimingDAQTekScope'	
-		DoTracking = True
-		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.TimingDAQCMDs(SaveWaveformBool, Version, DoTracking, False)
-		SizeCut = 20000
-	elif PID == 3:
-		ProcessName = 'TimingDAQKeySightScope'	
+		ProcessName = 'TimingDAQ' + Digitizer	
 		DoTracking = True
 		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.TimingDAQCMDs(SaveWaveformBool, Version, DoTracking, False)
 		SizeCut = 20000
 	elif PID == 4:
-		ProcessName = 'TimingDAQNoTracksVME'
-		DoTracking = False	
-		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.TimingDAQCMDs(SaveWaveformBool, Version, DoTracking, False)
-		SizeCut = 20000
-	elif PID == 4:
-		ProcessName = 'TimingDAQNoTracksDT5742'
-		DoTracking = False	
-		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.TimingDAQCMDs(SaveWaveformBool, Version, DoTracking, False)
-		SizeCut = 20000
-	elif PID == 4:
-		ProcessName = 'TimingDAQNoTracksSampic'
-		DoTracking = False	
-		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.TimingDAQCMDs(SaveWaveformBool, Version, DoTracking, False)
-		SizeCut = 20000
-	elif PID == 4:
-		ProcessName = 'TimingDAQNoTracksTekScope'
-		DoTracking = False	
-		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.TimingDAQCMDs(SaveWaveformBool, Version, DoTracking, False)
-		SizeCut = 20000
-	elif PID == 4:
-		ProcessName = 'TimingDAQNoTracksKeySightScope'
+		ProcessName = 'TimingDAQNoTracks' + Digitizer
 		DoTracking = False	
 		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.TimingDAQCMDs(SaveWaveformBool, Version, DoTracking, False)
 		SizeCut = 20000
@@ -117,7 +72,7 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool, Version, RunNumber = -1
 			RawStageTwoFilePath = am.RawStageTwoLocalPathScope + 'run_scope' + str(run) + '.root'
 			if PID == 1:
 				if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldIDList[index]), ProcessName, 'Processing', False)
-                                session = am.subprocess.Popen(["ssh", am.RulinuxSSH, str(CMD)], stderr=am.subprocess.PIPE, stdout=am.subprocess.PIPE)
+                session = am.subprocess.Popen(["ssh", am.RulinuxSSH, str(CMD)], stderr=am.subprocess.PIPE, stdout=am.subprocess.PIPE)
 			elif PID == 2:
 				if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldIDList[index]), ProcessName, 'Processing', False)
 				session = am.subprocess.Popen('source %s; %s' % (am.EnvSetupPath,str(CMD)),stdout=am.subprocess.PIPE, stderr=am.PIPE, shell=True)
