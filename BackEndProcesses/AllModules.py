@@ -94,6 +94,21 @@ TwoStageRecoDigitizers = {
 
                         }
 
+OneStageRecoDigitizers = {
+
+                         'VME'     :  {
+                                            'RawTimingDAQLocalPath'  : '%sVME/RecoData/ConversionRECO/'  % (BaseTestbeamDir),
+                                            'RecoTimingDAQLocalPath' : '%sVME/RecoData/TimingDAQRECO/' % (BaseTestbeamDir),
+                                            'RawTimingDAQFileNameFormat' : 'run_scope' ##### run_scope<run>.root
+                                            }
+                         'DT5742'     :  {
+                                            'RawTimingDAQLocalPath'  : '%sKeySightScope/RecoData/ConversionRECO/'  % (BaseTestbeamDir),
+                                            'RecoTimingDAQLocalPath' : '%sKeySightScope/RecoData/TimingDAQRECO/' % (BaseTestbeamDir),
+                                            'RawTimingDAQFileNameFormat' : 'run_scope' ##### run_scope<run>.root
+                                            }
+                        }
+
+
 DigitizerDict = {
                     0 : 'VME'
                     1 : 'DT5742'
