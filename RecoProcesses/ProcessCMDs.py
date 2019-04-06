@@ -9,9 +9,9 @@ import AllModules as am
 ################################################################################################################################################################################################################                                                                         ################################################################################################################################################################################################################                                                                                                           
 
 
-def TrackingCMDs(RunNumber, Debug):
-
-    RunList, FieldIDList = pr.TrackingRuns(RunNumber, False)
+def TrackingCMDs(RunNumber, MyKey, Debug):
+    MyKey = MyKey
+    RunList, FieldIDList = pr.TrackingRuns(RunNumber, MyKey, False)
     TrackingCMDList = []
     ResultFileLocationList = []
 
@@ -25,7 +25,7 @@ def TrackingCMDs(RunNumber, Debug):
     return TrackingCMDList, ResultFileLocationList, RunList, FieldIDList
 
 
-def ConversionCMDs(Debug):
+def ConversionCMDs(RunNumber, Digitizer, MyKey, Debug):
 
     RunList, FieldIDList = pr.ConversionRuns(False)
     ConversionCMDList = []
@@ -35,13 +35,13 @@ def ConversionCMDs(Debug):
         
         for run in RunList: 
 
-            ConversionCMDList.append(am.ConversionCMD + str(run))
+            ConversionCMDList.append(am.ConversionCMDDict[Digitizer] + str(run))
             ResultFileLocationList.append(am.RawStageTwoLocalPathScope + 'run_scope' + str(run) + '.root')
 
     return ConversionCMDList, ResultFileLocationList, RunList, FieldIDList
 
 
-def TimingDAQCMDs(SaveWaveformBool, Version, DoTracking, Debug):
+def TimingDAQCMDs(SaveWaveformBool, Version, DoTracking, Digitizer, MyKey, Debug):
     DoTracking = DoTracking 
     RunList, FieldIDList, DigitizerList, RedoList, VersionList = pr.TimingDAQRuns(DoTracking, False)
     DatToRootCMDList = []

@@ -38,26 +38,64 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool, Version, RunNumber = -1
 		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.TrackingCMDs(RunNumber, False)
 		SizeCut = 10000
 	elif PID == 2:
-		ProcessName = 'Conversion'
+		ProcessName = 'ConversionSampic'
+		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.ConversionCMDs(False)
+		SizeCut = 10000
+	elif PID == 2:
+		ProcessName = 'ConversionTekScope'
+		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.ConversionCMDs(False)
+		SizeCut = 10000
+	elif PID == 2:
+		ProcessName = 'ConversionKeySightScope'
 		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.ConversionCMDs(False)
 		SizeCut = 10000
 	elif PID == 3:
-		ProcessName = 'TimingDAQ'	
+		ProcessName = 'TimingDAQVME'	
+		DoTracking = True
+		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.TimingDAQCMDs(SaveWaveformBool, Version, DoTracking, False)
+		SizeCut = 20000
+	elif PID == 3:
+		ProcessName = 'TimingDAQDT5742'	
+		DoTracking = True
+		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.TimingDAQCMDs(SaveWaveformBool, Version, DoTracking, False)
+		SizeCut = 20000
+	elif PID == 3:
+		ProcessName = 'TimingDAQSampic'	
+		DoTracking = True
+		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.TimingDAQCMDs(SaveWaveformBool, Version, DoTracking, False)
+		SizeCut = 20000
+	elif PID == 3:
+		ProcessName = 'TimingDAQTekScope'	
+		DoTracking = True
+		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.TimingDAQCMDs(SaveWaveformBool, Version, DoTracking, False)
+		SizeCut = 20000
+	elif PID == 3:
+		ProcessName = 'TimingDAQKeySightScope'	
 		DoTracking = True
 		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.TimingDAQCMDs(SaveWaveformBool, Version, DoTracking, False)
 		SizeCut = 20000
 	elif PID == 4:
-		ProcessName = 'TimingDAQNoTracks'
+		ProcessName = 'TimingDAQNoTracksVME'
 		DoTracking = False	
 		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.TimingDAQCMDs(SaveWaveformBool, Version, DoTracking, False)
 		SizeCut = 20000
-	elif PID == 10:
-		ProcessName = 'VME'
-		DoTracking = True	
+	elif PID == 4:
+		ProcessName = 'TimingDAQNoTracksDT5742'
+		DoTracking = False	
 		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.TimingDAQCMDs(SaveWaveformBool, Version, DoTracking, False)
 		SizeCut = 20000
-	elif PID == 11:
-		ProcessName = 'VMENoTracks'
+	elif PID == 4:
+		ProcessName = 'TimingDAQNoTracksSampic'
+		DoTracking = False	
+		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.TimingDAQCMDs(SaveWaveformBool, Version, DoTracking, False)
+		SizeCut = 20000
+	elif PID == 4:
+		ProcessName = 'TimingDAQNoTracksTekScope'
+		DoTracking = False	
+		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.TimingDAQCMDs(SaveWaveformBool, Version, DoTracking, False)
+		SizeCut = 20000
+	elif PID == 4:
+		ProcessName = 'TimingDAQNoTracksKeySightScope'
 		DoTracking = False	
 		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.TimingDAQCMDs(SaveWaveformBool, Version, DoTracking, False)
 		SizeCut = 20000

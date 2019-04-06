@@ -1,7 +1,7 @@
 import ParseFunctions as pf
 import AllModules as am
 
-def TrackingRuns(RunNumber, Debug):
+def TrackingRuns(RunNumber, MyKey, Debug):
     RunList = []  
     FieldIDList = [] 
     print "run = ", RunNumber
@@ -9,7 +9,7 @@ def TrackingRuns(RunNumber, Debug):
         #Retrieve the list of all runs that have not been processed yet
 
         FilterByFormula = pf.ORFunc(['Tracking','Tracking'],['Not started', 'Retry'])                                                                 
-        headers = {'Authorization': 'Bearer %s' % am.MyKey, } 
+        headers = {'Authorization': 'Bearer %s' % MyKey, } 
     
         if pf.QueryGreenSignal(True): response = am.requests.get(am.CurlBaseCommand  + '?filterByFormula=' + FilterByFormula, headers=headers)
 
@@ -27,14 +27,14 @@ def TrackingRuns(RunNumber, Debug):
 
     return RunList, FieldIDList 
 
-
-def ConversionRuns(Debug):
+def ConversionRuns(RunNumber, Digitizer, MyKey, Debug):
     RunList = []                                                                                                                                                                                                                                                                         
     FieldIDList = []                                                                                                                                                                                                                                                                     
 
-    FilterByFormula = pf.ORFunc(['Conversion','Conversion'],['Not started', 'Retry'])                                                                 
+    ColumnName = 'Conversion' + Digitizer
+    FilterByFormula = pf.ORFunc([ColumnName, ColumnName],['Not started', 'Retry'])                                                                 
 
-    headers = {'Authorization': 'Bearer %s' % am.MyKey, }                                                                                                                                                                                                                                
+    headers = {'Authorization': 'Bearer %s' % MyKey, }                                                                                                                                                                                                                                
     if pf.QueryGreenSignal(True): response = am.requests.get(am.CurlBaseCommand  + '?filterByFormula=' + FilterByFormula, headers=headers)                                                                                                                                                                                
     ResponseDict = am.ast.literal_eval(response.text)                                                                                                                                                                                                                                       
     if Debug: return ResponseDict, FilterByFormula
@@ -45,20 +45,22 @@ def ConversionRuns(Debug):
         
     return RunList, FieldIDList                                                                                                                                                                                                                   
 
-
-def TimingDAQRuns(DoTracking, Debug):                                                                                                                                                                                                                                               
+def TimingDAQRuns(DoTracking, Digitizer, MyKey, Debug):                                                                                                                                                                                                                                               
     RunList = []                                                                                                                                                                                                                                                                         
     FieldIDList = []                                                                                                                                                                                                                                                                     
     DigitizerList = []                                                                                                                                                                                                                                                                   
     RedoList = []                                                                                                                                                                                                                                                                        
     VersionList = []                                                                                                                                                                                                                                                                     
-    
+
     if DoTracking:
         ProcessName = 'TimingDAQ'
     else:
         ProcessName = 'TimingDAQNoTracks'
 
-    OR1 = pf.ORFunc(['Conversion','Conversion'],['Complete', 'N/A'])                                                                 
+    ProcessName = ProcessName + Digitizer
+    ColumnName = ColumnName + Digitizer
+
+    OR1 = pf.ORFunc([ColumnName,ColumnName],['Complete', 'N/A'])                                                                 
     OR2 = pf.ORFunc(['Tracking','Tracking'],['Complete', 'N/A'])                                                                                                                                                              
     OR3 = pf.ORFunc([ProcessName, ProcessName,'Redo'],['Not started', 'Retry','Redo'])                                                                                                                                                                                                  
 
@@ -66,7 +68,7 @@ def TimingDAQRuns(DoTracking, Debug):
     if DoTracking: FilterByFormula = FilterByFormula + ',' + OR2 
     FilterByFormula = FilterByFormula + ')'
 
-    headers = {'Authorization': 'Bearer %s' % am.MyKey, }                                                                                                                                                                                                                                
+    headers = {'Authorization': 'Bearer %s' % MyKey, }                                                                                                                                                                                                                                
     if pf.QueryGreenSignal(True): response = am.requests.get(am.CurlBaseCommand  + '?filterByFormula=' + FilterByFormula, headers=headers)                                                                                                                                                                               
     ResponseDict = am.ast.literal_eval(response.text)  
     if Debug: return ResponseDict, FilterByFormula                                                                                                                                                                                                                                    
