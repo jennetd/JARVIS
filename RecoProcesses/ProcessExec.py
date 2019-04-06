@@ -28,7 +28,7 @@ def FileSizeBool(FilePath, SizeCut):
 		return am.os.stat(FilePath).st_size < SizeCut
 	else: return True
 
-def ProcessExec(OrderOfExecution, PID, SaveWaveformBool, Version, RunNumber = -1, DigitizerKey = -1 , MyKey): #PID is 1 for Tracking, 2 for Conversion, 3 for TimingDAQ, Refer all modules for digitizer keys
+def ProcessExec(OrderOfExecution, PID, SaveWaveformBool, Version, RunNumber = -1, DigitizerKey = -1 , MyKey):
 	
 	Digitizer = am.DigitizerDict[DigitizerKey]
 	SaveWaveformBool = SaveWaveformBool
@@ -36,24 +36,24 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool, Version, RunNumber = -1
 	RunNumber = RunNumber
 	MyKey = MyKey 
 	
-	if PID == 1:
-		ProcessName = 'Tracking'
+	if PID == 0:
+		ProcessName = am.ProcessDict[PID]
 		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.TrackingCMDs(RunNumber, MyKey, False)
-		SizeCut = 10000
-	elif PID == 2:
-		ProcessName = 'Conversion' + Digitizer
+		SizeCut = am.ProcessDict[PID]['SizeCut']
+	elif PID == 1:
+		ProcessName = am.ProcessDict[PID] + Digitizer
 		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.ConversionCMDs(RunNumber, Digitizer, MyKey, False)
-		SizeCut = 10000
-	elif PID == 3:
-		ProcessName = 'TimingDAQ' + Digitizer	
+		SizeCut = am.ProcessDict[PID]['SizeCut']
+	elif PID == 2:
+		ProcessName = am.ProcessDict[PID] + Digitizer	
 		DoTracking = True
 		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.TimingDAQCMDs(SaveWaveformBool, Version, DoTracking, False)
-		SizeCut = 20000
-	elif PID == 4:
-		ProcessName = 'TimingDAQNoTracks' + Digitizer
+		SizeCut = am.ProcessDict[PID]['SizeCut']
+	elif PID == 3:
+		ProcessName = am.ProcessDict[PID] + Digitizer
 		DoTracking = False	
 		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.TimingDAQCMDs(SaveWaveformBool, Version, DoTracking, False)
-		SizeCut = 20000
+		SizeCut = am.ProcessDict[PID]['SizeCut']
 
 	RunListInt = map(int,RunList)
 	if OrderOfExecution == 1: 
@@ -70,20 +70,20 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool, Version, RunNumber = -1
 			ResultFileLocation = ResultFileLocationList[index]
 			BadProcessExec = False
 			RawStageTwoFilePath = am.RawStageTwoLocalPathScope + 'run_scope' + str(run) + '.root'
-			if PID == 1:
-				if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldIDList[index]), ProcessName, 'Processing', False)
+			if PID == 0:
+				if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldIDList[index]), ProcessName, am.StatusDict[1], False)
                 session = am.subprocess.Popen(["ssh", am.RulinuxSSH, str(CMD)], stderr=am.subprocess.PIPE, stdout=am.subprocess.PIPE)
-			elif PID == 2:
-				if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldIDList[index]), ProcessName, 'Processing', False)
+			elif PID == 1:
+				if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldIDList[index]), ProcessName, am.StatusDict[1], False)
 				session = am.subprocess.Popen('source %s; %s' % (am.EnvSetupPath,str(CMD)),stdout=am.subprocess.PIPE, stderr=am.PIPE, shell=True)
-			elif PID == 3 or PID == 4:
-				if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldIDList[index]), ProcessName, 'Processing', False)
+			elif PID == 2 or PID == 3:
+				if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldIDList[index]), ProcessName, am.StatusDict[1], False)
 				session = am.subprocess.Popen('cd %s; source %s; %s;cd -' % (am.TimingDAQDir,am.EnvSetupPath,str(CMD)),stdout=am.PIPE, stderr=am.subprocess.PIPE, shell=True)                                                                                                                                                                                   			
 			stdout, stderr = session.communicate() 
 			ProcessLog(ProcessName, run, stdout)   
 			if FileSizeBool(ResultFileLocation,SizeCut) or not am.os.path.exists(ResultFileLocation): BadProcessExec = True                                                                                                                                                                                                                                                     
 			if BadProcessExec:                                                                                                                                                                                                                               
-				if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldIDList[index]), ProcessName, 'Failed', False)  
+				if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldIDList[index]), ProcessName, am.StatusDict[2], False)  
 			else:
-				if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldIDList[index]), ProcessName, 'Complete', False)
+				if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldIDList[index]), ProcessName, am.StatusDict[0], False)
 

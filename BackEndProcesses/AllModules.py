@@ -72,23 +72,23 @@ TwoStageRecoDigitizers = {
                                             'RawConversionLocalPath' : '%sTekScope/TekScopeMount/' % (BaseTestbeamDir),
                                             'RawTimingDAQLocalPath'  : '%sTekScope/RecoData/ConversionRECO/'  % (BaseTestbeamDir),
                                             'RecoTimingDAQLocalPath' : '%sTekScope/RecoData/TimingDAQRECO/' % (BaseTestbeamDir),
-                                            'RawTimingDAQFileNameFormat' : 'run_scope' ##### run_scope<run>.root
-                                            }
+                                            'RawTimingDAQFileNameFormat' : 'run_scope', ##### run_scope<run>.root 
+                                            },
                          'KeySightScope'     :  {
 
                                             'ConversionCMD'          : 'python %sKeySightScope/...... %sKeySightScopeMount/run_scope' % (BaseTestbeamDir,BaseTestbeamDir), 
                                             'RawConversionLocalPath' : '%sKeySightScope/KeySightScopeMount/' % (BaseTestbeamDir),
                                             'RawTimingDAQLocalPath'  : '%sKeySightScope/RecoData/ConversionRECO/'  % (BaseTestbeamDir),
                                             'RecoTimingDAQLocalPath' : '%sKeySightScope/RecoData/TimingDAQRECO/' % (BaseTestbeamDir),
-                                            'RawTimingDAQFileNameFormat' : 'run_scope' ##### run_scope<run>.root
-                                            }
+                                            'RawTimingDAQFileNameFormat' : 'run_scope', ##### run_scope<run>.root
+                                            },
                          'Sampic'     :  {
 
                                             'ConversionCMD'          : 'python %sSampic/Tektronix_DPO7254Control/Reconstruction/conversion.py %sSampicMount/run_scope' % (BaseTestbeamDir,BaseTestbeamDir), 
                                             'RawConversionLocalPath' : '%sSampic/SampicMount/' % (BaseTestbeamDir),
                                             'RawTimingDAQLocalPath'  : '%sSampic/RecoData/ConversionRECO/'  % (BaseTestbeamDir),
                                             'RecoTimingDAQLocalPath' : '%sSampic/RecoData/TimingDAQRECO/' % (BaseTestbeamDir),
-                                            'RawTimingDAQFileNameFormat' : 'run_scope' ##### run_scope<run>.root
+                                            'RawTimingDAQFileNameFormat' : 'run_scope', ##### run_scope<run>.root
 
                                             }
 
@@ -99,24 +99,48 @@ OneStageRecoDigitizers = {
                          'VME'     :  {
                                             'RawTimingDAQLocalPath'  : '%sVME/RecoData/ConversionRECO/'  % (BaseTestbeamDir),
                                             'RecoTimingDAQLocalPath' : '%sVME/RecoData/TimingDAQRECO/' % (BaseTestbeamDir),
-                                            'RawTimingDAQFileNameFormat' : 'run_scope' ##### run_scope<run>.root
-                                            }
+                                            'RawTimingDAQFileNameFormat' : 'run_scope', ##### run_scope<run>.root
+                                            },
                          'DT5742'     :  {
                                             'RawTimingDAQLocalPath'  : '%sKeySightScope/RecoData/ConversionRECO/'  % (BaseTestbeamDir),
                                             'RecoTimingDAQLocalPath' : '%sKeySightScope/RecoData/TimingDAQRECO/' % (BaseTestbeamDir),
-                                            'RawTimingDAQFileNameFormat' : 'run_scope' ##### run_scope<run>.root
+                                            'RawTimingDAQFileNameFormat' : 'run_scope', ##### run_scope<run>.root
                                             }
                         }
 
 
 DigitizerDict = {
-                    0 : 'VME'
-                    1 : 'DT5742'
-                    2 : 'TekScope'
-                    3 : 'KeySightScope'
-                    4 : 'Sampic'
+                    0 : 'VME',
+                    1 : 'DT5742',
+                    2 : 'TekScope',
+                    3 : 'KeySightScope',
+                    4 : 'Sampic',
                 }
 
+ProcessDict = {
+                    0 : 'Tracking' : {'SizeCut' : 10000},
+                    1 : 'Conversion' : {'SizeCut' : 10000},
+                    2 : 'TimingDAQ' : {'SizeCut' : 20000},
+                    3 : 'TimingDAQNoTracks' : {'SizeCut' : 20000},
+                }
+StatusDict = {
+                    0 : 'Complete',
+                    1 : 'Processing',
+                    2 : 'Failed',
+                    3 : 'Not started',
+                    4 : 'Verified',
+                    5 : 'Retry',
+                    6 : 'Redo',
+                    7 : 'N/A',
+}
+
+QueryFieldsDict = {
+                    0 : 'Run number',
+                    1 : 'Digitizer',
+                    2 : 'Redo',
+                    3 : 'Version',
+                    
+}
 
 def wait_until(nseconds):
     while True:
