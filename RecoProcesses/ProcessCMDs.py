@@ -88,10 +88,10 @@ def TimingDAQCMDs(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer, M
                 ListRawRunNumber = [(x.split("_Run")[1].split(".dat")[0].split("_")[0]) for x in am.glob.glob(RawBaseLocalPath + '*_Run*')]
                 ListRawFilePath = [x for x in am.glob.glob(RawBaseLocalPath + '*_Run*')] 
                 RawLocalPath = ListRawFilePath[ListRawRunNumber.index(str(run))]
-                RecoLocalPath = RecoBaseLocalPath + RawLocalPath.split(".dat")[0].split("%s" % RawBaseLocalPath)[1] + '.root'                                            
+                RecoLocalPath = RecoBaseLocalPath + '/' + RawLocalPath.split(".dat")[0].split("%s" % RawBaseLocalPath)[1] + '.root'                                            
             else:
                 RawLocalPath =  RawBaseLocalPath + am.TwoStageRecoDigitizers[Digitizer]['RawTimingDAQFileNameFormat'] + str(run) + '.root'                                      
-                RecoLocalPath = RecoBaseLocalPath + am.TwoStageRecoDigitizers[Digitizer]['RawTimingDAQFileNameFormat']+ str(run) + '_converted.root' 
+                RecoLocalPath = RecoBaseLocalPath + '/' + am.TwoStageRecoDigitizers[Digitizer]['RawTimingDAQFileNameFormat']+ str(run) + '_converted.root' 
 
             ResultFileLocationList.append(RecoLocalPath)
             

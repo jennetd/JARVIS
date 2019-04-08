@@ -56,7 +56,7 @@ EnvSetupPath = '/home/daq/otsdaq/setup_ots.sh'
 ########## TimingDAQ Paths ############
 #TimingDAQDir = '/home/daq/CMS-MTD/TimingDAQ/'
 TimingDAQDir = '/home/sxie/TimingDAQ/'
-ConfigFileBasePath = '%sconfig/FNAL_TestBeam_1811/' % TimingDAQDir
+ConfigFileBasePath = '%sconfig/FNAL_TestBeam_1904/' % TimingDAQDir
 
 
 ############# OTSDAQ Information ################
@@ -102,12 +102,12 @@ TwoStageRecoDigitizers = {
 
 OneStageRecoDigitizers = {
 
-                         'VME'     :  {     'ConfigFileBasePath'     : '%sconfig/FNAL_TestBeam_1811/VME_' % (TimingDAQDir),
+                         'VME'     :  {     'ConfigFileBasePath'     : '%sconfig/FNAL_TestBeam_1904/DT5742_' % (TimingDAQDir),
                                             'DatToROOTExec'          : 'VMEDat2Root', 
                                             'RawTimingDAQLocalPath'  : '%sVME/RawData/'  % (BaseTestbeamDir),
                                             'RecoTimingDAQLocalPath' : '%sVME/RecoData/' % (BaseTestbeamDir),
                                             },
-                         'DT5742'     :  {  'ConfigFileBasePath'     : '%sconfig/FNAL_TestBeam_1811/DT5742_' % (TimingDAQDir),
+                         'DT5742'     :  {  'ConfigFileBasePath'     : '%sconfig/FNAL_TestBeam_1904/DT5742_' % (TimingDAQDir),
                                             'DatToROOTExec'          : 'DT5742Dat2Root',
                                             'RawTimingDAQLocalPath'  : '%sDT5742/RawData/'  % (BaseTestbeamDir),
                                             'RecoTimingDAQLocalPath' : '%sDT5742/RecoData/' % (BaseTestbeamDir),
