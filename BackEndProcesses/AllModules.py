@@ -67,7 +67,8 @@ localRunFileName = "otsdaq_runNumber.txt"
 TwoStageRecoDigitizers = {
 
                          'TekScope'     :  {
-
+                                            'ConfigFileBasePath'     : '',
+                                            'DatToROOTExec'          : '', 
                                             'ConversionCMD'          : 'python %sTekScope/Tektronix_DPO7254Control/Reconstruction/conversion.py %sTekScopeMount/run_scope' % (BaseTestbeamDir,BaseTestbeamDir), 
                                             'RawConversionLocalPath' : '%sTekScope/TekScopeMount/' % (BaseTestbeamDir),
                                             'RawTimingDAQLocalPath'  : '%sTekScope/RecoData/ConversionRECO/'  % (BaseTestbeamDir),
@@ -75,7 +76,8 @@ TwoStageRecoDigitizers = {
                                             'RawTimingDAQFileNameFormat' : 'run_scope', ##### run_scope<run>.root 
                                             },
                          'KeySightScope'     :  {
-
+                                            'ConfigFileBasePath'     : '',
+                                            'DatToROOTExec'          : '',
                                             'ConversionCMD'          : 'python %sKeySightScope/...... %sKeySightScopeMount/run_scope' % (BaseTestbeamDir,BaseTestbeamDir), 
                                             'RawConversionLocalPath' : '%sKeySightScope/KeySightScopeMount/' % (BaseTestbeamDir),
                                             'RawTimingDAQLocalPath'  : '%sKeySightScope/RecoData/ConversionRECO/'  % (BaseTestbeamDir),
@@ -83,7 +85,8 @@ TwoStageRecoDigitizers = {
                                             'RawTimingDAQFileNameFormat' : 'run_scope', ##### run_scope<run>.root
                                             },
                          'Sampic'     :  {
-
+                                            'ConfigFileBasePath'     : '',
+                                            'DatToROOTExec'          : '',
                                             'ConversionCMD'          : 'python %sSampic/Tektronix_DPO7254Control/Reconstruction/conversion.py %sSampicMount/run_scope' % (BaseTestbeamDir,BaseTestbeamDir), 
                                             'RawConversionLocalPath' : '%sSampic/SampicMount/' % (BaseTestbeamDir),
                                             'RawTimingDAQLocalPath'  : '%sSampic/RecoData/ConversionRECO/'  % (BaseTestbeamDir),
@@ -96,12 +99,14 @@ TwoStageRecoDigitizers = {
 
 OneStageRecoDigitizers = {
 
-                         'VME'     :  {
+                         'VME'     :  {     'ConfigFileBasePath'     : '',
+                                            'DatToROOTExec'          : '', 
                                             'RawTimingDAQLocalPath'  : '%sVME/RecoData/ConversionRECO/'  % (BaseTestbeamDir),
                                             'RecoTimingDAQLocalPath' : '%sVME/RecoData/TimingDAQRECO/' % (BaseTestbeamDir),
                                             'RawTimingDAQFileNameFormat' : 'run_scope', ##### run_scope<run>.root
                                             },
-                         'DT5742'     :  {
+                         'DT5742'     :  {  'ConfigFileBasePath'     : '',
+                                            'DatToROOTExec'          : '',
                                             'RawTimingDAQLocalPath'  : '%sKeySightScope/RecoData/ConversionRECO/'  % (BaseTestbeamDir),
                                             'RecoTimingDAQLocalPath' : '%sKeySightScope/RecoData/TimingDAQRECO/' % (BaseTestbeamDir),
                                             'RawTimingDAQFileNameFormat' : 'run_scope', ##### run_scope<run>.root
@@ -175,3 +180,11 @@ def WaitForScopeFinishAcquisition():
         if ScopeState=="writing" or ScopeState=="ready": break
         time.sleep(0.5)
     return
+
+def ProcessLog(ProcessName, RunNumber, ProcessOutput):
+    ProcessLogBasePath = "%sProcessLog/%s/" % (BaseTestbeamDir, ProcessName)
+    if not am.os.path.exists(ProcessLogBasePath): am.os.system('mkdir -p %s' % ProcessLogBasePath)
+    ProcessLogFilePath = ProcessLogBasePath + 'run%d.txt' % RunNumber
+    ProcessFile_handle = open(ProcessLogFilePath, "a+")                                                                                                                                                                                                                                 
+    ProcessFile_handle.write(ProcessOutput)                                                                                                                                                                                                                                                        
+    ProcessFile_handle.close()  

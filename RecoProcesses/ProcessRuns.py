@@ -2,6 +2,7 @@ import ParseFunctions as pf
 import AllModules as am
 
 def TrackingRuns(RunNumber, MyKey, Debug):
+    MyKey = MyKey
     RunList = []  
     FieldIDList = [] 
     print "run = ", RunNumber
@@ -30,6 +31,7 @@ def TrackingRuns(RunNumber, MyKey, Debug):
 def ConversionRuns(RunNumber, Digitizer, MyKey, Debug):
     RunList = []                                                                                                                                                                                                                                                                         
     FieldIDList = []   
+    MyKey = MyKey
     if RunNumber == -1:                                                                                                                                                                                                                                                                  
 
         ProcessName = am.ProcessDict[1] + Digitizer
@@ -52,9 +54,8 @@ def ConversionRuns(RunNumber, Digitizer, MyKey, Debug):
 def TimingDAQRuns(RunNumber, DoTracking, Digitizer, MyKey, Debug):                                                                                                                                                                                                                                               
     RunList = []                                                                                                                                                                                                                                                                         
     FieldIDList = []                                                                                                                                                                                                                                                                     
-    DigitizerList = []                                                                                                                                                                                                                                                                   
-    RedoList = []                                                                                                                                                                                                                                                                        
-    VersionList = []                                                                                                                                                                                                                                                                     
+    DigitizerList = []   
+    MyKey = MyKey                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
 
     if DoTracking:
         ProcessName = am.ProcessDict[2] + Digitizer
@@ -63,9 +64,9 @@ def TimingDAQRuns(RunNumber, DoTracking, Digitizer, MyKey, Debug):
 
     if RunNumber == -1:
 
-        OR1 = pf.ORFunc([am.ProcessDict[1],am.ProcessDict[1]],[am.StatusDict[0], am.StatusDict[7]])                                                                 
+        OR1 = pf.ORFunc([am.ProcessDict[1] + Digitizer, am.ProcessDict[1] + Digitizer],[am.StatusDict[0], am.StatusDict[7]])                                                                 
         OR2 = pf.ORFunc([am.ProcessDict[0],am.ProcessDict[0]],[am.StatusDict[0], am.StatusDict[7]])                                                                                                                                                              
-        OR3 = pf.ORFunc([ProcessName, ProcessName, am.QueryFieldsDict[2]],[am.StatusDict[3], am.StatusDict[5], am.StatusDict[6]])                                                                                                                                                                                                  
+        OR3 = pf.ORFunc([ProcessName, ProcessName],[am.StatusDict[3], am.StatusDict[5]])                                                                                                                                                                                                  
 
         FilterByFormula = 'AND(' + OR1 + ',' + OR3   
         if DoTracking: FilterByFormula = FilterByFormula + ',' + OR2 
@@ -78,14 +79,11 @@ def TimingDAQRuns(RunNumber, DoTracking, Digitizer, MyKey, Debug):
         
         for i in ResponseDict["records"]:                                                                                                                                                                                                                                                    
             RunList.append(i['fields'][am.QueryFieldsDict[0]])                                                                                                                                                                                                                                        
-            FieldIDList.append(i['id'])                                                                                                                                                                                                                                                      
-            DigitizerList.append(i['fields'][am.QueryFieldsDict[1]])                                                                                                                                                                                                                                   
-            RedoList.append(i['fields'][am.QueryFieldsDict[2]])                                                                                                                                                                                                                                             
-            VersionList.append(i['fields'][am.QueryFieldsDict[3]])         
-
+            FieldIDList.append(i['id'])                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
     else:
-    return RunList, FieldIDList, DigitizerList, RedoList, VersionList                                                                                                                                                                                                                   
-
+        RunList.append(RunNumber)
+        FieldIDList.append(pf.GetFieldID(am.QueryFieldsDict[0], RunNumber, False))
+    return RunList, FieldIDList                                                                                                                                                                                                                  
 
 
 

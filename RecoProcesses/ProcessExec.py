@@ -1,11 +1,6 @@
 import AllModules as am
 import ProcessCMDs as pc
-import ParseFunctions as pf
-
-def ProcessLog(ProcessName, RunNumber, ProcessOutput):
-	ProcessFile_handle = open("/home/daq/fnal_tb_18_11/ProcessLog/%s/run%d.txt" % (ProcessName, RunNumber), "a+")                                                                                                                                                                                                                                 
-	ProcessFile_handle.write(ProcessOutput)                                                                                                                                                                                                                                                        
-	ProcessFile_handle.close()                                                                                                                                                                                                    
+import ParseFunctions as pf                                                                                                                                                                                                  
 
 def exists_remote(host, path):                                                                                                                                                                                                                                                                                                
 	status = subprocess.call(['ssh', host, 'test -f {0}'.format(pipes.quote(path))])                                                                                                                                                                                                                                          
@@ -28,7 +23,7 @@ def FileSizeBool(FilePath, SizeCut):
 		return am.os.stat(FilePath).st_size < SizeCut
 	else: return True
 
-def ProcessExec(OrderOfExecution, PID, SaveWaveformBool, Version, RunNumber = -1, DigitizerKey = -1 , MyKey):
+def ProcessExec(OrderOfExecution, PID, SaveWaveformBool, Version = None, RunNumber = -1, DigitizerKey = -1 , MyKey):
 	
 	Digitizer = am.DigitizerDict[DigitizerKey]
 	SaveWaveformBool = SaveWaveformBool
@@ -47,12 +42,12 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool, Version, RunNumber = -1
 	elif PID == 2:
 		ProcessName = am.ProcessDict[PID] + Digitizer	
 		DoTracking = True
-		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.TimingDAQCMDs(SaveWaveformBool, Version, DoTracking, False)
+		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.TimingDAQCMDs(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer, MyKey, False)
 		SizeCut = am.ProcessDict[PID]['SizeCut']
 	elif PID == 3:
 		ProcessName = am.ProcessDict[PID] + Digitizer
 		DoTracking = False	
-		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.TimingDAQCMDs(SaveWaveformBool, Version, DoTracking, False)
+		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.TimingDAQCMDs(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer, MyKey, False)
 		SizeCut = am.ProcessDict[PID]['SizeCut']
 
 	RunListInt = map(int,RunList)
@@ -80,7 +75,7 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool, Version, RunNumber = -1
 				if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldIDList[index]), ProcessName, am.StatusDict[1], False)
 				session = am.subprocess.Popen('cd %s; source %s; %s;cd -' % (am.TimingDAQDir,am.EnvSetupPath,str(CMD)),stdout=am.PIPE, stderr=am.subprocess.PIPE, shell=True)                                                                                                                                                                                   			
 			stdout, stderr = session.communicate() 
-			ProcessLog(ProcessName, run, stdout)   
+			am.ProcessLog(ProcessName, run, stdout)   
 			if FileSizeBool(ResultFileLocation,SizeCut) or not am.os.path.exists(ResultFileLocation): BadProcessExec = True                                                                                                                                                                                                                                                     
 			if BadProcessExec:                                                                                                                                                                                                                               
 				if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldIDList[index]), ProcessName, am.StatusDict[2], False)  
