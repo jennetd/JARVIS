@@ -51,12 +51,13 @@ def TimingDAQCMDs(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer, M
     MyKey = MyKey
     Digitizer = Digitizer
     RunNumber = RunNumber
+
     RunList, FieldIDList = pr.TimingDAQRuns(RunNumber, DoTracking, Digitizer, MyKey, False)
     DatToRootCMDList = []
     ResultFileLocationList = []
 
     if RunList:
-        
+        print RunList
         for run in RunList: 
 
             RecoLocalPath = None
@@ -66,12 +67,12 @@ def TimingDAQCMDs(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer, M
             if Digitizer == am.DigitizerDict[0] or Digitizer == am.DigitizerDict[1]:
                 RecoBaseLocalPath = am.OneStageRecoDigitizers[Digitizer]['RecoTimingDAQLocalPath']
                 RawBaseLocalPath = am.OneStageRecoDigitizers[Digitizer]['RawTimingDAQLocalPath']
-                ConfigFilePath = am.OneStageRecoDigitizers[Digitizer]['ConfigFileBasePath'] + '_%s.config' % Version
+                ConfigFilePath = am.OneStageRecoDigitizers[Digitizer]['ConfigFileBasePath'] + '%s.config' % Version
                 DatToROOTExec = am.OneStageRecoDigitizers[Digitizer]['DatToROOTExec']
             else:
                 RecoBaseLocalPath = am.TwoStageRecoDigitizers[Digitizer]['RecoTimingDAQLocalPath']
                 RawBaseLocalPath = am.TwoStageRecoDigitizers[Digitizer]['RawTimingDAQLocalPath']
-                ConfigFilePath = am.TwoStageRecoDigitizers[Digitizer]['ConfigFileBasePath'] + '_%s.config' % Version
+                ConfigFilePath = am.TwoStageRecoDigitizers[Digitizer]['ConfigFileBasePath'] + '%s.config' % Version
                 DatToROOTExec = am.TwoStageRecoDigitizers[Digitizer]['DatToROOTExec']
 
             if not DoTracking: 
@@ -79,15 +80,15 @@ def TimingDAQCMDs(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer, M
             else:
                 RecoBaseLocalPath = RecoBaseLocalPath + 'RecoWithTracks/'
 
-            RecoBaseLocalPath = RecoBaseLocalPath + Version
+            RecoBaseLocalPath = RecoBaseLocalPath + Version + '/'
 
             if not am.os.path.exists(RecoBaseLocalPath): am.os.system('mkdir -p %s' % RecoBaseLocalPath)
 
             if Digitizer == am.DigitizerDict[0] or Digitizer == am.DigitizerDict[1]:
                 ListRawRunNumber = [(x.split("_Run")[1].split(".dat")[0].split("_")[0]) for x in am.glob.glob(RawBaseLocalPath + '*_Run*')]
                 ListRawFilePath = [x for x in am.glob.glob(RawBaseLocalPath + '*_Run*')] 
-                RawLocalPath = ListRawFilePath[ListRawRunNumber.index(run)]
-                RecoLocalPath = RecoBaseLocalPath + RawLocalPath.split(".dat")[0].split("%s/" % Version)[1] + '.root'                                            
+                RawLocalPath = ListRawFilePath[ListRawRunNumber.index(str(run))]
+                RecoLocalPath = RecoBaseLocalPath + RawLocalPath.split(".dat")[0].split("%s" % RawBaseLocalPath)[1] + '.root'                                            
             else:
                 RawLocalPath =  RawBaseLocalPath + am.TwoStageRecoDigitizers[Digitizer]['RawTimingDAQFileNameFormat'] + str(run) + '.root'                                      
                 RecoLocalPath = RecoBaseLocalPath + am.TwoStageRecoDigitizers[Digitizer]['RawTimingDAQFileNameFormat']+ str(run) + '_converted.root' 

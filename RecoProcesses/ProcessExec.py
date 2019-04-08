@@ -1,5 +1,5 @@
 import sys 
-sys.path.append('/home/daq/JarvisDevelopment/BackEndProcesses/')
+sys.path.append('/home/sxie/JARVIS/BackEndProcesses/')
 import AllModules as am
 import ProcessCMDs as pc
 import ParseFunctions as pf                                                                                                                                                                                                  
@@ -58,29 +58,35 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 	else:
 		RunListInt.sort(reverse = True)
 
-
 	if CMDList:	
 
 		for run in 	RunListInt: 
 			index = RunList.index(run)      
 			CMD = CMDList[index]  
+			if RunNumber != -1: 
+				FieldID = FieldIDList[index][0]
+			else:
+				FieldID = FieldIDList[index]
 			ResultFileLocation = ResultFileLocationList[index]
 			BadProcessExec = False
+
+			##### Printing Command
+			print CMD
 			
 			if PID == 0:
-				if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldIDList[index]), ProcessName, am.StatusDict[1], False)
+				if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[1], False)
 				session = am.subprocess.Popen(["ssh", am.RulinuxSSH, str(CMD)], stderr=am.subprocess.PIPE, stdout=am.subprocess.PIPE)
 			elif PID == 1:
-				if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldIDList[index]), ProcessName, am.StatusDict[1], False)
+				if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[1], False)
 				session = am.subprocess.Popen('source %s; %s' % (am.EnvSetupPath,str(CMD)),stdout=am.subprocess.PIPE, stderr=am.PIPE, shell=True)
 			elif PID == 2 or PID == 3:
-				if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldIDList[index]), ProcessName, am.StatusDict[1], False)
-				session = am.subprocess.Popen('cd %s; source %s; %s;cd -' % (am.TimingDAQDir,am.EnvSetupPath,str(CMD)),stdout=am.PIPE, stderr=am.subprocess.PIPE, shell=True)                                                                                                                                                                                   			
+				if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[1], False)
+				session = am.subprocess.Popen('cd %s; %s;cd -' % (am.TimingDAQDir,str(CMD)),stdout=am.PIPE, stderr=am.subprocess.PIPE, shell=True)                                                                                                                                                                                   			
 			stdout, stderr = session.communicate() 
 			am.ProcessLog(ProcessName, run, stdout)   
 			if FileSizeBool(ResultFileLocation,SizeCut) or not am.os.path.exists(ResultFileLocation): BadProcessExec = True                                                                                                                                                                                                                                                     
 			if BadProcessExec:                                                                                                                                                                                                                               
-				if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldIDList[index]), ProcessName, am.StatusDict[2], False)  
+				if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[2], False)  
 			else:
-				if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldIDList[index]), ProcessName, am.StatusDict[0], False)
+				if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[0], False)
 

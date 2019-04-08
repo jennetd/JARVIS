@@ -35,24 +35,27 @@ QueryFilePath ="/home/daq/Jarvis/QueryLog.txt"
 ############# Tracking Paths ##############
 
 BaseTrackDirRulinux = '/data/TestBeam/2018_11_November_CMSTiming/'
-BaseTrackDirLocal = '/home/daq/fnal_tb_18_11/Tracks/'
+#BaseTrackDirLocal = '/home/daq/fnal_tb_19_04/Tracks/'
+BaseTrackDirLocal = '/data2/fnal_tb_19_04/Tracks/'
 HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScriptFastTrigger_NewGeo_18_12_11.sh'
 RulinuxSSH = 'otsdaq@rulinux04.dhcp.fnal.gov'
-LocalSSH = 'daq@timingdaq02.dhcp.fnal.gov'
+#LocalSSH = 'daq@timingdaq02.dhcp.fnal.gov'
 ResultTrackFileNameBeforeRunNumber = 'Run' ###########'Run%d_CMSTiming_converted.root' 
 ResultTrackFileNameAfterRunNumber = '_CMSTiming_converted.root'
 
 ################ Scope Control from AutoPilot Paths ################
-ScopeStateFileName = '/home/daq/fnal_tb_18_11/LocalData/RECO/ETL_Agilent_MSO-X-92004A/Acquisition/RunLog.txt'
-ScopeCommFileName = '/home/daq/fnal_tb_18_11/LocalData/RECO/ETL_Agilent_MSO-X-92004A/Acquisition/ScopeStatus.txt'
+#ScopeStateFileName = '/home/daq/fnal_tb_18_11/LocalData/RECO/ETL_Agilent_MSO-X-92004A/Acquisition/RunLog.txt'
+#ScopeCommFileName = '/home/daq/fnal_tb_18_11/LocalData/RECO/ETL_Agilent_MSO-X-92004A/Acquisition/ScopeStatus.txt'
 
 
 ################## Paths on timingdaq02 #####################
-BaseTestbeamDir = '/home/daq/fnal_tb_19_04/'
+#BaseTestbeamDir = '/home/daq/fnal_tb_19_04/'
+BaseTestbeamDir = '/data2/fnal_tb_19_04/'
 EnvSetupPath = '/home/daq/otsdaq/setup_ots.sh'
 
 ########## TimingDAQ Paths ############
-TimingDAQDir = '/home/daq/CMS-MTD/TimingDAQ/'
+#TimingDAQDir = '/home/daq/CMS-MTD/TimingDAQ/'
+TimingDAQDir = '/home/sxie/TimingDAQ/'
 ConfigFileBasePath = '%sconfig/FNAL_TestBeam_1811/' % TimingDAQDir
 
 
@@ -99,12 +102,12 @@ TwoStageRecoDigitizers = {
 
 OneStageRecoDigitizers = {
 
-                         'VME'     :  {     'ConfigFileBasePath'     : '/home/daq/CMS-MTD/TimingDAQ/config/FNAL_TestBeam_1811/VME_v6.config',
+                         'VME'     :  {     'ConfigFileBasePath'     : '%sconfig/FNAL_TestBeam_1811/VME_' % (TimingDAQDir),
                                             'DatToROOTExec'          : 'VMEDat2Root', 
                                             'RawTimingDAQLocalPath'  : '%sVME/RawData/'  % (BaseTestbeamDir),
                                             'RecoTimingDAQLocalPath' : '%sVME/RecoData/' % (BaseTestbeamDir),
                                             },
-                         'DT5742'     :  {  'ConfigFileBasePath'     : '/home/daq/CMS-MTD/TimingDAQ/config/FNAL_TestBeam_1811/VME_v6.config',
+                         'DT5742'     :  {  'ConfigFileBasePath'     : '%sconfig/FNAL_TestBeam_1811/DT5742_' % (TimingDAQDir),
                                             'DatToROOTExec'          : 'DT5742Dat2Root',
                                             'RawTimingDAQLocalPath'  : '%sDT5742/RawData/'  % (BaseTestbeamDir),
                                             'RecoTimingDAQLocalPath' : '%sDT5742/RecoData/' % (BaseTestbeamDir),
