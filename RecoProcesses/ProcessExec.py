@@ -1,3 +1,5 @@
+import sys 
+sys.path.append('/home/daq/JarvisDevelopment/BackEndProcesses/')
 import AllModules as am
 import ProcessCMDs as pc
 import ParseFunctions as pf                                                                                                                                                                                                  
@@ -23,9 +25,9 @@ def FileSizeBool(FilePath, SizeCut):
 		return am.os.stat(FilePath).st_size < SizeCut
 	else: return True
 
-def ProcessExec(OrderOfExecution, PID, SaveWaveformBool, Version = None, RunNumber = -1, DigitizerKey = -1 , MyKey):
+def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, RunNumber = -1, DigitizerKey = -1 , MyKey = None):
 	
-	Digitizer = am.DigitizerDict[DigitizerKey]
+	if not DigitizerKey == -1: Digitizer = am.DigitizerDict[DigitizerKey]
 	SaveWaveformBool = SaveWaveformBool
 	Version = Version
 	RunNumber = RunNumber
@@ -64,10 +66,10 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool, Version = None, RunNumb
 			CMD = CMDList[index]  
 			ResultFileLocation = ResultFileLocationList[index]
 			BadProcessExec = False
-			RawStageTwoFilePath = am.RawStageTwoLocalPathScope + 'run_scope' + str(run) + '.root'
+			
 			if PID == 0:
 				if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldIDList[index]), ProcessName, am.StatusDict[1], False)
-                session = am.subprocess.Popen(["ssh", am.RulinuxSSH, str(CMD)], stderr=am.subprocess.PIPE, stdout=am.subprocess.PIPE)
+				session = am.subprocess.Popen(["ssh", am.RulinuxSSH, str(CMD)], stderr=am.subprocess.PIPE, stdout=am.subprocess.PIPE)
 			elif PID == 1:
 				if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldIDList[index]), ProcessName, am.StatusDict[1], False)
 				session = am.subprocess.Popen('source %s; %s' % (am.EnvSetupPath,str(CMD)),stdout=am.subprocess.PIPE, stderr=am.PIPE, shell=True)

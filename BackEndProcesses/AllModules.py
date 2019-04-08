@@ -99,17 +99,15 @@ TwoStageRecoDigitizers = {
 
 OneStageRecoDigitizers = {
 
-                         'VME'     :  {     'ConfigFileBasePath'     : '',
-                                            'DatToROOTExec'          : '', 
-                                            'RawTimingDAQLocalPath'  : '%sVME/RecoData/ConversionRECO/'  % (BaseTestbeamDir),
-                                            'RecoTimingDAQLocalPath' : '%sVME/RecoData/TimingDAQRECO/' % (BaseTestbeamDir),
-                                            'RawTimingDAQFileNameFormat' : 'run_scope', ##### run_scope<run>.root
+                         'VME'     :  {     'ConfigFileBasePath'     : '/home/daq/CMS-MTD/TimingDAQ/config/FNAL_TestBeam_1811/VME_v6.config',
+                                            'DatToROOTExec'          : 'VMEDat2Root', 
+                                            'RawTimingDAQLocalPath'  : '%sVME/RawData/'  % (BaseTestbeamDir),
+                                            'RecoTimingDAQLocalPath' : '%sVME/RecoData/' % (BaseTestbeamDir),
                                             },
-                         'DT5742'     :  {  'ConfigFileBasePath'     : '',
-                                            'DatToROOTExec'          : '',
-                                            'RawTimingDAQLocalPath'  : '%sKeySightScope/RecoData/ConversionRECO/'  % (BaseTestbeamDir),
-                                            'RecoTimingDAQLocalPath' : '%sKeySightScope/RecoData/TimingDAQRECO/' % (BaseTestbeamDir),
-                                            'RawTimingDAQFileNameFormat' : 'run_scope', ##### run_scope<run>.root
+                         'DT5742'     :  {  'ConfigFileBasePath'     : '/home/daq/CMS-MTD/TimingDAQ/config/FNAL_TestBeam_1811/VME_v6.config',
+                                            'DatToROOTExec'          : 'DT5742Dat2Root',
+                                            'RawTimingDAQLocalPath'  : '%sDT5742/RawData/'  % (BaseTestbeamDir),
+                                            'RecoTimingDAQLocalPath' : '%sDT5742/RecoData/' % (BaseTestbeamDir),
                                             }
                         }
 
@@ -183,7 +181,7 @@ def WaitForScopeFinishAcquisition():
 
 def ProcessLog(ProcessName, RunNumber, ProcessOutput):
     ProcessLogBasePath = "%sProcessLog/%s/" % (BaseTestbeamDir, ProcessName)
-    if not am.os.path.exists(ProcessLogBasePath): am.os.system('mkdir -p %s' % ProcessLogBasePath)
+    if not os.path.exists(ProcessLogBasePath): os.system('mkdir -p %s' % ProcessLogBasePath)
     ProcessLogFilePath = ProcessLogBasePath + 'run%d.txt' % RunNumber
     ProcessFile_handle = open(ProcessLogFilePath, "a+")                                                                                                                                                                                                                                 
     ProcessFile_handle.write(ProcessOutput)                                                                                                                                                                                                                                                        
