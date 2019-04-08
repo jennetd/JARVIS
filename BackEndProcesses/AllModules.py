@@ -123,10 +123,10 @@ DigitizerDict = {
                 }
 
 ProcessDict = {
-                    0 : 'Tracking' : {'SizeCut' : 10000},
-                    1 : 'Conversion' : {'SizeCut' : 10000},
-                    2 : 'TimingDAQ' : {'SizeCut' : 20000},
-                    3 : 'TimingDAQNoTracks' : {'SizeCut' : 20000},
+                    0 : {'Tracking' : {'SizeCut' : 10000}},
+                    1 : {'Conversion' : {'SizeCut' : 10000}},
+                    2 : {'TimingDAQ' : {'SizeCut' : 20000}},
+                    3 : {'TimingDAQNoTracks' : {'SizeCut' : 20000}},
                 }
 StatusDict = {
                     0 : 'Complete',

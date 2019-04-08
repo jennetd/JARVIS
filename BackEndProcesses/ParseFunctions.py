@@ -114,6 +114,23 @@ def ParsingQuery(NumberOfConditions, ConditionAttributeNames, ConditionAttribute
     for i in ResponseDict["records"]: FieldID.append(i['id'])   
     return Output, FieldID
 
+def GetDigiFromConfig(ConfigurationNumber, Debug):
+    Output = [] 
+    FieldID = []
+    DigitizerList = []
+    headers = {'Authorization': 'Bearer %s' % am.MyKey, }
+    CurlBaseCommand = am.CurlBaseCommandConfig
+    FilterByFormula = EqualToFunc(Curly('Configuration number'), DoubleQuotes(ConfigurationNumber)) 
+
+    response = am.requests.get(CurlBaseCommand  + '?filterByFormula=' + FilterByFormula, headers=headers)
+    ResponseDict = am.ast.literal_eval(response.text)
+    if Debug: return ResponseDict, FilterByFormula
+    ListOfFields = ResponseDict["records"][0]['fields'].keys()
+    for k , Digitizer in am.DigitizerDict.items():
+         if any(Digitizer in fields for fields in ListOfFields):
+            DigitizerList.append(Digitizer)
+    return DigitizerList
+
 def GetFieldID(ConditionAttributeName, ConditionAttributeStatus, Debug):
     Output = [] 
     FilterByFormula = EqualToFunc(Curly(ConditionAttributeName), DoubleQuotes(ConditionAttributeStatus))

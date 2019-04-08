@@ -32,23 +32,23 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool, Version = None, RunNumb
 	MyKey = MyKey 
 	
 	if PID == 0:
-		ProcessName = am.ProcessDict[PID]
+		ProcessName = am.ProcessDict[PID].keys()[0]
 		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.TrackingCMDs(RunNumber, MyKey, False)
-		SizeCut = am.ProcessDict[PID]['SizeCut']
+		SizeCut = am.ProcessDict[PID][am.ProcessDict[PID].keys()[0]]['SizeCut']
 	elif PID == 1:
-		ProcessName = am.ProcessDict[PID] + Digitizer
+		ProcessName = am.ProcessDict[PID].keys()[0] + Digitizer
 		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.ConversionCMDs(RunNumber, Digitizer, MyKey, False)
-		SizeCut = am.ProcessDict[PID]['SizeCut']
+		SizeCut = am.ProcessDict[PID][am.ProcessDict[PID].keys()[0]]['SizeCut']
 	elif PID == 2:
-		ProcessName = am.ProcessDict[PID] + Digitizer	
+		ProcessName = am.ProcessDict[PID].keys()[0] + Digitizer	
 		DoTracking = True
 		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.TimingDAQCMDs(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer, MyKey, False)
-		SizeCut = am.ProcessDict[PID]['SizeCut']
+		SizeCut = am.ProcessDict[PID][am.ProcessDict[PID].keys()[0]]['SizeCut']
 	elif PID == 3:
-		ProcessName = am.ProcessDict[PID] + Digitizer
+		ProcessName = am.ProcessDict[PID].keys()[0] + Digitizer
 		DoTracking = False	
 		CMDList, ResultFileLocationList, RunList, FieldIDList = pc.TimingDAQCMDs(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer, MyKey, False)
-		SizeCut = am.ProcessDict[PID]['SizeCut']
+		SizeCut = am.ProcessDict[PID][am.ProcessDict[PID].keys()[0]]['SizeCut']
 
 	RunListInt = map(int,RunList)
 	if OrderOfExecution == 1: 

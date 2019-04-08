@@ -9,7 +9,7 @@ def TrackingRuns(RunNumber, MyKey, Debug):
     if RunNumber == -1:
         #Retrieve the list of all runs that have not been processed yet
 
-        FilterByFormula = pf.ORFunc([am.ProcessDict[0],am.ProcessDict[0]],[am.StatusDict[3], am.StatusDict[5]])                                                                 
+        FilterByFormula = pf.ORFunc([am.ProcessDict[0].keys()[0],am.ProcessDict[0].keys()[0]],[am.StatusDict[3], am.StatusDict[5]])                                                                 
         headers = {'Authorization': 'Bearer %s' % MyKey, } 
     
         if pf.QueryGreenSignal(True): response = am.requests.get(am.CurlBaseCommand  + '?filterByFormula=' + FilterByFormula, headers=headers)
@@ -34,7 +34,7 @@ def ConversionRuns(RunNumber, Digitizer, MyKey, Debug):
     MyKey = MyKey
     if RunNumber == -1:                                                                                                                                                                                                                                                                  
 
-        ProcessName = am.ProcessDict[1] + Digitizer
+        ProcessName = am.ProcessDict[1].keys()[0] + Digitizer
         FilterByFormula = pf.ORFunc([ProcessName, ProcessName],[am.StatusDict[3], am.StatusDict[5]])                                                                 
 
         headers = {'Authorization': 'Bearer %s' % MyKey, }                                                                                                                                                                                                                                
@@ -58,14 +58,14 @@ def TimingDAQRuns(RunNumber, DoTracking, Digitizer, MyKey, Debug):
     MyKey = MyKey                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
 
     if DoTracking:
-        ProcessName = am.ProcessDict[2] + Digitizer
+        ProcessName = am.ProcessDict[2].keys()[0] + Digitizer
     else:
-        ProcessName = am.ProcessDict[3] + Digitizer
+        ProcessName = am.ProcessDict[3].keys()[0] + Digitizer
 
     if RunNumber == -1:
 
-        OR1 = pf.ORFunc([am.ProcessDict[1] + Digitizer, am.ProcessDict[1] + Digitizer],[am.StatusDict[0], am.StatusDict[7]])                                                                 
-        OR2 = pf.ORFunc([am.ProcessDict[0],am.ProcessDict[0]],[am.StatusDict[0], am.StatusDict[7]])                                                                                                                                                              
+        OR1 = pf.ORFunc([am.ProcessDict[1].keys()[0] + Digitizer, am.ProcessDict[1].keys()[0] + Digitizer],[am.StatusDict[0], am.StatusDict[7]])                                                                 
+        OR2 = pf.ORFunc([am.ProcessDict[0].keys()[0],am.ProcessDict[0].keys()[0]],[am.StatusDict[0], am.StatusDict[7]])                                                                                                                                                              
         OR3 = pf.ORFunc([ProcessName, ProcessName],[am.StatusDict[3], am.StatusDict[5]])                                                                                                                                                                                                  
 
         FilterByFormula = 'AND(' + OR1 + ',' + OR3   

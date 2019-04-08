@@ -25,25 +25,6 @@ import multiprocessing
   
 from multiprocessing import Pool
 
-################## Hard Code these paths ####################                                                                                                                                                                                                                            
-BaseTrackDirRulinux = '/data/TestBeam/2018_11_November_CMSTiming/'                                                                                                                                                                                                                       
-HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScriptFastTrigger_NewGeo_18_12_11.sh'                                                                                                                                                                                                     
-RulinuxSSH = 'otsdaq@rulinux04.dhcp.fnal.gov'                                                                                                                                                                                                                                            
-LocalSSH = 'daq@timingdaq02.dhcp.fnal.gov'                                                                                                                                                                                                                                               
-
-################## Paths on timingdaq02 #####################                                                                                                                                                                                                                            
-ConfigFileBasePath = '/home/daq/TimingDAQ/config/FNAL_TestBeam_1811/'                                                                                                                                                                                                                    
-BaseTrackDirLocal = '/home/daq/fnal_tb_18_11/Tracks/'                                                                                                                                                                                                                                    
-RawStageTwoLocalPathScope = '/home/daq/fnal_tb_18_11/LocalData/ROOT/'                                                                                                                                                                                                                    
-RawStageOneLocalPathScope = '/home/daq/fnal_tb_18_11/ScopeMount/'                                                                                                                                                                                                                        
-RawBaseLocalPath = '/home/daq/fnal_tb_18_11/'                                                                                                                                                                                                                                            
-RecoBaseLocalPath = '/home/daq/fnal_tb_18_11/LocalData/RECO/'                                                                                                                                                                                                                          
-EnvSetupPath = '/home/daq/otsdaq/setup_ots.sh'                                                                                                                                                                                                                                         
-TimingDAQDir = '/home/daq/TimingDAQ/'                                                                                                                                                                                                                                                   
-ConversionCMD = 'python /home/daq/fnal_tb_18_11/Tektronix_DPO7254Control/Reconstruction/conversion.py /home/daq/fnal_tb_18_11/ScopeMount/run_scope'                                                                                                                                     
-
-
-
 
 ################################################################################################################################################################################################################                                                                         
 ################################################################################################################################################################################################################                                                                         
