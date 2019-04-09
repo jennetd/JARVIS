@@ -1,5 +1,5 @@
 import sys 
-sys.path.append('/home/daq/JarvisDevelopment/BackEndProcesses/')
+sys.path.append('/home/daq/JARVIS/BackEndProcesses/')
 import ParseFunctions as pf
 import TCP_com as tp  #in-built 5s delay in all of them
 from AllModules import *
@@ -33,7 +33,7 @@ Sensor = args.Sensor
 ########################### Only when Run table is used ############################
 
 ############ Getting the digitizer list from the configuration table #############
-DigitizerList = GetDigiFromConfig(Configuration, False)
+DigitizerList = pf.GetDigiFromConfig(Configuration, False)
 
 if DigitizerDict[2] in DigitizerList or DigitizerDict[3] in DigitizerList:
 	IsScope = True
@@ -49,43 +49,53 @@ else:
 if DigitizerDict[0] in DigitizerList:
 	TimingDAQVME = 'Not started'
 	TimingDAQNoTracksVME = 'Not started'
+        IncludesVME = True
 else:
 	TimingDAQVME = 'N/A'
 	TimingDAQNoTracksVME = 'N/A'
+        IncludesVME = False
 
 if DigitizerDict[1] in DigitizerList:
 	TimingDAQDT5742 = 'Not started'
 	TimingDAQNoTracksDT5742 = 'Not started'
+        IncludesDT5742 = True
 else:
 	TimingDAQDT5742 = 'Not started'
 	TimingDAQNoTracksDT5742 = 'Not started'
+        IncludesDT5742 = False
 
 if DigitizerDict[2] in DigitizerList:
 	ConversionTekScope = 'Not started'
 	TimingDAQTekScope = 'Not started'
 	TimingDAQNoTracksTekScope = 'Not started'
+        IncludesTekScope = True
 else:
 	ConversionTekScope = 'N/A'
 	TimingDAQTekScope = 'N/A'
 	TimingDAQNoTracksTekScope = 'N/A'
+        IncludesTekScope = False
 
 if DigitizerDict[3] in DigitizerList:
 	ConversionKeySightScope = 'Not started'
 	TimingDAQKeySightScope = 'Not started'
 	TimingDAQNoTracksKeySightScope = 'Not started'
+        IncludesKeySightScope = True
 else:
 	ConversionKeySightScope = 'N/A'
 	TimingDAQKeySightScope = 'N/A'
 	TimingDAQNoTracksKeySightScope = 'N/A'
+        IncludesKeySightScope = False
 
 if DigitizerDict[4] in DigitizerList:
 	ConversionSampic = 'Not started'
 	TimingDAQSampic = 'Not started'
 	TimingDAQNoTracksSampic = 'Not started'
+        IncludesSampic = True
 else:
 	ConversionSampic = 'N/A'
 	TimingDAQSampic = 'N/A'
 	TimingDAQNoTracksSampic = 'N/A'
+        IncludesSampic = False
 
 # Get Sensor ID and Configuration ID list
 
@@ -98,7 +108,8 @@ if not ConfigID: #not SensorID or
 	##### Exit the program ######
 
 # Use Status file to tell autopilot when to stop.
-os.remove("AutoPilot.status")
+if os.path.exists("AutoPilot.status"):
+        os.remove("AutoPilot.status")
 statusFile = open("AutoPilot.status","w") 
 statusFile.write("START") 
 statusFile.close() 
@@ -113,15 +124,15 @@ print "Sensor Configuration : ", Sensor
 
 if IsTelescope:
         print "Tracking Telescope Included"
-if IsSampic:
+if IncludesSampic:
         print "SAMPIC readout Included"
-if IsVME:
+if IncludesVME:
         print "VME readout Included" 
-if (IsDT5742):
+if (IncludesDT5742):
         print "DT5742 DRS Desktop Digitizer readout Included"
-if (IsTekScope):
+if (IncludesTekScope):
         print "Tektronix Scope readout Included"
-if (IsKeySightScope):
+if (IncludesKeySightScope):
         print "Keysight Scope readout Included"
 print ""
 print ""
