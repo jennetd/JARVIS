@@ -102,12 +102,12 @@ TwoStageRecoDigitizers = {
 
 OneStageRecoDigitizers = {
 
-                         'VME'     :  {     'ConfigFileBasePath'     : '%sconfig/FNAL_TestBeam_1904/DT5742_' % (TimingDAQDir),
+                         'VME'     :  {     'ConfigFileBasePath'     : '%sVME_' % (ConfigFileBasePath),
                                             'DatToROOTExec'          : 'VMEDat2Root', 
                                             'RawTimingDAQLocalPath'  : '%sVME/RawData/'  % (BaseTestbeamDir),
                                             'RecoTimingDAQLocalPath' : '%sVME/RecoData/' % (BaseTestbeamDir),
                                             },
-                         'DT5742'     :  {  'ConfigFileBasePath'     : '%sconfig/FNAL_TestBeam_1904/DT5742_' % (TimingDAQDir),
+                         'DT5742'     :  {  'ConfigFileBasePath'     : '%sDT5742_' % (ConfigFileBasePath),
                                             'DatToROOTExec'          : 'DT5742Dat2Root',
                                             'RawTimingDAQLocalPath'  : '%sDT5742/RawData/'  % (BaseTestbeamDir),
                                             'RecoTimingDAQLocalPath' : '%sDT5742/RecoData/' % (BaseTestbeamDir),
@@ -159,11 +159,13 @@ def wait_until(nseconds):
 def ScopeState():
     ScopeStateHandle = open(ScopeStateFileName, "r")
     ScopeState = str(ScopeStateHandle.read().strip())
+    ScopeStateHandle.close()
     return ScopeState
 
 def ScopeStatusAutoPilot():
     ScopeCommFile = open(ScopeCommFileName, "w")
     ScopeCommFile.write(str(1))
+    ScopeCommFile.close()
     return
 
 def WaitForScopeStart():
@@ -172,6 +174,7 @@ def WaitForScopeStart():
         ScopeState = str(ScopeStateHandle.read().strip())
         if ScopeState=="0": break
         time.sleep(0.5)
+    ScopeStateHandle.close()
     return
 
 def WaitForScopeFinishAcquisition():
@@ -180,6 +183,7 @@ def WaitForScopeFinishAcquisition():
         ScopeState = str(ScopeStateHandle.read().strip())
         if ScopeState=="writing" or ScopeState=="ready": break
         time.sleep(0.5)
+    ScopeStateHandle.close()
     return
 
 def ProcessLog(ProcessName, RunNumber, ProcessOutput):
@@ -187,5 +191,6 @@ def ProcessLog(ProcessName, RunNumber, ProcessOutput):
     if not os.path.exists(ProcessLogBasePath): os.system('mkdir -p %s' % ProcessLogBasePath)
     ProcessLogFilePath = ProcessLogBasePath + 'run%d.txt' % RunNumber
     ProcessFile_handle = open(ProcessLogFilePath, "a+")                                                                                                                                                                                                                                 
-    ProcessFile_handle.write(ProcessOutput)                                                                                                                                                                                                                                                        
-    ProcessFile_handle.close()  
+    ProcessFile_handle.write(ProcessOutput+ '\n\n\n')
+    return ProcessFile_handle                                                                                                                                                                                                                                                        
+     

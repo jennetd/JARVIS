@@ -12,7 +12,7 @@ StopRunNumber = None
 ############ Doesn't matter for tracking ###########
 SaveWaveForms = True
 ConfigVersion = "v1"
-DigitizerKey = 0 #key=0 for VME, Refer Allmodules
+DigitizerKey = 3 #key=0 for VME, Refer Allmodules
 
 #You need to make a file called "key" that sits inside the RecoProcesses directory and contains the key password for the database.
 keyFile = open("key", "r")

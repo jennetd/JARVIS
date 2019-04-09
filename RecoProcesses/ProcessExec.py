@@ -70,23 +70,31 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 			ResultFileLocation = ResultFileLocationList[index]
 			BadProcessExec = False
 
-			##### Printing Command
-			print CMD
+			##### Command will be in the log file
+			ProcessFile_handle = am.ProcessLog(ProcessName, run, CMD)
 			
+			print '\n###############################'
+			print 'Starting process %s for run %d\n' % (ProcessName, run)
+
 			if PID == 0:
 				if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[1], False)
-				session = am.subprocess.Popen(["ssh", am.RulinuxSSH, str(CMD)], stderr=am.subprocess.PIPE, stdout=am.subprocess.PIPE)
+				session = am.subprocess.Popen(["ssh", am.RulinuxSSH, str(CMD)], stderr=am.subprocess.PIPE, stdout=ProcessFile_handle)
 			elif PID == 1:
 				if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[1], False)
-				session = am.subprocess.Popen('source %s; %s' % (am.EnvSetupPath,str(CMD)),stdout=am.subprocess.PIPE, stderr=am.PIPE, shell=True)
+				session = am.subprocess.Popen('source %s; %s' % (am.EnvSetupPath,str(CMD)),stdout=ProcessFile_handle, stderr=am.PIPE, shell=True)
 			elif PID == 2 or PID == 3:
 				if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[1], False)
-				session = am.subprocess.Popen('cd %s; %s;cd -' % (am.TimingDAQDir,str(CMD)),stdout=am.PIPE, stderr=am.subprocess.PIPE, shell=True)                                                                                                                                                                                   			
-			stdout, stderr = session.communicate() 
-			am.ProcessLog(ProcessName, run, stdout)   
+				session = am.subprocess.Popen('cd %s; %s;cd -' % (am.TimingDAQDir,str(CMD)),stdout=ProcessFile_handle, stderr=am.subprocess.PIPE, shell=True)                                                                                                                                                                                   			
+			stderr = session.communicate() 
+			
+			ProcessFile_handle.close()  
 			if FileSizeBool(ResultFileLocation,SizeCut) or not am.os.path.exists(ResultFileLocation): BadProcessExec = True                                                                                                                                                                                                                                                     
 			if BadProcessExec:                                                                                                                                                                                                                               
 				if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[2], False)  
+				print 'Bad %s execution for run %d. Either the CMD format is wrong or somwthing else was wrong while execution. Please check the ProcessLog to know more.\n' % (ProcessName, run)
 			else:
 				if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[0], False)
+			
+			print 'Finished process %s for run %d' % (ProcessName, run)
+			print '###############################\n'
 
