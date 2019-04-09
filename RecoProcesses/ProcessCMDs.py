@@ -57,7 +57,6 @@ def TimingDAQCMDs(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer, M
     ResultFileLocationList = []
 
     if RunList:
-        print RunList
         for run in RunList: 
 
             RecoLocalPath = None

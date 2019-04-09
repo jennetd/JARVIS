@@ -12,6 +12,14 @@ def exists_remote(host, path):
 		return False                                                                                                                                                                                                                                                                                                          
 	raise Exception('SSH failed') 
 
+def GetSessionOutputRealTime(session):
+	while True:
+		line = session.stdout.readline().rstrip()
+		if not line:
+			break
+		print type(line)
+		yield line
+
 def TrackFileRemoteExists(RunNumber):
 	TrackFilePathRulinux = am.BaseTrackDirRulinux +'CMSTimingConverted/Run%i_CMSTiming_converted.root' % RunNumber                                                                                                                                                                                                                       
 	return exists_remote(am.RulinuxSSH, am.TrackFilePathRulinux), am.TrackFilePathRulinux                                                                                                                                                                                                                                              
@@ -71,23 +79,36 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 			BadProcessExec = False
 
 			##### Command will be in the log file
-			ProcessFile_handle = am.ProcessLog(ProcessName, run, CMD)
+			am.ProcessLog(ProcessName, run, CMD)
 			
 			print '\n###############################'
 			print 'Starting process %s for run %d\n' % (ProcessName, run)
 
 			if PID == 0:
 				if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[1], False)
-				session = am.subprocess.Popen(["ssh", am.RulinuxSSH, str(CMD)], stderr=am.subprocess.PIPE, stdout=ProcessFile_handle)
+				session = am.subprocess.Popen(["ssh", am.RulinuxSSH, str(CMD)],stdout=am.subprocess.PIPE, shell=True)
+				while True:
+					line = session.stdout.readline()
+					am.ProcessLog(ProcessName, run, line)
+					if not line and session.poll() != None:
+						break
 			elif PID == 1:
 				if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[1], False)
-				session = am.subprocess.Popen('source %s; %s' % (am.EnvSetupPath,str(CMD)),stdout=ProcessFile_handle, stderr=am.PIPE, shell=True)
+				session = am.subprocess.Popen('source %s; %s' % (am.EnvSetupPath,str(CMD)),stdout=am.subprocess.PIPE, shell=True)
+				while True:
+					line = session.stdout.readline()
+					am.ProcessLog(ProcessName, run, line)
+					if not line and session.poll() != None:
+						break
 			elif PID == 2 or PID == 3:
 				if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[1], False)
-				session = am.subprocess.Popen('cd %s; %s;cd -' % (am.TimingDAQDir,str(CMD)),stdout=ProcessFile_handle, stderr=am.subprocess.PIPE, shell=True)                                                                                                                                                                                   			
-			stderr = session.communicate() 
-			
-			ProcessFile_handle.close()  
+				session = am.subprocess.Popen('cd %s; %s;cd -' % (am.TimingDAQDir,str(CMD)),stdout=am.subprocess.PIPE, shell=True)                                                                                                                                                                                   			
+				while True:
+					line = session.stdout.readline()
+					am.ProcessLog(ProcessName, run, line)
+					if not line and session.poll() != None:
+						break
+				
 			if FileSizeBool(ResultFileLocation,SizeCut) or not am.os.path.exists(ResultFileLocation): BadProcessExec = True                                                                                                                                                                                                                                                     
 			if BadProcessExec:                                                                                                                                                                                                                               
 				if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[2], False)  

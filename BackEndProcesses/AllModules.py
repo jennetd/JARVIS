@@ -191,6 +191,6 @@ def ProcessLog(ProcessName, RunNumber, ProcessOutput):
     if not os.path.exists(ProcessLogBasePath): os.system('mkdir -p %s' % ProcessLogBasePath)
     ProcessLogFilePath = ProcessLogBasePath + 'run%d.txt' % RunNumber
     ProcessFile_handle = open(ProcessLogFilePath, "a+")                                                                                                                                                                                                                                 
-    ProcessFile_handle.write(ProcessOutput+ '\n\n\n')
-    return ProcessFile_handle                                                                                                                                                                                                                                                        
-     
+    ProcessFile_handle.write(ProcessOutput)
+    ProcessFile_handle.close()
+
