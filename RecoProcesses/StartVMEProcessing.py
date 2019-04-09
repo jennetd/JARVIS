@@ -1,7 +1,7 @@
 from ProcessExec import *
 import ProcessRuns as pr
 
-ExecutionOrder = 1 #This is Ascending Run number order, Refer to the dictionary in all modules
+ExecutionOrder = 0 #This is Ascending Run number order, Refer to the dictionary in all modules
 PID = 2 #3 means Timngdaqnotracks, Refer to the dictionary in all modules
 RunNumber = -1 #-1 means do all runs
 

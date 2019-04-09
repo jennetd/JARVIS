@@ -33,31 +33,30 @@ QueryFilePath ="/home/daq/Jarvis/QueryLog.txt"
 #############################################################
 
 ############# Tracking Paths ##############
-
-BaseTrackDirRulinux = '/data/TestBeam/2018_11_November_CMSTiming/'
-#BaseTrackDirLocal = '/home/daq/fnal_tb_19_04/Tracks/'
-BaseTrackDirLocal = '/data2/fnal_tb_19_04/Tracks/'
 HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScriptFastTrigger_NewGeo_18_12_11.sh'
 RulinuxSSH = 'otsdaq@rulinux04.dhcp.fnal.gov'
-#LocalSSH = 'daq@timingdaq02.dhcp.fnal.gov'
+BaseTrackDirRulinux = '/data/TestBeam/2019_04_April_CMSTiming/'
 ResultTrackFileNameBeforeRunNumber = 'Run' ###########'Run%d_CMSTiming_converted.root' 
 ResultTrackFileNameAfterRunNumber = '_CMSTiming_converted.root'
+
+############## For timingdaq02 ############
+BaseTestbeamDir = '/home/daq/fnal_tb_19_04/' 
+BaseTrackDirLocal = '%sTracks/' % BaseTestbeamDir
+LocalSSH = 'daq@timingdaq02.dhcp.fnal.gov'
+EnvSetupPath = '/home/daq/setup.sh' ############### Remember to change ProcessExec accordingly
+#EnvSetupPath = '/home/daq/otsdaq/setup_ots.sh' ############### Remember to change ProcessExec accordingly
+TimingDAQDir = '/home/daq/CMS-MTD/TimingDAQ/'
+
+############## For Caltech CMS Computer ############
+#BaseTrackDirLocal = '/data2/fnal_tb_19_04/Tracks/'
+#BaseTestbeamDir = '/data2/fnal_tb_19_04/'
+#TimingDAQDir = '/home/sxie/TimingDAQ/'
+##### Check ProcessExec for uncommenting the environment setup thingy
 
 ################ Scope Control from AutoPilot Paths ################
 #ScopeStateFileName = '/home/daq/fnal_tb_18_11/LocalData/RECO/ETL_Agilent_MSO-X-92004A/Acquisition/RunLog.txt'
 #ScopeCommFileName = '/home/daq/fnal_tb_18_11/LocalData/RECO/ETL_Agilent_MSO-X-92004A/Acquisition/ScopeStatus.txt'
-
-
-################## Paths on timingdaq02 #####################
-#BaseTestbeamDir = '/home/daq/fnal_tb_19_04/'
-BaseTestbeamDir = '/data2/fnal_tb_19_04/'
-EnvSetupPath = '/home/daq/otsdaq/setup_ots.sh'
-
-########## TimingDAQ Paths ############
-#TimingDAQDir = '/home/daq/CMS-MTD/TimingDAQ/'
-TimingDAQDir = '/home/sxie/TimingDAQ/'
 ConfigFileBasePath = '%sconfig/FNAL_TestBeam_1904/' % TimingDAQDir
-
 
 ############# OTSDAQ Information ################
 ip_address = "192.168.133.46"

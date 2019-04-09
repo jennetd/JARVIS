@@ -1,5 +1,5 @@
 import sys 
-sys.path.append('/home/sxie/JARVIS/BackEndProcesses/')
+sys.path.append('/home/daq/JarvisDevelopment/BackEndProcesses/')
 import AllModules as am
 import ProcessCMDs as pc
 import ParseFunctions as pf                                                                                                                                                                                                  
@@ -86,7 +86,7 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 
 			if PID == 0:
 				if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[1], False)
-				session = am.subprocess.Popen(["ssh", am.RulinuxSSH, str(CMD)],stdout=am.subprocess.PIPE, shell=True)
+				session = am.subprocess.Popen(["ssh", am.RulinuxSSH, str(CMD)],stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT, shell=True)
 				while True:
 					line = session.stdout.readline()
 					am.ProcessLog(ProcessName, run, line)
@@ -94,7 +94,7 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 						break
 			elif PID == 1:
 				if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[1], False)
-				session = am.subprocess.Popen('source %s; %s' % (am.EnvSetupPath,str(CMD)),stdout=am.subprocess.PIPE, shell=True)
+				session = am.subprocess.Popen('source %s; %s' % (am.EnvSetupPath,str(CMD)),stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT, shell=True)
 				while True:
 					line = session.stdout.readline()
 					am.ProcessLog(ProcessName, run, line)
@@ -102,7 +102,10 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 						break
 			elif PID == 2 or PID == 3:
 				if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[1], False)
-				session = am.subprocess.Popen('cd %s; %s;cd -' % (am.TimingDAQDir,str(CMD)),stdout=am.subprocess.PIPE, shell=True)                                                                                                                                                                                   			
+				######## For TimingDAQ02 
+				session = am.subprocess.Popen('cd %s; source %s; %s;cd -' % (am.TimingDAQDir, am.EnvSetupPath, str(CMD)),stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT, shell=True)                                                                                                                                                                                   			
+				######## For Caltech CMS Timing uncomment this 
+				#session = am.subprocess.Popen('cd %s; %s;cd -' % (am.TimingDAQDir, str(CMD)),stdout=am.subprocess.PIPE, shell=True)                                                                                                                                                                                   			
 				while True:
 					line = session.stdout.readline()
 					am.ProcessLog(ProcessName, run, line)
