@@ -26,7 +26,7 @@ if RunNumber != -1:
 	for run in range (StartRunNumber, StopRunNumber + 1):	
 		ProcessExec(ExecutionOrder,TimingPID, SaveWaveForms, ConfigVersion,run,DigitizerKey,key)
 else:
-	ProcessExec(ExecutionOrder,TimingPID, SaveWaveForms, ConfigVersion,RunNumber,DigitizerKey,key)
+	ProcessExec(ExecutionOrder,PID, SaveWaveForms, ConfigVersion,RunNumber,DigitizerKey,key)
 
 print "\n##############################"
 print "## Completed Data processing ##"
