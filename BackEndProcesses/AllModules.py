@@ -33,7 +33,7 @@ QueryFilePath ="/home/daq/Jarvis/QueryLog.txt"
 #############################################################
 
 ############# Tracking Paths ##############
-HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScriptFastTrigger_NewGeo_18_12_11.sh'
+HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScriptFastTrigger_NewGeo_19_04_08.sh'
 RulinuxSSH = 'otsdaq@rulinux04.dhcp.fnal.gov'
 BaseTrackDirRulinux = '/data/TestBeam/2019_04_April_CMSTiming/'
 ResultTrackFileNameBeforeRunNumber = 'Run' ###########'Run%d_CMSTiming_converted.root' 
@@ -54,8 +54,8 @@ TimingDAQDir = '/home/daq/CMS-MTD/TimingDAQ/'
 ##### Check ProcessExec for uncommenting the environment setup thingy
 
 ################ Scope Control from AutoPilot Paths ################
-#ScopeStateFileName = '/home/daq/fnal_tb_18_11/LocalData/RECO/ETL_Agilent_MSO-X-92004A/Acquisition/RunLog.txt'
-#ScopeCommFileName = '/home/daq/fnal_tb_18_11/LocalData/RECO/ETL_Agilent_MSO-X-92004A/Acquisition/ScopeStatus.txt'
+ScopeStateFileName = '/home/daq/fnal_tb_18_11/LocalData/RECO/ETL_Agilent_MSO-X-92004A/Acquisition/RunLog.txt'
+ScopeCommFileName = '/home/daq/fnal_tb_18_11/LocalData/RECO/ETL_Agilent_MSO-X-92004A/Acquisition/ScopeStatus.txt'
 ConfigFileBasePath = '%sconfig/FNAL_TestBeam_1904/' % TimingDAQDir
 
 ############# OTSDAQ Information ################
@@ -193,3 +193,10 @@ def ProcessLog(ProcessName, RunNumber, ProcessOutput):
     ProcessFile_handle.write(ProcessOutput)
     ProcessFile_handle.close()
 
+def DeleteProcessLog(ProcessName, RunNumber):
+    ProcessLogBasePath = "%sProcessLog/%s/" % (BaseTestbeamDir, ProcessName)
+    if os.path.exists(ProcessLogBasePath):     
+        ProcessLogFilePath = ProcessLogBasePath + 'run%d.txt' % RunNumber
+        if os.path.exists(ProcessLogFilePath):      
+            os.system('rm %s' % ProcessLogFilePath)
+    return

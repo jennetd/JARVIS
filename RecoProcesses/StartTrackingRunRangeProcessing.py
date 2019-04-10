@@ -2,11 +2,12 @@ from ProcessExec import *
 import ProcessRuns as pr
 
 ExecutionOrder = 1 #This is Ascending Run number order, Refer to the dictionary in all modules
-PID = 3 #3 means Timngdaqnotracks, Refer to the dictionary in all modules
-RunNumber = -1 #-1 means do all runs
+PID = 0 #0 means Tracking, Refer to the dictionary in all modules
+StartRunNumber = None
+StopRunNumber = None
 
 ############ Doesn't matter for tracking ###########
-SaveWaveForms = True
+SaveWaveForms = False
 ConfigVersion = "v1"
 DigitizerKey = 0 #key=0 for VME, Refer Allmodules
 
@@ -18,7 +19,8 @@ print "\n##############################"
 print "## Starting Data processing ##"
 print "##############################\n"
 
-ProcessExec(ExecutionOrder,PID, SaveWaveForms, ConfigVersion,RunNumber,DigitizerKey,key)
+for run in range (StartRunNumber, StopRunNumber + 1):	
+	ProcessExec(ExecutionOrder,PID, SaveWaveForms, ConfigVersion,run,DigitizerKey,key)
 
 print "\n##############################"
 print "## Completed Data processing ##"

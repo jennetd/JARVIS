@@ -5,10 +5,6 @@ ExecutionOrder = 1 #This is Ascending Run number order, Refer to the dictionary 
 PID = 2 #2 means TimingDAQ , Refer to the dictionary in all modules
 RunNumber = -1 #-1 means do all runs
 
-########### If want to do processing for specific run range (Both run numbers are included) ##########
-StartRunNumber = None
-StopRunNumber = None
-
 ############ Doesn't matter for tracking ###########
 SaveWaveForms = True
 ConfigVersion = "v1"
@@ -22,11 +18,7 @@ print "\n##############################"
 print "## Starting Data processing ##"
 print "##############################\n"
 
-if RunNumber != -1:
-	for run in range (StartRunNumber, StopRunNumber + 1):	
-		ProcessExec(ExecutionOrder,TimingPID, SaveWaveForms, ConfigVersion,run,DigitizerKey,key)
-else:
-	ProcessExec(ExecutionOrder,PID, SaveWaveForms, ConfigVersion,RunNumber,DigitizerKey,key)
+ProcessExec(ExecutionOrder,PID, SaveWaveForms, ConfigVersion,RunNumber,DigitizerKey,key)
 
 print "\n##############################"
 print "## Completed Data processing ##"

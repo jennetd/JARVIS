@@ -1,5 +1,5 @@
 import sys 
-sys.path.append('/home/daq/JARVIS/BackEndProcesses/')
+sys.path.append('/home/daq/JarvisDevelopment/BackEndProcesses/')
 import ParseFunctions as pf
 import TCP_com as tp  #in-built 5s delay in all of them
 from AllModules import *
@@ -100,7 +100,7 @@ else:
 # Get Sensor ID and Configuration ID list
 
 if pf.QueryGreenSignal(True):
-	SensorID = pf.GetFieldIDOtherTable('Sensor', 'Configuration number', str(Sensor), False)
+	#SensorID = pf.GetFieldIDOtherTable('Sensor', 'Configuration number', str(Sensor), False)
 	ConfigID = pf.GetFieldIDOtherTable('Config', 'Configuration number', str(Configuration), False)
 
 if not ConfigID: #not SensorID or 
@@ -157,6 +157,7 @@ while (AutoPilotStatus == 1):
 
 	if IsScope:
 		currentScopeState = ScopeState() 
+		print currentScopeState
 		if currentScopeState == 'ready': 
 		   print("Sending start command to scope.")
 		   if not Debug:
@@ -201,7 +202,7 @@ while (AutoPilotStatus == 1):
 			if "TekScope" in DigiListThisRun: DigiListThisRun.remove("TekScope")
 			if "KeySightScope" in DigiListThisRun: DigiListThisRun.remove("KeySightScope")
 
-		pf.NewRunRecord(RunNumber, StartTime, str(Duration), DigiListThisRun, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, SensorID, ConfigID, False)
+		#pf.NewRunRecord(RunNumber, StartTime, str(Duration), DigiListThisRun, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, SensorID, ConfigID, False)
 		
         
         #################################################
