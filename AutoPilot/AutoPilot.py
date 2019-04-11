@@ -1,3 +1,5 @@
+import sys 
+sys.path.append('/home/daq/JarvisDevelopment/BackEndProcesses/')
 import ParseFunctions as pf
 import TCP_com as tp  #in-built 5s delay in all of them
 from AllModules import *
@@ -22,91 +24,83 @@ parser.add_argument('-it', '--IsTelescope', type=int,default=1, help = 'Give 1 i
 parser.add_argument('-conf', '--Configuration', type=int, help = 'Make sure to add the configuration in the run table. Give COnfiguration S/N from the run table',required=False)
 parser.add_argument('-se', '--Sensor', type=int, help = 'Make sure to add the sensor record in the run table. Give sensor S/N from the run table',required=False)
 
-############################## Digitizers ##################################
-## we want to remove these
-parser.add_argument('-iv', '--IsVME', type=int, default = 0, help = 'Give 1 if using VME, 0 otherwise.', required =False)
-parser.add_argument('-is', '--IsSampic', type=int, default = 0, help = 'Give 1 if using Sampic, 0 otherwise.', required =False)
-parser.add_argument('-its', '--IsTekScope', type=int, default = 0, help = 'Give 1 if using TekScope, 0 otherwise.', required =False)
-parser.add_argument('-iks', '--IsKeySightScope', type=int, default = 0, help = 'Give 1 if using KeySightScope, 0 otherwise.', required =False)
-parser.add_argument('-idt', '--IsDT5742', type=int, default = 0, help = 'Give 1 if using DT5742, 0 otherwise.', required =False)
-
-
 args = parser.parse_args()
 Debug = args.Debug
 IsTelescope = args.IsTelescope
 Configuration = args.Configuration
-IsSampic = args.IsSampic
-IsVME = args.IsVME
-IsTekScope = args.IsTekScope
-IsKeySightScope = args.IsKeySightScope
-IsDT5742 = args.IsDT5742
-
 Sensor = args.Sensor
 
 ########################### Only when Run table is used ############################
-DigitizerList = []
 
-if IsTekScope or IsKeySightScope:
+############ Getting the digitizer list from the configuration table #############
+DigitizerList = pf.GetDigiFromConfig(Configuration, False)
+
+if DigitizerDict[2] in DigitizerList or DigitizerDict[3] in DigitizerList:
 	IsScope = True
 else:
 	IsScope = False
 
-##initialize progress fields on run table
+############ Initialize progress fields on run table ################
 if IsTelescope:
 	Tracking = 'Not started'
 else:
 	Tracking = 'N/A'
 
-if IsVME:
+if DigitizerDict[0] in DigitizerList:
 	TimingDAQVME = 'Not started'
 	TimingDAQNoTracksVME = 'Not started'
-	DigitizerList.append('VME')
+        IncludesVME = True
 else:
 	TimingDAQVME = 'N/A'
 	TimingDAQNoTracksVME = 'N/A'
+        IncludesVME = False
 
-if IsDT5742:
+if DigitizerDict[1] in DigitizerList:
 	TimingDAQDT5742 = 'Not started'
 	TimingDAQNoTracksDT5742 = 'Not started'
-	DigitizerList.append('DT5742')
+        IncludesDT5742 = True
 else:
 	TimingDAQDT5742 = 'Not started'
 	TimingDAQNoTracksDT5742 = 'Not started'
+        IncludesDT5742 = False
 
-if IsTekScope:
+if DigitizerDict[2] in DigitizerList:
 	ConversionTekScope = 'Not started'
 	TimingDAQTekScope = 'Not started'
 	TimingDAQNoTracksTekScope = 'Not started'
-	DigitizerList.append('TekScope')
+        IncludesTekScope = True
 else:
 	ConversionTekScope = 'N/A'
 	TimingDAQTekScope = 'N/A'
 	TimingDAQNoTracksTekScope = 'N/A'
+        IncludesTekScope = False
 
-if IsKeySightScope:
+if DigitizerDict[3] in DigitizerList:
 	ConversionKeySightScope = 'Not started'
 	TimingDAQKeySightScope = 'Not started'
 	TimingDAQNoTracksKeySightScope = 'Not started'
-	DigitizerList.append('KeySightScope')
+        IncludesKeySightScope = True
 else:
 	ConversionKeySightScope = 'N/A'
 	TimingDAQKeySightScope = 'N/A'
 	TimingDAQNoTracksKeySightScope = 'N/A'
+        IncludesKeySightScope = False
 
-if IsSampic:
+if DigitizerDict[4] in DigitizerList:
 	ConversionSampic = 'Not started'
 	TimingDAQSampic = 'Not started'
 	TimingDAQNoTracksSampic = 'Not started'
-	DigitizerList.append('Sampic')
+        IncludesSampic = True
 else:
 	ConversionSampic = 'N/A'
 	TimingDAQSampic = 'N/A'
 	TimingDAQNoTracksSampic = 'N/A'
+        IncludesSampic = False
 
 # Get Sensor ID and Configuration ID list
 
 if pf.QueryGreenSignal(True):
-	SensorID = pf.GetFieldIDOtherTable('Sensor', 'Configuration number', str(Sensor), False)
+	#SensorID = pf.GetFieldIDOtherTable('Sensor', 'Configuration number', str(Sensor), False)
 	ConfigID = pf.GetFieldIDOtherTable('Config', 'Configuration number', str(Configuration), False)
 
 if not ConfigID: #not SensorID or 
@@ -114,7 +108,8 @@ if not ConfigID: #not SensorID or
 	##### Exit the program ######
 
 # Use Status file to tell autopilot when to stop.
-os.remove("AutoPilot.status")
+if os.path.exists("AutoPilot.status"):
+        os.remove("AutoPilot.status")
 statusFile = open("AutoPilot.status","w") 
 statusFile.write("START") 
 statusFile.close() 
@@ -129,15 +124,15 @@ print "Sensor Configuration : ", Sensor
 
 if IsTelescope:
         print "Tracking Telescope Included"
-if IsSampic:
+if IncludesSampic:
         print "SAMPIC readout Included"
-if IsVME:
+if IncludesVME:
         print "VME readout Included" 
-if (IsDT5742):
+if (IncludesDT5742):
         print "DT5742 DRS Desktop Digitizer readout Included"
-if (IsTekScope):
+if (IncludesTekScope):
         print "Tektronix Scope readout Included"
-if (IsKeySightScope):
+if (IncludesKeySightScope):
         print "Keysight Scope readout Included"
 print ""
 print ""
@@ -162,6 +157,7 @@ while (AutoPilotStatus == 1):
 
 	if IsScope:
 		currentScopeState = ScopeState() 
+		print currentScopeState
 		if currentScopeState == 'ready': 
 		   print("Sending start command to scope.")
 		   if not Debug:
@@ -206,7 +202,7 @@ while (AutoPilotStatus == 1):
 			if "TekScope" in DigiListThisRun: DigiListThisRun.remove("TekScope")
 			if "KeySightScope" in DigiListThisRun: DigiListThisRun.remove("KeySightScope")
 
-		pf.NewRunRecord(RunNumber, StartTime, str(Duration), DigiListThisRun, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, SensorID, ConfigID, False)
+		#pf.NewRunRecord(RunNumber, StartTime, str(Duration), DigiListThisRun, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, SensorID, ConfigID, False)
 		
         
         #################################################
