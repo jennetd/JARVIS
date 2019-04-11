@@ -11,10 +11,16 @@ from AllModules import *
 ######## after the start of each clock minute (only meaningful modulo 60 seconds) #####
 ################ Periodically make sure this value makes sense. #######################
 #######################################################################################
+#deltaTwrtTClock = 0 
+
+#StartSeconds = (9 + deltaTwrtTClock) % 60
+#StopSeconds = (40 + deltaTwrtTClock) % 60
+#NumSpillsPerRun = 1
 
 StartSeconds = 9
-StopSeconds = 40
+StopSeconds = 40 
 NumSpillsPerRun = 1
+
 
 #################################Parsing arguments######################################
 
@@ -22,18 +28,28 @@ parser = argparse.ArgumentParser(description='Information for running the AutoPi
 parser.add_argument('-de', '--Debug', type=int, default = 0, required=False)
 parser.add_argument('-it', '--IsTelescope', type=int,default=1, help = 'Give 1 if using the telescope',required=False)
 parser.add_argument('-conf', '--Configuration', type=int, help = 'Make sure to add the configuration in the run table. Give COnfiguration S/N from the run table',required=False)
-parser.add_argument('-se', '--Sensor', type=int, help = 'Make sure to add the sensor record in the run table. Give sensor S/N from the run table',required=False)
 
 args = parser.parse_args()
 Debug = args.Debug
 IsTelescope = args.IsTelescope
 Configuration = args.Configuration
-Sensor = args.Sensor
 
 ########################### Only when Run table is used ############################
+########### Get Key ###########
+keyFilePath = "../RecoProcesses/key"
+key = None
+NoKeyFile = False
+if os.path.exists(keyFilePath): 
+	keyFile = open(keyFilePath, "r")
+	key = str(keyFile.read().strip())
+ 	keyFile.close()
+else:
+	NoKeyFile = True
+if key == '' or NoKeyFile:
+	raise Exception('\n\n ################################################################################################ \n ######Either the key file is not present in the current directory or there is no key in it!########\n ########################################################################################################### \n\n')
 
 ############ Getting the digitizer list from the configuration table #############
-DigitizerList = pf.GetDigiFromConfig(Configuration, False)
+DigitizerList = pf.GetDigiFromConfig(Configuration, False, key)
 
 if DigitizerDict[2] in DigitizerList or DigitizerDict[3] in DigitizerList:
 	IsScope = True
@@ -98,10 +114,8 @@ else:
         IncludesSampic = False
 
 # Get Sensor ID and Configuration ID list
-
 if pf.QueryGreenSignal(True):
-	#SensorID = pf.GetFieldIDOtherTable('Sensor', 'Configuration number', str(Sensor), False)
-	ConfigID = pf.GetFieldIDOtherTable('Config', 'Configuration number', str(Configuration), False)
+	ConfigID = pf.GetFieldIDOtherTable('Config', 'Configuration number', str(Configuration), False, key)
 
 if not ConfigID: #not SensorID or 
 	raise Exception('\n The sensor and configuration you passed as argument are not in the table!!!!!!!!!!!!!!!!!!!! \n')
@@ -120,7 +134,6 @@ print "Starting AutoPilot"
 print "*********************************************************************"
 print ""
 print "Using Configuration : ", Configuration
-print "Sensor Configuration : ", Sensor
 
 if IsTelescope:
         print "Tracking Telescope Included"
@@ -157,9 +170,8 @@ while (AutoPilotStatus == 1):
 
 	if IsScope:
 		currentScopeState = ScopeState() 
-		print currentScopeState
 		if currentScopeState == 'ready': 
-		   print("Sending start command to scope.")
+		   print("\n Sending start command to scope.\n")
 		   if not Debug:
 			   ScopeStatusAutoPilot()
 			   ScopeIncludedThisRun = True
@@ -202,7 +214,7 @@ while (AutoPilotStatus == 1):
 			if "TekScope" in DigiListThisRun: DigiListThisRun.remove("TekScope")
 			if "KeySightScope" in DigiListThisRun: DigiListThisRun.remove("KeySightScope")
 
-		#pf.NewRunRecord(RunNumber, StartTime, str(Duration), DigiListThisRun, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, SensorID, ConfigID, False)
+		pf.NewRunRecord(RunNumber, StartTime, str(Duration), DigiListThisRun, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, ConfigID, False, key)
 		
         
         #################################################
