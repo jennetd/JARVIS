@@ -97,11 +97,11 @@ def ORFunc(AttributeNameList, AttributeStatusList):
 
 ##################### Main Run Table Operaton functions #########################
 
-def ParsingQuery(NumberOfConditions, ConditionAttributeNames, ConditionAttributeStatus, QueryAttributeName, Debug):
+def ParsingQuery(NumberOfConditions, ConditionAttributeNames, ConditionAttributeStatus, QueryAttributeName, Debug, MyKey):
     Output = [] 
     FieldID = []
     FilterByFormula = None
-    headers = {'Authorization': 'Bearer %s' % am.MyKey, }
+    headers = {'Authorization': 'Bearer %s' % MyKey, }
     for i in range (0, NumberOfConditions): 
         if i > 0: FilterByFormula = FilterByFormula + ','
         FilterByFormula = FilterByFormula + EqualToFunc(Curly(ConditionAttributeNames[i]), DoubleQuotes(ConditionAttributeStatus[i])) 
@@ -114,11 +114,11 @@ def ParsingQuery(NumberOfConditions, ConditionAttributeNames, ConditionAttribute
     for i in ResponseDict["records"]: FieldID.append(i['id'])   
     return Output, FieldID
 
-def GetDigiFromConfig(ConfigurationNumber, Debug):
+def GetDigiFromConfig(ConfigurationNumber, Debug, MyKey):
     Output = [] 
     FieldID = []
     DigitizerList = []
-    headers = {'Authorization': 'Bearer %s' % am.MyKey, }
+    headers = {'Authorization': 'Bearer %s' % MyKey}
     CurlBaseCommand = am.CurlBaseCommandConfig
     FilterByFormula = EqualToFunc(Curly('Configuration number'), DoubleQuotes(ConfigurationNumber)) 
 
@@ -131,10 +131,10 @@ def GetDigiFromConfig(ConfigurationNumber, Debug):
             DigitizerList.append(Digitizer)
     return DigitizerList
 
-def GetFieldID(ConditionAttributeName, ConditionAttributeStatus, Debug):
+def GetFieldID(ConditionAttributeName, ConditionAttributeStatus, Debug, MyKey):
     Output = [] 
     FilterByFormula = EqualToFunc(Curly(ConditionAttributeName), DoubleQuotes(ConditionAttributeStatus))
-    headers = {'Authorization': 'Bearer %s' % am.MyKey, }
+    headers = {'Authorization': 'Bearer %s' % MyKey, }
     response = am.requests.get(am.CurlBaseCommand  + '?filterByFormula=' + FilterByFormula, headers=headers)
     ResponseDict = am.ast.literal_eval(response.text)
     if Debug: return ResponseDict, FilterByFormula
@@ -142,9 +142,9 @@ def GetFieldID(ConditionAttributeName, ConditionAttributeStatus, Debug):
     for i in ResponseDict["records"]: Output.append(i['id'])   
     return Output
 
-def UpdateAttributeStatus(FieldID, UpdateAttributeName, UpdateAttributeStatus, Debug):
+def UpdateAttributeStatus(FieldID, UpdateAttributeName, UpdateAttributeStatus, Debug, MyKey):
     headers = {
-        'Authorization': 'Bearer %s' % am.MyKey, 
+        'Authorization': 'Bearer %s' % MyKey, 
         'Content-Type': 'application/json',
     }
     data = '{"fields":{"%s": ["%s"]}}' % (UpdateAttributeName,UpdateAttributeStatus)
@@ -152,32 +152,57 @@ def UpdateAttributeStatus(FieldID, UpdateAttributeName, UpdateAttributeStatus, D
     ResponseDict = am.ast.literal_eval(response.text)
     if Debug: return ResponseDict
 
-def GetFieldIDOtherTable(TableName,ConditionAttributeName, ConditionAttributeStatus, Debug):     
+def GetFieldIDOtherTable(TableName,ConditionAttributeName, ConditionAttributeStatus, Debug, MyKey):     
     if TableName == 'Sensor' :
         CurlBaseCommand = am.CurlBaseCommandSensor
     elif TableName == 'Config':
         CurlBaseCommand = am.CurlBaseCommandConfig
     Output = [] 
     FilterByFormula = EqualToFunc(Curly(ConditionAttributeName), DoubleQuotes(ConditionAttributeStatus))
-    headers = {'Authorization': 'Bearer %s' % am.MyKey, }
+    headers = {'Authorization': 'Bearer %s' % MyKey, }
     response = am.requests.get(CurlBaseCommand  + '?filterByFormula=' + FilterByFormula, headers=headers)
     ResponseDict = am.ast.literal_eval(response.text)
     if Debug: return ResponseDict, FilterByFormula
     for i in ResponseDict["records"]: Output.append(i['id'])   
     return Output
 
-def NewRunRecord(RunNumber, StartTime, Duration, DigitizerList, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, SensorID, ConfigID, Debug):
-#NewRunRecord(RunNumber, DigitizerList, Debug)
+def NewRunRecord(RunNumber, StartTime, Duration, DigitizerList, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, ConfigID, Debug, MyKey):
+    #NewRunRecord(RunNumber, DigitizerList, Debug)
     headers = {
-        'Authorization': 'Bearer %s' % am.MyKey, 
+        'Authorization': 'Bearer %s' % MyKey, 
         'Content-Type': 'application/json',
     }
-    Digitizer1 = 'KeySightScope'
-    Digitizer2 = 'DT5742'
+
+    if len(DigitizerList) == 1:
+        Digitizer1 = DigitizerList[0]
+        data = '{"fields":{"Run number": %d,"Start time": "%s", "Duration": "%s", "Digitizer": ["%s"], "Tracking": ["%s"], "ConversionSampic": ["%s"], "ConversionTekScope": ["%s"], "ConversionKeySightScope": ["%s"], "TimingDAQVME": ["%s"], "TimingDAQSampic": ["%s"], "TimingDAQTekScope": ["%s"], "TimingDAQKeySightScope": ["%s"], "TimingDAQDT5742": ["%s"],"TimingDAQNoTracksVME": ["%s"], "TimingDAQNoTracksSampic": ["%s"], "TimingDAQNoTracksTekScope": ["%s"], "TimingDAQNoTracksKeySightScope": ["%s"], "TimingDAQNoTracksDT5742": ["%s"],"Configuration": ["%s"]}}' % (RunNumber, StartTime, Duration, Digitizer1, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, ConfigID[0])
+    elif len(DigitizerList) == 2:
+        Digitizer1 = DigitizerList[0]
+        Digitizer2 = DigitizerList[1]
+        data = '{"fields":{"Run number": %d,"Start time": "%s", "Duration": "%s", "Digitizer": ["%s","%s"], "Tracking": ["%s"], "ConversionSampic": ["%s"], "ConversionTekScope": ["%s"], "ConversionKeySightScope": ["%s"], "TimingDAQVME": ["%s"], "TimingDAQSampic": ["%s"], "TimingDAQTekScope": ["%s"], "TimingDAQKeySightScope": ["%s"], "TimingDAQDT5742": ["%s"],"TimingDAQNoTracksVME": ["%s"], "TimingDAQNoTracksSampic": ["%s"], "TimingDAQNoTracksTekScope": ["%s"], "TimingDAQNoTracksKeySightScope": ["%s"], "TimingDAQNoTracksDT5742": ["%s"],"Configuration": ["%s"]}}' % (RunNumber, StartTime, Duration, Digitizer1, Digitizer2, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, ConfigID[0])
+    elif len(DigitizerList) == 3:
+        Digitizer1 = DigitizerList[0]
+        Digitizer2 = DigitizerList[1]
+        Digitizer3 = DigitizerList[2]
+        data = '{"fields":{"Run number": %d,"Start time": "%s", "Duration": "%s", "Digitizer": ["%s","%s","%s"], "Tracking": ["%s"], "ConversionSampic": ["%s"], "ConversionTekScope": ["%s"], "ConversionKeySightScope": ["%s"], "TimingDAQVME": ["%s"], "TimingDAQSampic": ["%s"], "TimingDAQTekScope": ["%s"], "TimingDAQKeySightScope": ["%s"], "TimingDAQDT5742": ["%s"],"TimingDAQNoTracksVME": ["%s"], "TimingDAQNoTracksSampic": ["%s"], "TimingDAQNoTracksTekScope": ["%s"], "TimingDAQNoTracksKeySightScope": ["%s"], "TimingDAQNoTracksDT5742": ["%s"],"Configuration": ["%s"]}}' % (RunNumber, StartTime, Duration, Digitizer1, Digitizer2, Digitizer3, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, ConfigID[0])
+    elif len(DigitizerList) == 4:
+        Digitizer1 = DigitizerList[0]
+        Digitizer2 = DigitizerList[1]
+        Digitizer3 = DigitizerList[2]
+        Digitizer4 = DigitizerList[3]
+        data = '{"fields":{"Run number": %d,"Start time": "%s", "Duration": "%s", "Digitizer": ["%s","%s","%s","%s"], "Tracking": ["%s"], "ConversionSampic": ["%s"], "ConversionTekScope": ["%s"], "ConversionKeySightScope": ["%s"], "TimingDAQVME": ["%s"], "TimingDAQSampic": ["%s"], "TimingDAQTekScope": ["%s"], "TimingDAQKeySightScope": ["%s"], "TimingDAQDT5742": ["%s"],"TimingDAQNoTracksVME": ["%s"], "TimingDAQNoTracksSampic": ["%s"], "TimingDAQNoTracksTekScope": ["%s"], "TimingDAQNoTracksKeySightScope": ["%s"], "TimingDAQNoTracksDT5742": ["%s"],"Configuration": ["%s"]}}' % (RunNumber, StartTime, Duration, Digitizer1, Digitizer2, Digitizer3, Digitizer4, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, ConfigID[0])
+    elif len(DigitizerList) == 5:
+        Digitizer1 = DigitizerList[0]
+        Digitizer2 = DigitizerList[1]
+        Digitizer3 = DigitizerList[2]
+        Digitizer4 = DigitizerList[3]
+        Digitizer5 = DigitizerList[4]
+        data = '{"fields":{"Run number": %d,"Start time": "%s", "Duration": "%s", "Digitizer": ["%s","%s","%s","%s","%s"], "Tracking": ["%s"], "ConversionSampic": ["%s"], "ConversionTekScope": ["%s"], "ConversionKeySightScope": ["%s"], "TimingDAQVME": ["%s"], "TimingDAQSampic": ["%s"], "TimingDAQTekScope": ["%s"], "TimingDAQKeySightScope": ["%s"], "TimingDAQDT5742": ["%s"],"TimingDAQNoTracksVME": ["%s"], "TimingDAQNoTracksSampic": ["%s"], "TimingDAQNoTracksTekScope": ["%s"], "TimingDAQNoTracksKeySightScope": ["%s"], "TimingDAQNoTracksDT5742": ["%s"],"Configuration": ["%s"]}}' % (RunNumber, StartTime, Duration, Digitizer1, Digitizer2, Digitizer3, Digitizer4, Digitizer5, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, ConfigID[0])
+
     #Example template of a query response :  {'records': [{'createdTime': '2015-02-12T03:40:42.000Z', 'fields': {'Conversion': ['Complete'], 'Time Resolution 1': 30, 'TimingDAQ': ['Failed'], 'Notes': 'Make test beam great again\n', 'HV 1': ['recJRiQqSHzTNZqal'], 'Run number': 4, 'Tracking': ['Processing'], 'Configuration': ['rectY95k7m19likjW'], 'Sensor': ['recNwdccBdzS7iBa5']}, 'id': 'recNsKOMDvYKrJzXd'}]}
-    data = '{"fields":{"Run number": %d,"Start time": "%s", "Duration": "%s", "Digitizer": ["%s","%s"], "Tracking": ["%s"], "ConversionSampic": ["%s"], "ConversionTekScope": ["%s"], "ConversionKeySightScope": ["%s"], "TimingDAQVME": ["%s"], "TimingDAQSampic": ["%s"], "TimingDAQTekScope": ["%s"], "TimingDAQKeySightScope": ["%s"], "TimingDAQDT5742": ["%s"],"TimingDAQNoTracksVME": ["%s"], "TimingDAQNoTracksSampic": ["%s"], "TimingDAQNoTracksTekScope": ["%s"], "TimingDAQNoTracksKeySightScope": ["%s"], "TimingDAQNoTracksDT5742": ["%s"],"Sensor": ["%s"],"Configuration": ["%s"]}}' % (RunNumber, StartTime, Duration, Digitizer1, Digitizer2, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, SensorID[0], ConfigID[0])
+    #data = '{"fields":{"Run number": %d,"Start time": "%s", "Duration": "%s", "Digitizer": ["%s","%s"], "Tracking": ["%s"], "ConversionSampic": ["%s"], "ConversionTekScope": ["%s"], "ConversionKeySightScope": ["%s"], "TimingDAQVME": ["%s"], "TimingDAQSampic": ["%s"], "TimingDAQTekScope": ["%s"], "TimingDAQKeySightScope": ["%s"], "TimingDAQDT5742": ["%s"],"TimingDAQNoTracksVME": ["%s"], "TimingDAQNoTracksSampic": ["%s"], "TimingDAQNoTracksTekScope": ["%s"], "TimingDAQNoTracksKeySightScope": ["%s"], "TimingDAQNoTracksDT5742": ["%s"],"Sensor": ["%s"],"Configuration": ["%s"]}}' % (RunNumber, StartTime, Duration, Digitizer1, Digitizer2, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, SensorID[0], ConfigID[0])
     #data = '{"fields":{"Run number": %d,"Start time": "%s", "Duration": "%s", "Digitizer": %s, "Tracking": ["%s"], "ConversionSampic": ["%s"], "ConversionTekScope": ["%s"], "ConversionKeySightScope": ["%s"], "TimingDAQVME": ["%s"], "TimingDAQSampic": ["%s"], "TimingDAQTekScope": ["%s"], "TimingDAQKeySightScope": ["%s"], "TimingDAQDT5742": ["%s"],"TimingDAQNoTracksVME": ["%s"], "TimingDAQNoTracksSampic": ["%s"], "TimingDAQNoTracksTekScope": ["%s"], "TimingDAQNoTracksKeySightScope": ["%s"], "TimingDAQNoTracksDT5742": ["%s"],"Sensor": ["%s"],"Configuration": ["%s"]}}' % (RunNumber, StartTime, Duration, DigitizerList, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, SensorID[0], ConfigID[0])
-    #data = "{'fields':{'Run number': %d, 'Digitizer': %s}}" % (RunNumber, DigitizerList)
+    #data = '{"fields":{"Run number": %d, "Digitizer": ["%s","%s"]}}' % (RunNumber, Digitizer1, Digitizer2)
     response = am.requests.post(am.CurlBaseCommand, headers=headers, data=data)
     ResponseDict = am.ast.literal_eval(response.text)
     if Debug: return ResponseDict, data

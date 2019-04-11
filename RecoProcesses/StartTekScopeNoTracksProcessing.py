@@ -17,6 +17,7 @@ DigitizerKey = 2 #key=0 for VME, Refer Allmodules
 #You need to make a file called "key" that sits inside the RecoProcesses directory and contains the key password for the database.
 keyFile = open("key", "r")
 key = str(keyFile.read().strip())
+keyFile.close()
 
 print "\n##############################"
 print "## Starting Data processing ##"

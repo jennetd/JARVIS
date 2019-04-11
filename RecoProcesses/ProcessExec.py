@@ -71,9 +71,8 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 		if CMDList != None:	
 
 			if GetRunListEachTime:
-				print RunListInt
 				RunListInt = RunListInt[:1] #Just do the first run of the list
-				print RunListInt
+
 			for run in RunListInt: 
 			
 				index = RunList.index(run)      
@@ -93,7 +92,7 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 				print 'Starting process %s for run %d\n' % (ProcessName, run)
 
 				if PID == 0:
-					if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[1], False)
+					if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[1], False, MyKey)
 					session = am.subprocess.Popen(["ssh", am.RulinuxSSH, str(CMD)],stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT)
 					while True:
 						line = session.stdout.readline()
@@ -101,7 +100,7 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 						if not line and session.poll() != None:
 							break
 				elif PID == 1:
-					if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[1], False)
+					if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[1], False, MyKey)
 					session = am.subprocess.Popen('source %s; %s' % (am.EnvSetupPath,str(CMD)),stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT, shell=True)
 					while True:
 						line = session.stdout.readline()
@@ -109,7 +108,7 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 						if not line and session.poll() != None:
 							break
 				elif PID == 2 or PID == 3:
-					if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[1], False)
+					if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[1], False, MyKey)
 					######## For TimingDAQ02 
 					session = am.subprocess.Popen('cd %s; source %s; %s;cd -' % (am.TimingDAQDir, am.EnvSetupPath, str(CMD)),stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT, shell=True)                                                                                                                                                                                   			
 					######## For Caltech CMS Timing computer uncomment this and comment out the above line 
@@ -119,20 +118,24 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 						am.ProcessLog(ProcessName, run, line)
 						if not line and session.poll() != None:
 							break
-					
+				
 				if FileSizeBool(ResultFileLocation,SizeCut) or not am.os.path.exists(ResultFileLocation): BadProcessExec = True                                                                                                                                                                                                                                                     
 				if BadProcessExec:                                                                                                                                                                                                                               
-					if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[2], False)  
+					if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[2], False, MyKey)  
 					print 'Bad %s execution for run %d. Either the CMD format is wrong or somwthing else was wrong while execution. Please check the ProcessLog to know more.\n' % (ProcessName, run)
 				else:
-					if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[0], False)
+					if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[0], False, MyKey)
 				
 				print 'Finished process %s for run %d' % (ProcessName, run)		
 				print '###############################\n'
-
+			
+			if RunNumber != -1:
+				break
 			am.time.sleep(1)	
-
+		
 		else:
-			print 'No runs to process!!!!'	
+			print '\n######################'
+			print 'No runs to process!!!!'
+			print '######################\n'
 			am.time.sleep(5)
 

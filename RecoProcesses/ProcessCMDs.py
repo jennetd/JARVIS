@@ -21,7 +21,7 @@ def TrackingCMDs(RunNumber, MyKey, Debug):
         
         for run in RunList: 
             TrackingCMDList.append('. %s %d' % (am.HyperscriptPath, run)) #####Modify Hyperscript to scp the result file on the local machine
-            ResultFileLocationList.append(am.BaseTrackDirLocal + am.ResultTrackFileNameBeforeRunNumber + str(run) + am.ResultTrackFileNameAfterRunNumber)
+            ResultFileLocationList.append(am.BaseTrackDirLocal + am.ResultTrackFileNameBeforeRunNumber + str(run) + am.ResultTrackFileNameAfterRunNumberFast)
         return TrackingCMDList, ResultFileLocationList, RunList, FieldIDList
  
     else:
@@ -74,11 +74,13 @@ def TimingDAQCMDs(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer, M
                 RawBaseLocalPath = am.OneStageRecoDigitizers[Digitizer]['RawTimingDAQLocalPath']
                 ConfigFilePath = am.OneStageRecoDigitizers[Digitizer]['ConfigFileBasePath'] + '%s.config' % Version
                 DatToROOTExec = am.OneStageRecoDigitizers[Digitizer]['DatToROOTExec']
+                ResultTrackFileNameAfterRunNumber = am.ResultTrackFileNameAfterRunNumberSlow
             else:
                 RecoBaseLocalPath = am.TwoStageRecoDigitizers[Digitizer]['RecoTimingDAQLocalPath']
                 RawBaseLocalPath = am.TwoStageRecoDigitizers[Digitizer]['RawTimingDAQLocalPath']
                 ConfigFilePath = am.TwoStageRecoDigitizers[Digitizer]['ConfigFileBasePath'] + '%s.config' % Version
                 DatToROOTExec = am.TwoStageRecoDigitizers[Digitizer]['DatToROOTExec']
+                ResultTrackFileNameAfterRunNumber = am.ResultTrackFileNameAfterRunNumberFast
 
             if not DoTracking: 
                 RecoBaseLocalPath = RecoBaseLocalPath + 'RecoWithoutTracks/'
@@ -108,7 +110,7 @@ def TimingDAQCMDs(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer, M
                 if SaveWaveformBool: DatToRootCMD = DatToRootCMD + ' --save_meas'
             
                 if DoTracking: 
-                    TrackFilePathLocal = am.BaseTrackDirLocal + 'Run%i_CMSTiming_converted.root' % run
+                    TrackFilePathLocal = am.BaseTrackDirLocal + am.ResultTrackFileNameBeforeRunNumber + str(run) + ResultTrackFileNameAfterRunNumber
                     DatToRootCMD = DatToRootCMD + ' --pixel_input_file=' + TrackFilePathLocal   
 
                 DatToRootCMDList.append(DatToRootCMD)
@@ -116,8 +118,8 @@ def TimingDAQCMDs(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer, M
         #Remove the runs which were not present
         for run in RunsNotPresent:
             print 'Run %d not present in the raw files' % run
+            del FieldIDList[RunList.index(run)]
             RunList.remove(run)
-            FieldIDList.remove(RunList.index(run))
 
         return DatToRootCMDList, ResultFileLocationList, RunList, FieldIDList
 

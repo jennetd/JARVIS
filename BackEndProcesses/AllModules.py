@@ -17,7 +17,7 @@ import argparse
 
 
 ################### Run Table Information #################
-MyKey = 'keyfsS7rNSv9sNG6I'
+MyKey = '' #Read MyKey from myfile 
 RunTableName = 'tblC4GsJFKjvXgG4e'
 SensorTableName = 'tblAUIj7OVFteuAEL'
 ConfigTableName = 'tblPKdZ7mOWfPr3K0'
@@ -36,11 +36,13 @@ QueryFilePath ="/home/daq/Jarvis/QueryLog.txt"
 HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScriptFastTrigger_NewGeo_19_04_08.sh'
 RulinuxSSH = 'otsdaq@rulinux04.dhcp.fnal.gov'
 BaseTrackDirRulinux = '/data/TestBeam/2019_04_April_CMSTiming/'
-ResultTrackFileNameBeforeRunNumber = 'Run' ###########'Run%d_CMSTiming_converted.root' 
-ResultTrackFileNameAfterRunNumber = '_CMSTiming_converted.root'
+ResultTrackFileNameBeforeRunNumber = 'Run' ###########'Run%d_CMSTiming_converted.root'
+ResultTrackFileNameAfterRunNumber = '_CMSTiming_converted.root' 
+ResultTrackFileNameAfterRunNumberSlow = '_CMSTiming_SlowTriggerStream_converted.root'
+ResultTrackFileNameAfterRunNumberFast = '_CMSTiming_FastTriggerStream_converted.root'
 
 ############## For timingdaq02 ############
-BaseTestbeamDir = '/home/daq/fnal_tb_19_04/' 
+BaseTestbeamDir = '/home/daq/2019_04_April_CMSTiming/' 
 BaseTrackDirLocal = '%sTracks/' % BaseTestbeamDir
 LocalSSH = 'daq@timingdaq02.dhcp.fnal.gov'
 EnvSetupPath = '/home/daq/setup.sh' ############### Remember to change ProcessExec accordingly
@@ -48,8 +50,8 @@ EnvSetupPath = '/home/daq/setup.sh' ############### Remember to change ProcessEx
 TimingDAQDir = '/home/daq/CMS-MTD/TimingDAQ/'
 
 ############## For Caltech CMS Computer ############
-#BaseTrackDirLocal = '/data2/fnal_tb_19_04/Tracks/'
-#BaseTestbeamDir = '/data2/fnal_tb_19_04/'
+#BaseTestbeamDir = '/data2/2019_04_April_CMSTiming/'
+#BaseTrackDirLocal = '%sTracks/' % BaseTestbeamDir
 #TimingDAQDir = '/home/sxie/TimingDAQ/'
 ##### Check ProcessExec for uncommenting the environment setup thingy
 
@@ -64,6 +66,8 @@ use_socket = 17000
 runFileName ="/data-08/TestBeam/Users/RunNumber/OtherRuns0NextRunNumber.txt"
 localRunFileName = "otsdaq_runNumber.txt"
 
+########## Key File Path starting from Recoprocesses in Javis
+keyFilePath = "key"
 
 ############### Conversion Commands for different digitizer ###########
 TwoStageRecoDigitizers = {
@@ -200,3 +204,18 @@ def DeleteProcessLog(ProcessName, RunNumber):
         if os.path.exists(ProcessLogFilePath):      
             os.system('rm %s' % ProcessLogFilePath)
     return
+
+def GetKey():
+    key = None
+    NoKeyFile = False
+    if os.path.exists(keyFilePath): 
+        keyFile = open(keyFilePath, "r")
+        key = str(keyFile.read().strip())
+        keyFile.close()
+    else:
+        NoKeyFile = True
+    if key == '' or NoKeyFile:
+        raise Exception('\n\n ################################################################################################ \n ######Either the key file is not present in the current directory or there is no key in it!########\n ########################################################################################################### \n\n')
+        return 
+    else:
+        return key
