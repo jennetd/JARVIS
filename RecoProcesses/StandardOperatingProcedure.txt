@@ -1,0 +1,42 @@
+Data Processing Shift Procedures
+
+1) Run Auto-Processing
+On timingdaq02 : Open a new terminal and open 6 Tabs.
+Change the title of the tabs to the following and run the corresponding command in each tab.:
+* Tracking          :  cd /home/daq/JarvisProduction/RecoProcesses/; python StartTrackingProcessing.py
+* VME               :  cd /home/daq/JarvisProduction/RecoProcesses/; python StartVMEProcessing.py
+* VMENoTracks       :  cd /home/daq/JarvisProduction/RecoProcesses/; python StartVMENoTracksProcessing.py
+* DT5742            :  cd /home/daq/JarvisProduction/RecoProcesses/; python StartDT5742Processing.py
+* DT5742NoTracks    :  cd /home/daq/JarvisProduction/RecoProcesses/; python StartDT5742NoTracksProcessing.py
+* KeySightScope     :  cd /home/daq/JarvisProduction/RecoProcesses/; python StartKeySightScopeProcessing.py
+
+
+
+2) Monitor Auto-Processing
+
+On timingdaq02 : Open a new terminal and open 6 Tabs.
+Change the title of the tabs to the following and run the corresponding command in each tab.:
+* Tracking Log          :  cd /home/daq/fnal_tb_19_04/ProcessLog/Tracking/
+* VME Log               :  cd /home/daq/fnal_tb_19_04/ProcessLog/TimingDAQVME/
+* VME NoTrack Log       :  cd /home/daq/fnal_tb_19_04/ProcessLog/TimingDAQNoTracksVME/
+* DT5742 Log            :  cd /home/daq/fnal_tb_19_04/ProcessLog/TimingDAQDT5742/
+* DT5742 NoTrack Log    :  cd /home/daq/fnal_tb_19_04/ProcessLog/TimingDAQNoTracksDT5742/
+* KeySightScope Log     :  cd /home/daq/fnal_tb_19_04/ProcessLog/KeySightScope/
+
+In each directory, run "tail -f" on the relevant log files to monitor that they are progressing normally.
+
+
+3) Monitor the output files
+
+On timingdaq02 : Open a new terminal and open 6 Tabs.
+Change the title of the tabs to the following and run the corresponding command in each tab.:
+* Tracking Data          :  cd /home/daq/fnal_tb_19_04/Tracks/
+* VME Data               :  cd /home/daq/fnal_tb_19_04/VME/RecoData/RecoWithTracks/v1/
+* VME NoTrack Data       :  cd /home/daq/fnal_tb_19_04/VME/RecoData/RecoWithoutTracks/v1/
+* DT5742 Data            :  cd /home/daq/fnal_tb_19_04/DT5742/RecoData/RecoWithTracks/v1/
+* DT5742 NoTrack Data    :  cd /home/daq/fnal_tb_19_04/DT5742/RecoData/RecoWithoutTracks/v1/
+* KeySightScope Data     :  cd /home/daq/fnal_tb_19_04/KeySightScope/RecoData/TimingDAQRECO/
+
+* In each directory, periodically check that the output files are being populated and have the right size.
+* Check that the tracking is correct by plotting the Sensor Efficiency Plot and monitoring the geometry of the sensors.
+
