@@ -15,17 +15,7 @@ ConfigVersion = "v1"
 DigitizerKey = 0 #key=0 for VME, Refer Allmodules
 
 ########### Get Key ###########
-keyFilePath = "../RecoProcesses/key"
-key = None
-NoKeyFile = False
-if os.path.exists(keyFilePath): 
-	keyFile = open(keyFilePath, "r")
-	key = str(keyFile.read().strip())
- 	keyFile.close()
-else:
-	NoKeyFile = True
-if key == '' or NoKeyFile:
-	raise Exception('\n\n ################################################################################################ \n ######Either the key file is not present in the current directory or there is no key in it!########\n ########################################################################################################### \n\n')
+key = am.GetKey()
 
 print "\n##############################"
 print "## Starting Data processing ##"
