@@ -5,7 +5,7 @@ def TrackingRuns(RunNumber, MyKey, Debug):
     MyKey = MyKey
     RunList = []  
     FieldIDList = [] 
-    print "run = ", RunNumber
+
     if RunNumber == -1:
         #Retrieve the list of all runs that have not been processed yet
 

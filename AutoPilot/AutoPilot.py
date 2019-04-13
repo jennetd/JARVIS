@@ -17,9 +17,9 @@ from AllModules import *
 #StopSeconds = (40 + deltaTwrtTClock) % 60
 #NumSpillsPerRun = 1
 
-StartSeconds = 9
-StopSeconds = 40 
-NumSpillsPerRun = 1
+StartSeconds = 41
+StopSeconds = 24 
+NumSpillsPerRun = 2
 
 
 #################################Parsing arguments######################################
@@ -161,7 +161,7 @@ while (AutoPilotStatus == 1):
 	tp.GetRunFile()
 	time.sleep(5)
 	RunNumber = tp.GetRunNumber()
-	print "Starting Run %i " % (RunNumber)
+	print "Next Run %i " % (RunNumber)
         print ""
 	############ Wait for safe time to start run ##########
 
@@ -188,7 +188,7 @@ while (AutoPilotStatus == 1):
 	StartTime = datetime.now()  
 	print "\nRun %i started at %s" % (RunNumber,StartTime)
         print ""
-	if not Debug: tp.start_ots(False)
+	if not Debug: tp.start_ots(RunNumber,False)
 
 	## Minimum run duration
 	time.sleep(60*(NumSpillsPerRun-1))

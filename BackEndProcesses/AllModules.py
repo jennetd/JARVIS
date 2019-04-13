@@ -26,7 +26,7 @@ BaseID = 'appd8tCrKgKiaAfre'
 CurlBaseCommand = 'https://api.airtable.com/v0/%s/%s' % (BaseID, RunTableName)
 CurlBaseCommandSensor = 'https://api.airtable.com/v0/%s/%s' % (BaseID, SensorTableName)
 CurlBaseCommandConfig = 'https://api.airtable.com/v0/%s/%s' % (BaseID, ConfigTableName)
-QueryFilePath ="/home/daq/Jarvis/QueryLog.txt"
+QueryFilePath ="/home/daq/Jarvis/QueryLog.txt" # Don't care about this
 
 #############################################################
 ################## Hard Code these paths ####################
@@ -49,7 +49,7 @@ EnvSetupPath = '/home/daq/setup.sh' ############### Remember to change ProcessEx
 #EnvSetupPath = '/home/daq/otsdaq/setup_ots.sh' ############### Remember to change ProcessExec accordingly
 TimingDAQDir = '/home/daq/CMS-MTD/TimingDAQ/'
 
-############## For Caltech CMS Computer ############
+############## For PCCITFNAL01 ############
 #BaseTestbeamDir = '/data2/2019_04_April_CMSTiming/'
 #BaseTrackDirLocal = '%sTracks/' % BaseTestbeamDir
 #TimingDAQDir = '/home/sxie/TimingDAQ/'

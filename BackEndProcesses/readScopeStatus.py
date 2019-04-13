@@ -1,16 +1,16 @@
 from AllModules import *
 
-numEvents = 6000 
+numEvents = 20000 
 sampleRate = 20 
-horizontalWindow = 125 
-trigCh = 1 
-trig = -0.05
+horizontalWindow = 175
+trigCh = "AUX" 
+trig = -0.15
 
 ############### Remember to source the otsdaq environment
 ############### Assuming the directory structure in the KeySightScope repository is the same as on this computer
 
 AutoPilotStatusFile = '%sAcquisition/ScopeStatus.txt' % ScopeControlDir
-AgilentScopeCommand = 'python %sAcquisition/acquisition.py --numEvents %d --sampleRate %d --horizontalWindow %d --trigCh %d --trig %f' % (ScopeControlDir, numEvents, sampleRate, horizontalWindow, trigCh, trig) 
+AgilentScopeCommand = 'python %sAcquisition/acquisition.py --numEvents %d --sampleRate %d --horizontalWindow %d --trigCh %s --trig %f' % (ScopeControlDir, numEvents, sampleRate, horizontalWindow, trigCh, trig) 
 
 while True:
 
