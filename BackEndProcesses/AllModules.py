@@ -17,7 +17,7 @@ import argparse
 
 
 ################### Run Table Information #################
-MyKey = '' #Read MyKey from myfile 
+MyKey = '' #Read MyKey from key file in RecoProcesses
 RunTableName = 'tblC4GsJFKjvXgG4e'
 SensorTableName = 'tblAUIj7OVFteuAEL'
 ConfigTableName = 'tblPKdZ7mOWfPr3K0'
@@ -56,8 +56,9 @@ TimingDAQDir = '/home/daq/CMS-MTD/TimingDAQ/'
 ##### Check ProcessExec for uncommenting the environment setup thingy
 
 ################ Scope Control from AutoPilot Paths ################
-ScopeStateFileName = '/home/daq/fnal_tb_18_11/LocalData/RECO/ETL_Agilent_MSO-X-92004A/Acquisition/RunLog.txt'
-ScopeCommFileName = '/home/daq/fnal_tb_18_11/LocalData/RECO/ETL_Agilent_MSO-X-92004A/Acquisition/ScopeStatus.txt'
+ScopeControlDir = '%sKeySightScope/ETL_Agilent_MSO-X-92004A/' % BaseTestbeamDir
+ScopeStateFileName = '%sAcquisition/RunLog.txt' % ScopeControlDir
+ScopeCommFileName = '%sAcquisition/ScopeStatus.txt' % ScopeControlDir
 ConfigFileBasePath = '%sconfig/FNAL_TestBeam_1904/' % TimingDAQDir
 
 ############# OTSDAQ Information ################
@@ -84,11 +85,11 @@ TwoStageRecoDigitizers = {
                          'KeySightScope'     :  {
                                             'ConfigFileBasePath'     : '',
                                             'DatToROOTExec'          : '',
-                                            'ConversionCMD'          : 'python %sKeySightScope/...... %sKeySightScopeMount/run_scope' % (BaseTestbeamDir,BaseTestbeamDir), 
+                                            'ConversionCMD'          : 'python %sReconstruction/conversion_bin_fast.py --Run ' % (ScopeControlDir), 
                                             'RawConversionLocalPath' : '%sKeySightScope/KeySightScopeMount/' % (BaseTestbeamDir),
                                             'RawTimingDAQLocalPath'  : '%sKeySightScope/RecoData/ConversionRECO/'  % (BaseTestbeamDir),
                                             'RecoTimingDAQLocalPath' : '%sKeySightScope/RecoData/TimingDAQRECO/' % (BaseTestbeamDir),
-                                            'RawTimingDAQFileNameFormat' : 'run_scope', ##### run_scope<run>.root
+                                            'RawTimingDAQFileNameFormat' : 'run_scope', ##### run_scope_converted<run>.root
                                             },
                          'Sampic'     :  {
                                             'ConfigFileBasePath'     : '',
