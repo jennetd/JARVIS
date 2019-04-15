@@ -66,6 +66,7 @@ ip_address = "192.168.133.46"
 use_socket = 17000
 runFileName ="/data-08/TestBeam/Users/RunNumber/OtherRuns0NextRunNumber.txt"
 localRunFileName = "otsdaq_runNumber.txt"
+TClockFilePath = "/home/daq/JarvisDevelopment/AutoPilot/TClock"
 
 ########## Key File Path starting from Recoprocesses in Javis
 keyFilePath = "key"
@@ -220,3 +221,22 @@ def GetKey():
         return 
     else:
         return key
+
+def GetTClockTime():    
+    if os.path.exists(TClockFilePath): 
+        os.system(':> %s' % TClockFilePath) #Emptying the TClock File 
+    else:
+        os.system('mkdir -p %s' % TClockFilePath)
+    os.system('curl https://www-ad.fnal.gov/notifyservlet/www?action=raw | grep -Eoi "SC time</a> \=(.+)/" | cut -c"15-19" >> %s' % TClockFilePath)
+    LocalMachineTime = datetime.now().time().second
+    return LocalMachineTime, ResultFromCurl
+
+def GetStartAndStopSeconds(TClockStartSeconds, TClockStopSeconds):
+    LocalMachineTime = GetTClockTime()
+    TClockFile = open(TClockFilePath, "r")
+    TClockTime = float(TClockFile.read().strip())
+    TClockFile.close()  
+    deltaTwrtTClock = abs(LocalMachineTime - TClockTime)
+    LocalMachineStartSeconds = (TClockStartSeconds + deltaTwrtTClock) % 60
+    LocalMachineStopSeconds = (TClockStopSeconds + deltaTwrtTClock) % 60
+    return LocalMachineStartSeconds, LocalMachineStopSeconds
