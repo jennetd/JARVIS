@@ -12,7 +12,7 @@ def MakeXYEffPlots(mytree, ChannelAmpThresholdDict, outputDir, Label):
 
             #make canvas
             mycanvas = rt.TCanvas("cv","cv",800,600)
-            mytree.Draw("amp["+str(channel)+"]>"+str(ChannelAmpThresholdDict[channel])+":x_dut[0]:y_dut[0]","ntracks==1","profcolz");
+            mytree.Draw("amp["+str(channel)+"]>"+str(ChannelAmpThresholdDict[channel])+":y_dut[0]:x_dut[0]","ntracks==1","profcolz");
 
             mycanvas.SaveAs(outputDir+"/EffXY_" + Label + "_CH"+str(channel)+".png")
 

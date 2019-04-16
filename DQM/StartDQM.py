@@ -85,7 +85,6 @@ for run in VMERunList :
     if os.path.isfile(LocalDataLocation+CampaignDirectoryName+"/VME/RecoData/RecoWithTracks/"+VME_RECO_Version+"/RawDataSaver0CMSVMETiming_Run"+str(run)+"_0_Raw.root"):
 
         outputDir = WebServerDirectory+"/DQM/Run"+str(run)
-
         if os.path.exists(outputDir+"/DQMDone_VME.txt"):
             print "DQM (VME) for Run " + str(run) + " already done"
         else :
@@ -116,7 +115,7 @@ for run in DTRunList :
     # open the file
     if os.path.isfile(LocalDataLocation+CampaignDirectoryName+"/DT5742/RecoData/RecoWithTracks/"+DT_RECO_Version+"/DT5742_RAW_Run"+str(run)+".root"):
 
-        outputDir = LocalDataLocation+CampaignDirectoryName+"/DQM/Run"+str(run)
+        outputDir = WebServerDirectory+"/DQM/Run"+str(run)
 
         if os.path.exists(outputDir+"/DQMDone_DT.txt"):
             print "DQM (DT5742 )for Run " + str(run) + " already done"
