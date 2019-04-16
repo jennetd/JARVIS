@@ -3,6 +3,9 @@
 import os
 import datetime
 import time
+import subprocess
+import glob
+import TransferUtils
 
 print "\n########################################"
 print "## Starting RECO Data Distribution      ##"
@@ -43,18 +46,20 @@ while continueLoop :
     print "\n##########################################"
     print   "Transferring VME RECO Data to CMSLPC EOS"
     print   "##########################################\n"
-    command =  "rsync -ruv --progress " + LocalDataLocation+CampaignDirectoryName+"/VME/RecoData/RecoWithTracks/* "+user+"@cmslpc-sl6.fnal.gov:/eos/uscms/store/user/cmstestbeam/"+CampaignDirectoryName+"/VME/RecoData/RecoWithTracks/"
-    print command
-    os.system(command)
+    TransferUtils.XrdCopyLocalToRemote("cmseos.fnal.gov", 
+                                       "/store/group/cmstestbeam/" + CampaignDirectoryName + "/VME/RecoData/RecoWithTracks/",
+                                       LocalDataLocation+CampaignDirectoryName+"/VME/RecoData/RecoWithTracks/")
     time.sleep(0.5)
 
     
-     #Copy DT5742 RECO Data to CMSLPC EOS
+    #Copy DT5742 RECO Data to CMSLPC EOS
     print "\n\n"
     print "\n##########################################"
     print   "Transferring DT5742 RECO Data to CMSLPC EOS"
     print   "##########################################\n"
-    command =  "rsync -ruv --progress " + LocalDataLocation+CampaignDirectoryName+"/DT5742/RecoData/RecoWithTracks/* "+user+"@cmslpc-sl6.fnal.gov:/eos/uscms/store/user/cmstestbeam/"+CampaignDirectoryName+"/DT5742/RecoData/RecoWithTracks/"
+    TransferUtils.XrdCopyLocalToRemote("cmseos.fnal.gov", 
+                                       "/store/group/cmstestbeam/" + CampaignDirectoryName + "/DT5742/RecoData/RecoWithTracks/",
+                                       LocalDataLocation+CampaignDirectoryName+"/DT5742/RecoData/RecoWithTracks/")
     print command
     os.system(command)
     time.sleep(0.5)
@@ -65,9 +70,9 @@ while continueLoop :
     print "\n###################################################"
     print   "Transferring KeysightScope RECO Data to CMSLPC EOS"
     print   "##################################################\n"
-    command =  "rsync -ruv --progress " + LocalDataLocation+CampaignDirectoryName+"/KeySightScope/RecoData/TimingDAQRECO/* "+user+"@cmslpc-sl6.fnal.gov:/eos/uscms/store/user/cmstestbeam/"+CampaignDirectoryName+"/KeySightScope/RecoData/TimingDAQRECO/"
-    print command
-    os.system(command)
+    TransferUtils.XrdCopyLocalToRemote("cmseos.fnal.gov", 
+                                       "/store/group/cmstestbeam/" + CampaignDirectoryName + "/KeySightScope/RecoData/RecoWithTracks/",
+                                       LocalDataLocation+CampaignDirectoryName+"/KeySightScope/RecoData/RecoWithTracks/")
     time.sleep(0.5)
 
  
