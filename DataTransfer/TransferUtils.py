@@ -27,8 +27,8 @@ def XrdCopyLocalToRemote(remoteSite, remoteDir, localDir):
     
     for f in LocalFileList:        
         if f in RemoteFileList:
-            print f, "yes"
+            print f, " : Already present at Remote site " + remoteSite
         else:
-            print f, "no"
             command = "xrdcp " + localDir+"/" + f + " root://cmseos.fnal.gov//" + remoteDir + "/"
-            print command
+            os.system(command)
+
