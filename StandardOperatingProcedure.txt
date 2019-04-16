@@ -50,12 +50,21 @@ OTSDAQ Configuration Procedures:
 	3) Then go to the webpage and initialize and configure the otsdaq
 
 
-Run Auto-Processing
+Run Auto-Processing: 
 
-1) On timingdaq02 : Open 3 terminal windows for VME, DT5742 and KeySight.
+1) On timingdaq02 : Open 3 terminal windows for VME, DT5742 and KeySight reconstruction respectively (if you are using all three).
 2) Go to /home/daq/JARVIS/RecoProcesses/ on all three windows
-3) And run on the three windows
+3) Make sure the following TimingDAQ processing scripts have correct config version hard coded. 
+	StartDT5742Processing.py for DT5742
+	StartVMEProcessing.py for VME
+	StartKeySightScopeProcessing for KeySightScope	
+4) Now run the following commands on the three windows
 	". DT5742Reco.sh"
 	". VMEReco.sh"
 	". KeySightScopeReco.sh" 
 
+
+For Reprocessing single run, or a range of runs:
+
+1) On timingdaq02 : Go to /home/daq/JARVIS/RecoProcesses
+2) Run the Reprocess scripts for the respective digitizers after hardcoding the range of runs, and the version (if doing timingdaq) correctly.
