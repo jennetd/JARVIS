@@ -11,14 +11,7 @@ from AllModules import *
 ######## after the start of each clock minute (only meaningful modulo 60 seconds) #####
 ################ Periodically make sure this value makes sense. #######################
 #######################################################################################
-#deltaTwrtTClock = 0 
 
-#StartSeconds = (9 + deltaTwrtTClock) % 60
-#StopSeconds = (40 + deltaTwrtTClock) % 60
-#NumSpillsPerRun = 1
-
-StartSeconds = 41
-StopSeconds = 24 
 NumSpillsPerRun = 2
 
 
@@ -42,7 +35,7 @@ NoKeyFile = False
 if os.path.exists(keyFilePath): 
 	keyFile = open(keyFilePath, "r")
 	key = str(keyFile.read().strip())
- 	keyFile.close()
+	keyFile.close()
 else:
 	NoKeyFile = True
 if key == '' or NoKeyFile:
@@ -65,53 +58,63 @@ else:
 if DigitizerDict[0] in DigitizerList:
 	TimingDAQVME = 'Not started'
 	TimingDAQNoTracksVME = 'Not started'
-        IncludesVME = True
+	LabviewRecoVME = 'Not started'
+	IncludesVME = True
 else:
 	TimingDAQVME = 'N/A'
 	TimingDAQNoTracksVME = 'N/A'
-        IncludesVME = False
+	LabviewRecoVME = 'N/A'
+	IncludesVME = False
 
 if DigitizerDict[1] in DigitizerList:
 	TimingDAQDT5742 = 'Not started'
 	TimingDAQNoTracksDT5742 = 'Not started'
-        IncludesDT5742 = True
+	LabviewRecoDT5742 = 'Not started'
+	IncludesDT5742 = True
 else:
 	TimingDAQDT5742 = 'Not started'
 	TimingDAQNoTracksDT5742 = 'Not started'
-        IncludesDT5742 = False
+	LabviewRecoDT5742 = 'N/A'
+	IncludesDT5742 = False
 
 if DigitizerDict[2] in DigitizerList:
 	ConversionTekScope = 'Not started'
 	TimingDAQTekScope = 'Not started'
 	TimingDAQNoTracksTekScope = 'Not started'
-        IncludesTekScope = True
+	LabviewRecoTekScope = 'Not started'
+	IncludesTekScope = True
 else:
 	ConversionTekScope = 'N/A'
 	TimingDAQTekScope = 'N/A'
 	TimingDAQNoTracksTekScope = 'N/A'
-        IncludesTekScope = False
+	LabviewRecoTekScope = 'N/A'
+	IncludesTekScope = False
 
 if DigitizerDict[3] in DigitizerList:
 	ConversionKeySightScope = 'Not started'
 	TimingDAQKeySightScope = 'Not started'
 	TimingDAQNoTracksKeySightScope = 'Not started'
-        IncludesKeySightScope = True
+	LabviewRecoKeySightScope = 'Not started'
+	IncludesKeySightScope = True
 else:
 	ConversionKeySightScope = 'N/A'
 	TimingDAQKeySightScope = 'N/A'
 	TimingDAQNoTracksKeySightScope = 'N/A'
-        IncludesKeySightScope = False
+	LabviewRecoKeySightScope = 'N/A'
+	IncludesKeySightScope = False
 
 if DigitizerDict[4] in DigitizerList:
 	ConversionSampic = 'Not started'
 	TimingDAQSampic = 'Not started'
 	TimingDAQNoTracksSampic = 'Not started'
-        IncludesSampic = True
+	LabviewRecoSampic = 'Not started'
+	IncludesSampic = True
 else:
 	ConversionSampic = 'N/A'
 	TimingDAQSampic = 'N/A'
 	TimingDAQNoTracksSampic = 'N/A'
-        IncludesSampic = False
+	LabviewRecoSampic = 'N/A'
+	IncludesSampic = False
 
 # Get Sensor ID and Configuration ID list
 if pf.QueryGreenSignal(True):
@@ -123,7 +126,7 @@ if not ConfigID: #not SensorID or
 
 # Use Status file to tell autopilot when to stop.
 if os.path.exists("AutoPilot.status"):
-        os.remove("AutoPilot.status")
+	os.remove("AutoPilot.status")
 statusFile = open("AutoPilot.status","w") 
 statusFile.write("START") 
 statusFile.close() 
@@ -136,75 +139,86 @@ print ""
 print "Using Configuration : ", Configuration
 
 if IsTelescope:
-        print "Tracking Telescope Included"
+	print "Tracking Telescope Included"
 if IncludesSampic:
-        print "SAMPIC readout Included"
+	print "SAMPIC readout Included"
 if IncludesVME:
-        print "VME readout Included" 
+	print "VME readout Included" 
 if (IncludesDT5742):
-        print "DT5742 DRS Desktop Digitizer readout Included"
+	print "DT5742 DRS Desktop Digitizer readout Included"
 if (IncludesTekScope):
-        print "Tektronix Scope readout Included"
+	print "Tektronix Scope readout Included"
 if (IncludesKeySightScope):
-        print "Keysight Scope readout Included"
+	print "Keysight Scope readout Included"
 print ""
 print ""
 print "*********************************************************************"
 print ""
 print ""
 
-
+# Get Start and stop seconds for the first iteration of the loop
+iteration = 0
 
 while (AutoPilotStatus == 1):
+
+	if iteration % 20 == 0:
+		StartSeconds,StopSeconds = GetStartAndStopSeconds(30, 10)
+		print StartSeconds, StopSeconds
 
 	##sync local run number file with ftbf-daq-08
 	tp.GetRunFile()
 	time.sleep(5)
 	RunNumber = tp.GetRunNumber()
 	print "Next Run %i " % (RunNumber)
-        print ""
+	print ""
 	############ Wait for safe time to start run ##########
 
 
 	ScopeIncludedThisRun = False
 
 	if IsScope:
-		currentScopeState = ScopeState() 
+		currentScopeState = ScopeState()
+		if currentScopeState == 'busy':
+			print "Warning: Scope is still acquiring events, but autopilot is ready to start a new run. Likely someone killed a run prematurely. Tracking for scope in previous run is screwed up." 
+
 		if currentScopeState == 'ready': 
-		   print("\n Sending start command to scope.\n")
-		   if not Debug:
-			   ScopeStatusAutoPilot()
-			   ScopeIncludedThisRun = True
-			   WaitForScopeStart()
-		   print("Scope has started.")
-                else:
-                   print("Scope still busy. Excluding scope from the next run\n")
+			print("\n Sending start command to scope.\n")
+			if not Debug:
+				ScopeStatusAutoPilot()
+				ScopeIncludedThisRun = True
+				WaitForScopeStart()
+			print("Scope has started.")
+		else:
+			print("Scope still busy. Excluding scope from the next run\n")
 
 	wait_until(StartSeconds)
 	tp.UpdateRunNumber(RunNumber+1) ##must be called after scope start.
 	tp.SendRunFile()
-
+	print "Is Scope ",IsScope
+	print "Scope included ",ScopeIncludedThisRun
 	################### Starting the run ###################
 	StartTime = datetime.now()  
 	print "\nRun %i started at %s" % (RunNumber,StartTime)
-        print ""
+	print ""
 	if not Debug: tp.start_ots(RunNumber,False)
 
 	## Minimum run duration
 	time.sleep(60*(NumSpillsPerRun-1))
 
 	### Don't stop run until scope has acquired all events (OK if still writing events disk, though)
+
 	if IsScope and ScopeIncludedThisRun:
+		print "Waiting for scope to finish"
 		WaitForScopeFinishAcquisition()
-		
+		print "Waiting for TClock stop time"
 	wait_until(StopSeconds)
 	if not Debug: tp.stop_ots(False)
 
 	StopTime = datetime.now()
 	print "\nRun %i stopped at %s" % (RunNumber,StopTime)
-        print ""
-        print "*********************************************************************"
-        print ""
+	print ""
+	print "*********************************************************************"
+	print ""
 
 	Duration = int((StopTime - StartTime).total_seconds())
 
@@ -214,16 +228,16 @@ while (AutoPilotStatus == 1):
 			if "TekScope" in DigiListThisRun: DigiListThisRun.remove("TekScope")
 			if "KeySightScope" in DigiListThisRun: DigiListThisRun.remove("KeySightScope")
 
-		pf.NewRunRecord(RunNumber, StartTime, str(Duration), DigiListThisRun, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, ConfigID, False, key)
+		pf.NewRunRecord(RunNumber, StartTime, str(Duration), DigiListThisRun, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, LabviewRecoVME, LabviewRecoDT5742, LabviewRecoKeySightScope, LabviewRecoSampic, LabviewRecoTekScope, ConfigID, False, key)
 		
-        
-        #################################################
-        #Check for Stop signal in AutoPilot.status file
-        #################################################
-        tmpStatusFile = open("AutoPilot.status","r") 
-        tmpString = (tmpStatusFile.read().split())[0]
-        if (tmpString == "STOP" or tmpString == "stop"):
-                print "Detected stop signal.\nStopping AutoPilot...\n\n"
-                AutoPilotStatus = 0
-        tmpStatusFile.close()
-
+		
+		#################################################
+		#Check for Stop signal in AutoPilot.status file
+		#################################################
+		tmpStatusFile = open("AutoPilot.status","r") 
+		tmpString = (tmpStatusFile.read().split())[0]
+		if (tmpString == "STOP" or tmpString == "stop"):
+			print "Detected stop signal.\nStopping AutoPilot...\n\n"
+			AutoPilotStatus = 0
+		tmpStatusFile.close()
+	iteration += 1

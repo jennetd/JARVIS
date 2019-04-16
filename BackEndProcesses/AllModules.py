@@ -75,8 +75,8 @@ keyFilePath = "key"
 TwoStageRecoDigitizers = {
 
                          'TekScope'     :  {
-                                            'ConfigFileBasePath'     : '',
-                                            'DatToROOTExec'          : '', 
+                                            'ConfigFileBasePath'     : '%sTekScope_' % (ConfigFileBasePath),
+                                            'DatToROOTExec'          : 'NetScopeStandaloneDat2Root', 
                                             'ConversionCMD'          : 'python %sTekScope/Tektronix_DPO7254Control/Reconstruction/conversion.py %sTekScopeMount/run_scope' % (BaseTestbeamDir,BaseTestbeamDir), 
                                             'RawConversionLocalPath' : '%sTekScope/TekScopeMount/' % (BaseTestbeamDir),
                                             'RawTimingDAQLocalPath'  : '%sTekScope/RecoData/ConversionRECO/'  % (BaseTestbeamDir),
@@ -84,8 +84,8 @@ TwoStageRecoDigitizers = {
                                             'RawTimingDAQFileNameFormat' : 'run_scope', ##### run_scope<run>.root 
                                             },
                          'KeySightScope'     :  {
-                                            'ConfigFileBasePath'     : '',
-                                            'DatToROOTExec'          : '',
+                                            'ConfigFileBasePath'     : '%sKeySightScope_' % (ConfigFileBasePath),
+                                            'DatToROOTExec'          : 'NetScopeStandaloneDat2Root',
                                             'ConversionCMD'          : 'python %sReconstruction/conversion_bin_fast.py --Run ' % (ScopeControlDir), 
                                             'RawConversionLocalPath' : '%sKeySightScope/KeySightScopeMount/' % (BaseTestbeamDir),
                                             'RawTimingDAQLocalPath'  : '%sKeySightScope/RecoData/ConversionRECO/'  % (BaseTestbeamDir),
@@ -129,10 +129,11 @@ DigitizerDict = {
                 }
 
 ProcessDict = {
-                    0 : {'Tracking' : {'SizeCut' : 10000}},
-                    1 : {'Conversion' : {'SizeCut' : 10000}},
+                    0 : {'Tracking' : {'SizeCut' : 20000}},
+                    1 : {'Conversion' : {'SizeCut' : 20000}},
                     2 : {'TimingDAQ' : {'SizeCut' : 20000}},
                     3 : {'TimingDAQNoTracks' : {'SizeCut' : 20000}},
+                    4 : {'LabviewReco' : {'SizeCut' : 20000}},
                 }
 StatusDict = {
                     0 : 'Complete',
@@ -227,9 +228,9 @@ def GetTClockTime():
         os.system(':> %s' % TClockFilePath) #Emptying the TClock File 
     else:
         os.system('mkdir -p %s' % TClockFilePath)
-    os.system('curl https://www-ad.fnal.gov/notifyservlet/www?action=raw | grep -Eoi "SC time</a> \=(.+)/" | cut -c"15-19" >> %s' % TClockFilePath)
+    os.system('curl https://www-ad.fnal.gov/notifyservlet/www?action=raw | grep -Eoi "SC time</a> \=(.+)/" | cut -c"15-18" >> %s' % TClockFilePath)
     LocalMachineTime = datetime.now().time().second
-    return LocalMachineTime, ResultFromCurl
+    return LocalMachineTime
 
 def GetStartAndStopSeconds(TClockStartSeconds, TClockStopSeconds):
     LocalMachineTime = GetTClockTime()
@@ -239,4 +240,4 @@ def GetStartAndStopSeconds(TClockStartSeconds, TClockStopSeconds):
     deltaTwrtTClock = abs(LocalMachineTime - TClockTime)
     LocalMachineStartSeconds = (TClockStartSeconds + deltaTwrtTClock) % 60
     LocalMachineStopSeconds = (TClockStopSeconds + deltaTwrtTClock) % 60
-    return LocalMachineStartSeconds, LocalMachineStopSeconds
+    return int(LocalMachineStartSeconds), int(LocalMachineStopSeconds)
