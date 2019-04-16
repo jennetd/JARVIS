@@ -1,5 +1,5 @@
 import sys 
-sys.path.append('/home/daq/JarvisDevelopment/BackEndProcesses/')
+sys.path.append('/home/daq/JARVIS/BackEndProcesses/')
 import AllModules as am
 import ProcessCMDs as pc
 import ParseFunctions as pf                                                                                                                                                                                                  
