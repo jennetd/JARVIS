@@ -1,0 +1,2 @@
+##### Open one tab for DT5742 reco and other tab for doing tail -f on latest process log file ##########
+gnome-terminal --tab --title="DT5742 Reco" --command="bash -c 'cd /home/daq/JarvisDevelopment/RecoProcesses; python StartDT5742Processing.py; $SHELL'" --tab --title="TimingDAQ Logs" --command="bash -c 'cd /home/daq/2019_04_April_CMSTiming/ProcessLog/TimingDAQDT5742; python /home/daq/JarvisDevelopment/BackEndProcesses/CheckLogs.py; $SHELL'"

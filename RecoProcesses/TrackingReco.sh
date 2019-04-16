@@ -1,0 +1,2 @@
+##### Open one tab for track reco and other tab for doing tail -f on latest process log file ##########
+gnome-terminal --tab --title="Tracking Reco" --command="bash -c 'cd /home/daq/JarvisDevelopment/RecoProcesses; python StartTrackingProcessing.py; $SHELL'" --tab --title="Tracking Logs" --command="bash -c 'cd /home/daq/2019_04_April_CMSTiming/ProcessLog/Tracking; python /home/daq/JarvisDevelopment/BackEndProcesses/CheckLogs.py; $SHELL'"

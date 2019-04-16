@@ -1,42 +1,61 @@
 Data Processing Shift Procedures
 
-1) Run Auto-Processing
-On timingdaq02 : Open a new terminal and open 6 Tabs.
-Change the title of the tabs to the following and run the corresponding command in each tab.:
-* Tracking          :  cd /home/daq/JarvisProduction/RecoProcesses/; python StartTrackingProcessing.py
-* VME               :  cd /home/daq/JarvisProduction/RecoProcesses/; python StartVMEProcessing.py
-* VMENoTracks       :  cd /home/daq/JarvisProduction/RecoProcesses/; python StartVMENoTracksProcessing.py
-* DT5742            :  cd /home/daq/JarvisProduction/RecoProcesses/; python StartDT5742Processing.py
-* DT5742NoTracks    :  cd /home/daq/JarvisProduction/RecoProcesses/; python StartDT5742NoTracksProcessing.py
-* KeySightScope     :  cd /home/daq/JarvisProduction/RecoProcesses/; python StartKeySightScopeProcessing.py
+If you need to run the autopilot for the first time go to README.md and follow the instructions
+
+Run AutoPilot:
+
+1) Make configurations on AirTable for each device.
+2) Make global configuration pointing to every device config.
+3) If the listeners on different digitizers are not running, follow the listener starting procedures.
+4) Make sure the otsdaq webpage says that it is in configured state. If not follow the otsdaq configuring procedures.
+5) Make sure the otsdaq is correctly configured for all the digitizers in the otsdaq webpage configuration.
+6) Now to run the autopilot, assuming you are already on timingdaq02:
+		Go to /home/daq/JARVIS/AutoPilot
+		./runAutoPilot.sh <Global Configuration number> 	example: ./runAutoPilot.sh 1
 
 
+Stop AutoPilot:
 
-2) Monitor Auto-Processing
-
-On timingdaq02 : Open a new terminal and open 6 Tabs.
-Change the title of the tabs to the following and run the corresponding command in each tab.:
-* Tracking Log          :  cd /home/daq/fnal_tb_19_04/ProcessLog/Tracking/
-* VME Log               :  cd /home/daq/fnal_tb_19_04/ProcessLog/TimingDAQVME/
-* VME NoTrack Log       :  cd /home/daq/fnal_tb_19_04/ProcessLog/TimingDAQNoTracksVME/
-* DT5742 Log            :  cd /home/daq/fnal_tb_19_04/ProcessLog/TimingDAQDT5742/
-* DT5742 NoTrack Log    :  cd /home/daq/fnal_tb_19_04/ProcessLog/TimingDAQNoTracksDT5742/
-* KeySightScope Log     :  cd /home/daq/fnal_tb_19_04/ProcessLog/KeySightScope/
-
-In each directory, run "tail -f" on the relevant log files to monitor that they are progressing normally.
+1) Go to /home/daq/JARVIS/AutoPilot on timingdaq02. 
+2) Run ./StopAutoPilot.sh
 
 
-3) Monitor the output files
+Listener Starting Procedures:
 
-On timingdaq02 : Open a new terminal and open 6 Tabs.
-Change the title of the tabs to the following and run the corresponding command in each tab.:
-* Tracking Data          :  cd /home/daq/fnal_tb_19_04/Tracks/
-* VME Data               :  cd /home/daq/fnal_tb_19_04/VME/RecoData/RecoWithTracks/v1/
-* VME NoTrack Data       :  cd /home/daq/fnal_tb_19_04/VME/RecoData/RecoWithoutTracks/v1/
-* DT5742 Data            :  cd /home/daq/fnal_tb_19_04/DT5742/RecoData/RecoWithTracks/v1/
-* DT5742 NoTrack Data    :  cd /home/daq/fnal_tb_19_04/DT5742/RecoData/RecoWithoutTracks/v1/
-* KeySightScope Data     :  cd /home/daq/fnal_tb_19_04/KeySightScope/RecoData/TimingDAQRECO/
+* For DT5742:
+	1) ssh daq@192.168.133.167, password is timingdaq
+	2) Do -- cd lorenzo/TimingBone/ 
+	3) Do -- ./TimingController
+	4) Make sure it says on the screen that it binds to the socket, if it doesn't then probably the listener is already running somewhere else. 
+* For VME:
 
-* In each directory, periodically check that the output files are being populated and have the right size.
-* Check that the tracking is correct by plotting the Sensor Efficiency Plot and monitoring the geometry of the sensors.
+* For KeySightScope:
+	1) ssh -XY daq@timingdaq02.dhcp.fnal.gov
+	2) Go to /home/daq/JARVIS/BackEndProcesses/
+	3) Open readScopeStatus.py and adjust the scope acquisition parameters.
+	4) Through remote desktop make sure the scope is ready for acquisition
+	5) To setup the environment for the listener, do
+			source ~/otsdaq/setup_ots.sh
+	6) Now start the listener using
+	 		python readScopeStatus.py
+
+
+OTSDAQ Configuration Procedures:
+
+* If the otsdaq is not in configured state:
+	1) Go to the webpage and configure it.
+* If otsdaq is in a failed state:
+	1) Do "ssh cmstiming@ftbf-daq-08", if you are not already there 
+	2) Launch the server again using "ots" command
+	3) Then go to the webpage and initialize and configure the otsdaq
+
+
+Run Auto-Processing
+
+1) On timingdaq02 : Open 3 terminal windows for VME, DT5742 and KeySight.
+2) Go to /home/daq/JARVIS/RecoProcesses/ on all three windows
+3) And run on the three windows
+	". DT5742Reco.sh"
+	". VMEReco.sh"
+	". KeySightScopeReco.sh" 
 

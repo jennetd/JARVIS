@@ -39,7 +39,7 @@ if os.path.exists(keyFilePath):
 else:
 	NoKeyFile = True
 if key == '' or NoKeyFile:
-	raise Exception('\n\n ################################################################################################ \n ######Either the key file is not present in the current directory or there is no key in it!########\n ########################################################################################################### \n\n')
+	raise Exception('\n\n ################################################################################################ \n ###### Either the key file is not present in the current directory or there is no key in it! ########\n ########################################################################################################### \n\n')
 
 ############ Getting the digitizer list from the configuration table #############
 DigitizerList = pf.GetDigiFromConfig(Configuration, False, key)
