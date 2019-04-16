@@ -3,6 +3,9 @@
 import os
 import datetime
 import time
+import subprocess
+import glob
+import TransferUtils
 
 print "\n##############################"
 print "## Starting RAW Data Archival ##"
@@ -40,13 +43,16 @@ while continueLoop :
     print "\n###################################################"
     print   "Transferring Strip Telescope Raw Data to CMSLPC EOS"
     print   "###################################################\n"
-    command =  "rsync -uv --progress " + LocalDataLocation+CampaignDirectoryName+"/OtsData/* "+user+"@cmslpc-sl6.fnal.gov:/eos/uscms/store/user/cmstestbeam/"+CampaignDirectoryName+"/OtsData/"
-    print command
-    os.system(command)
+
+    TransferUtils.XrdCopyLocalToRemote("cmseos.fnal.gov", 
+                                       "/store/group/cmstestbeam/" + CampaignDirectoryName + "/OtsData/",
+                                       LocalDataLocation+CampaignDirectoryName+"/OtsData/")
+                                        
     time.sleep(0.5)
 
  
     #Copy NimPlus Data from ftbf-daq-08 and to CMSLPC EOS
+    #need to use xrdcp
     print "\n\n"
     print "\n######################################################"
     print   "Transferring NimPlus Data from ftbf-daq-08"
@@ -58,9 +64,10 @@ while continueLoop :
     print "\n###################################################"
     print   "Transferring NimPlus Data to CMSLPC EOS"
     print   "###################################################\n"
-    command =  "rsync -uv --progress " + LocalDataLocation+CampaignDirectoryName+"/NimPlus/* "+user+"@cmslpc-sl6.fnal.gov:/eos/uscms/store/user/cmstestbeam/"+CampaignDirectoryName+"/NimPlus/"
-    print command
-    os.system(command)
+    TransferUtils.XrdCopyLocalToRemote("cmseos.fnal.gov", 
+                                       "/store/group/cmstestbeam/" + CampaignDirectoryName + "/NimPlus/",
+                                       LocalDataLocation+CampaignDirectoryName+"/NimPlus/")
+
     time.sleep(0.5)
 
  
@@ -76,9 +83,10 @@ while continueLoop :
     print "\n###################################################"
     print   "Transferring VME RAW Data to CMSLPC EOS"
     print   "###################################################\n"
-    command =  "rsync -ruv --progress " + LocalDataLocation+CampaignDirectoryName+"/VME/RawData/* "+user+"@cmslpc-sl6.fnal.gov:/eos/uscms/store/user/cmstestbeam/"+CampaignDirectoryName+"/VME/RawData/"
-    print command
-    os.system(command)
+    TransferUtils.XrdCopyLocalToRemote("cmseos.fnal.gov", 
+                                       "/store/group/cmstestbeam/" + CampaignDirectoryName + "/VME/RawData/",
+                                       LocalDataLocation+CampaignDirectoryName+"/VME/RawData/")
+
     time.sleep(0.5)
 
  
@@ -87,9 +95,9 @@ while continueLoop :
     print "\n###################################################"
     print   "Transferring DT5742 RAW Data to CMSLPC EOS"
     print   "###################################################\n"
-    command =  "rsync -ruv --progress " + LocalDataLocation+CampaignDirectoryName+"/DT5742/RawData/* "+user+"@cmslpc-sl6.fnal.gov:/eos/uscms/store/user/cmstestbeam/"+CampaignDirectoryName+"/DT5742/RawData/"
-    print command
-    os.system(command)
+    TransferUtils.XrdCopyLocalToRemote("cmseos.fnal.gov", 
+                                       "/store/group/cmstestbeam/" + CampaignDirectoryName + "/DT5742/RawData/",
+                                       LocalDataLocation+CampaignDirectoryName+"/DT5742/RawData/")
     time.sleep(0.5)
 
  

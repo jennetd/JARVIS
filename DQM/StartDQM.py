@@ -2,6 +2,9 @@ import os
 import ROOT as rt
 import DQMPlots as dqm
 
+#Change to webserver location
+WebServerDirectory = "/var/www/html/"
+
 #Change to the location disk location
 LocalDataLocation = "/data2/"
 
@@ -25,7 +28,22 @@ VMEChannelAmpThresholdDict = {
   5 : 150, 
 }
 DTChannelAmpThresholdDict = {
-  6 : 30,
+  0 : 15,
+  1 : 15,
+  2 : 15,
+  3 : 15,
+  4 : 15,
+  5 : 15,
+  6 : 15,
+  7 : 15,
+  9 : 15,
+  10 : 15,
+  11 : 15,
+  12 : 15,
+  13 : 15,
+  14 : 15,
+  15 : 15,
+  16 : 15,
 }
 KeySightScopeChannelAmpThresholdDict = {
   2 : 150,
@@ -66,7 +84,7 @@ for run in VMERunList :
     # open the file
     if os.path.isfile(LocalDataLocation+CampaignDirectoryName+"/VME/RecoData/RecoWithTracks/"+VME_RECO_Version+"/RawDataSaver0CMSVMETiming_Run"+str(run)+"_0_Raw.root"):
 
-        outputDir = LocalDataLocation+CampaignDirectoryName+"/DQM/Run"+str(run)
+        outputDir = WebServerDirectory+"/DQM/Run"+str(run)
 
         if os.path.exists(outputDir+"/DQMDone_VME.txt"):
             print "DQM (VME) for Run " + str(run) + " already done"
@@ -123,3 +141,6 @@ for run in DTRunList :
         print "Data File " + LocalDataLocation+CampaignDirectoryName+"/DT5742/RecoData/RecoWithTracks/"+DT_RECO_Version+"/DT5742_RAW_Run"+str(run)+".root " + "not found."
 
     
+#copy the index.php into all new subdirectories
+os.system("cd " + WebServerDirectory+ "/DQM/; ./distributeIndexPHP.sh;")
+
