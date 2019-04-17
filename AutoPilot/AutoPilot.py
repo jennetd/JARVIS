@@ -160,10 +160,12 @@ print ""
 iteration = 0
 
 while (AutoPilotStatus == 1):
-
 	if iteration % 20 == 0:
 		StartSeconds,StopSeconds = GetStartAndStopSeconds(30, 10)
 		print StartSeconds, StopSeconds
+
+	## Refresh this
+	DigitizerList = pf.GetDigiFromConfig(Configuration, False, key)
 
 	##sync local run number file with ftbf-daq-08
 	tp.GetRunFile()

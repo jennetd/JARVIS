@@ -11,6 +11,7 @@ Run AutoPilot:
 5) Make sure the otsdaq is correctly configured for all the digitizers in the otsdaq webpage configuration.
 6) Now to run the autopilot, assuming you are already on timingdaq02:
 		Go to /home/daq/JARVIS/AutoPilot
+		source ~/setup.sh
 		./runAutoPilot.sh <Global Configuration number> 	example: ./runAutoPilot.sh 1
 
 

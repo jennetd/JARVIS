@@ -46,7 +46,7 @@ BaseTestbeamDir = '/home/daq/2019_04_April_CMSTiming/'
 BaseTrackDirLocal = '%sTracks/' % BaseTestbeamDir
 LocalSSH = 'daq@timingdaq02.dhcp.fnal.gov'
 EnvSetupPath = '/home/daq/setup.sh' ############### Remember to change ProcessExec accordingly
-#EnvSetupPath = '/home/daq/otsdaq/setup_ots.sh' ############### Remember to change ProcessExec accordingly
+#EnvSetupPath2 = '/home/daq/otsdaq/setup_ots.sh' ############### Remember to change ProcessExec accordingly
 TimingDAQDir = '/home/daq/CMS-MTD/TimingDAQ/'
 
 ############## For PCCITFNAL01 ############
@@ -228,16 +228,19 @@ def GetTClockTime():
         os.system(':> %s' % TClockFilePath) #Emptying the TClock File 
     else:
         os.system('mkdir -p %s' % TClockFilePath)
-    os.system('curl https://www-ad.fnal.gov/notifyservlet/www?action=raw | grep -Eoi "SC time</a> \=(.+)/" | cut -c"15-18" >> %s' % TClockFilePath)
+    os.system('curl https://www-ad.fnal.gov/notifyservlet/www?action=raw | grep -Eoi "SC time</a> \=(.+)/" | cut -c"15-18" > %s' % TClockFilePath)
     LocalMachineTime = datetime.now().time().second
     return LocalMachineTime
 
 def GetStartAndStopSeconds(TClockStartSeconds, TClockStopSeconds):
     LocalMachineTime = GetTClockTime()
+    print " Local machine time is ", LocalMachineTime
     TClockFile = open(TClockFilePath, "r")
     TClockTime = float(TClockFile.read().strip())
     TClockFile.close()  
-    deltaTwrtTClock = abs(LocalMachineTime - TClockTime)
+    print " TClock time is ", TClockTime
+    deltaTwrtTClock = LocalMachineTime - TClockTime
+    print " Local machine time is ", LocalMachineTime
     LocalMachineStartSeconds = (TClockStartSeconds + deltaTwrtTClock) % 60
     LocalMachineStopSeconds = (TClockStopSeconds + deltaTwrtTClock) % 60
     return int(LocalMachineStartSeconds), int(LocalMachineStopSeconds)
