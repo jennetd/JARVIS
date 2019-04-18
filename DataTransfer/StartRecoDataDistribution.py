@@ -32,12 +32,12 @@ while continueLoop :
     print   "##########################################\n"
 
 
-    #Copy VME Raw Data from ftbf-daq-08
+    #Copy VME RECO Data from timingdaq02
     print "\n\n"
     print "\n##########################################"
-    print   "Transferring VME Raw Data from ftbf-daq-08"
+    print   "Synchronization all data timingdaq02"
     print   "##########################################\n"
-    command = "rsync -uv --progress otsdaq@ftbf-daq-08.fnal.gov:/data/TestBeam/"+CampaignDirectoryName+"/CMSTiming/* " + LocalDataLocation+CampaignDirectoryName+"/VME/RawData/"
+    command = "rsync -artuv  --progress daq@timingdaq02:/home/daq/"+CampaignDirectoryName+"/* " + LocalDataLocation+CampaignDirectoryName+"/"
     print command
     os.system(command)
     time.sleep(0.5)
