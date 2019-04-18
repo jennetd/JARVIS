@@ -74,8 +74,9 @@ DTRunList.sort()
 
 # Get KeysightScope Run List
 for f in os.listdir(KeySightScope_RECO_DIR):
-    run = (f.split("_")[1])[3:]
+    run = (f.split("_")[0])[5:]
     KeySightScopeRunList.append(run)
+
 KeySightScopeRunList.sort()
 
 
@@ -113,6 +114,40 @@ for run in VMERunList :
 
     else :
         print "Data File " + LocalDataLocation+CampaignDirectoryName+"/VME/RecoData/RecoWithTracks/"+VME_RECO_Version+"/RawDataSaver0CMSVMETiming_Run"+str(run)+"_0_Raw.root " + "not found."
+
+
+#########################################
+# KeySightScope DQM Plots
+#########################################
+for run in KeySightScopeRunList :
+ 
+    # open the file
+    if os.path.isfile(LocalDataLocation+CampaignDirectoryName+"/KeySightScope/RecoData/RecoWithTracks/"+KeySightScope_RECO_Version+"/run_scope"+str(run)+"_converted.root"):
+
+        outputDir = WebServerDirectory+"/DQM/Run"+str(run)
+        if os.path.exists(outputDir+"/DQMDone_KeySightScope.txt"):
+            print "DQM (KeySightScope) for Run " + str(run) + " already done"
+        else :
+            myfile = rt.TFile(LocalDataLocation+CampaignDirectoryName+"/KeySightScope/RecoData/RecoWithTracks/"+KeySightScope_RECO_Version+"/run_scope"+str(run)+"_converted.root")
+            # retrieve the tree
+            mytree = myfile.Get('pulse')
+
+            #make output run directory if it doesn't exist
+            if not os.path.exists(outputDir):
+                os.makedirs(outputDir)
+
+            #Make XYEff Plots
+            if myfile.GetListOfKeys().Contains('pulse')==True:
+                dqm.MakeXYEffPlots(mytree, KeySightScopeChannelAmpThresholdDict, outputDir, "KeySightScope")
+            else:
+                print "Run "+str(run)+" missing pulse tree. Skipping DQM"
+
+            f = open(outputDir+"/DQMDone_KeySightScope.txt", "w")
+            f.write("DONE")
+            f.close()
+
+    else :
+        print "Data File " + LocalDataLocation+CampaignDirectoryName+"/KeySightScope/RecoData/RecoWithTracks/"+KeySightScope_RECO_Version+"/run_scope"+str(run)+"_converted.root " + "not found."
 
     
 #########################################

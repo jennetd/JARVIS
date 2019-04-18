@@ -192,6 +192,24 @@ def WaitForScopeFinishAcquisition():
     ScopeStateHandle.close()
     return
 
+#def ReadRPFile(RunNumber):                                                             
+#    FileHandle = open("%s/RP/Run%d_conditions.txt" % (BaseTestbeamDir, RunNumber), "r")                                                                                                                                                      
+#    FileHandle.readline()                                                                                                                                                                                        
+#    FileHandle.write(str(stop_run_number)+ "\n")                                                                                                                                                                                         
+#    FileHandle.write(str(scan_number)+ "\n")                                                                                                                                                                                             
+#    FileHandle.write(vors+ "\n")                                                                                                                                                                                                         
+#    FileHandle.write(scan_in+ "\n")                                                                                                                                                                                                      
+#    FileHandle.close()   
+#with open(filepath) as fp:  
+#   line = fp.readline()
+#   cnt = 1
+#   while line:
+#       print("Line {}: {}".format(cnt, line.strip()))
+#       line = fp.readline()
+#      cnt += 1
+
+
+
 def ProcessLog(ProcessName, RunNumber, ProcessOutput):
     ProcessLogBasePath = "%sProcessLog/%s/" % (BaseTestbeamDir, ProcessName)
     if not os.path.exists(ProcessLogBasePath): os.system('mkdir -p %s' % ProcessLogBasePath)
@@ -244,3 +262,4 @@ def GetStartAndStopSeconds(TClockStartSeconds, TClockStopSeconds):
     LocalMachineStartSeconds = (TClockStartSeconds + deltaTwrtTClock) % 60
     LocalMachineStopSeconds = (TClockStopSeconds + deltaTwrtTClock) % 60
     return int(LocalMachineStartSeconds), int(LocalMachineStopSeconds)
+

@@ -72,8 +72,8 @@ if DigitizerDict[1] in DigitizerList:
 	LabviewRecoDT5742 = 'Not started'
 	IncludesDT5742 = True
 else:
-	TimingDAQDT5742 = 'Not started'
-	TimingDAQNoTracksDT5742 = 'Not started'
+	TimingDAQDT5742 = 'N/A'
+	TimingDAQNoTracksDT5742 = 'N/A'
 	LabviewRecoDT5742 = 'N/A'
 	IncludesDT5742 = False
 
@@ -234,7 +234,17 @@ while (AutoPilotStatus == 1):
 		DigiListThisRun = DigitizerList
 		if not ScopeIncludedThisRun:
 			if "TekScope" in DigiListThisRun: DigiListThisRun.remove("TekScope")
-			if "KeySightScope" in DigiListThisRun: DigiListThisRun.remove("KeySightScope")
+			if "KeySightScope" in DigiListThisRun: 
+				DigiListThisRun.remove("KeySightScope")
+				ConversionKeySightScope = 'N/A'
+				TimingDAQKeySightScope = 'N/A'
+				TimingDAQNoTracksKeySightScope = 'N/A'
+				LabviewRecoKeySightScope = 'N/A'
+			else:
+				ConversionKeySightScope = 'Not started'
+				TimingDAQKeySightScope = 'Not started'
+				TimingDAQNoTracksKeySightScope = 'Not started'
+				LabviewRecoKeySightScope = 'Not started'
 
 		pf.NewRunRecord(RunNumber, StartTime, str(Duration), DigiListThisRun, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, LabviewRecoVME, LabviewRecoDT5742, LabviewRecoKeySightScope, LabviewRecoSampic, LabviewRecoTekScope, ConfigID, False, key)
 		

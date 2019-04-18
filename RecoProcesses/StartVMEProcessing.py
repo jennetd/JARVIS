@@ -7,7 +7,7 @@ GetRunListEachTime = True
 
 ############ Doesn't matter for tracking ###########
 SaveWaveForms = True
-ConfigVersion = "v1"
+ConfigVersion = "v3"
 DigitizerKey = 0 #key=0 for VME, Refer Allmodules
 
 ########### Get Key ###########
