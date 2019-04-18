@@ -45,5 +45,6 @@ while continueLoop :
     command = "rsync -artuv --progress daq@timingdaq02:/home/daq/"+CampaignDirectoryName+"/* " + LocalDataLocation+CampaignDirectoryName+"/"
     #print command
     #os.system(command)
-    time.sleep(0.5)
+    time.sleep(60)
+    
     
