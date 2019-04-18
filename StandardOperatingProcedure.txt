@@ -69,3 +69,17 @@ For Reprocessing single run, or a range of runs:
 
 1) On timingdaq02 : Go to /home/daq/JARVIS/RecoProcesses
 2) Run the Reprocess scripts for the respective digitizers after hardcoding the range of runs, and the version (if doing timingdaq) correctly.
+
+
+
+Common Failures:
+* Tracking could fail due to following reasons:
+	Read acknowledgement from the otsdaq "Start: received message:" in autopilot window. If it doesn't say "done" then 
+		1) Stop the autopilot
+		2) Start OTS server again, and then initialize and configure
+		3) Start the autopilot
+	Look at the histograms in otsdaq visualizer and make sure they are fine
+	The kinit on rulinux might have expired. Reissue the ticket on otsdaq@rulinux04.dhcp.fnal.gov
+* Keep checking the run number and if the run number in digitizer listener doesn't match the otsdaq run number
+ 	 Reissue the ticket on timingdaq02, change the run number in the file /data-08/TestBeam/Users/RunNumber/OtherRuns0NextRunNumber.txt to the next run number from the run table and see if the problem is fixed.
+

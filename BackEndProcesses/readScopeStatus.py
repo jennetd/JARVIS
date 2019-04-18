@@ -1,15 +1,15 @@
 from AllModules import *
 
-numEvents = 10000 
+numEvents = 7200 
 sampleRate = 40 #GSa/s
 horizontalWindow = 40 #ns
 ### if sample rate or horizontal window is changed, TimingDAQ must be recompiled to account for new npoints.
 trigCh = "AUX" 
 trig = 0.15 #V
 
-vScale1 = 0.02 #V
-vScale2 = 0.02 #V
-vScale3 = 0.02 #V
+vScale1 = 0.04 #V
+vScale2 = 0.01 #V
+vScale3 = 0.01 #V
 vScale4 = 0.05 #V
 
 timeoffset = -100 #ns

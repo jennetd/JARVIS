@@ -240,15 +240,19 @@ while (AutoPilotStatus == 1):
 				TimingDAQKeySightScope = 'N/A'
 				TimingDAQNoTracksKeySightScope = 'N/A'
 				LabviewRecoKeySightScope = 'N/A'
-			else:
-				ConversionKeySightScope = 'Not started'
-				TimingDAQKeySightScope = 'Not started'
-				TimingDAQNoTracksKeySightScope = 'Not started'
-				LabviewRecoKeySightScope = 'Not started'
+		else:
+			ConversionKeySightScope = 'Not started'
+			TimingDAQKeySightScope = 'Not started'
+			TimingDAQNoTracksKeySightScope = 'Not started'
+			LabviewRecoKeySightScope = 'Not started'
 
-		pf.NewRunRecord(RunNumber, StartTime, str(Duration), DigiListThisRun, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, LabviewRecoVME, LabviewRecoDT5742, LabviewRecoKeySightScope, LabviewRecoSampic, LabviewRecoTekScope, ConfigID, False, key)
+		# Get Raspberry Pi Value list, Make sure raspberry pi rsync is on
+		BoxTemp, x_stage, y_stage, BoxVoltage, BarCurrent, z_rotation, BoxHum, BoxCurrent, BarVoltage  = ReadRPFile(RunNumber)
+
+		pf.NewRunRecord2(RunNumber, StartTime, str(Duration), DigiListThisRun, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, LabviewRecoVME, LabviewRecoDT5742, LabviewRecoKeySightScope, LabviewRecoSampic, LabviewRecoTekScope, BoxTemp, x_stage, y_stage, BoxVoltage, BarCurrent, z_rotation, BoxHum, BoxCurrent, BarVoltage, ConfigID, False, key)
 		
-		
+		#pf.NewRunRecord(RunNumber, StartTime, str(Duration), DigiListThisRun, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, LabviewRecoVME, LabviewRecoDT5742, LabviewRecoKeySightScope, LabviewRecoSampic, LabviewRecoTekScope, ConfigID, False, key)
+
 		#################################################
 		#Check for Stop signal in AutoPilot.status file
 		#################################################
