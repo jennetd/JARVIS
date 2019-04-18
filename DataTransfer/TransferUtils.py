@@ -12,9 +12,7 @@ def ListXrdRemote(site, directory):
 def ListLocalFiles(directory):
     localList = []
     tmp = glob.glob(directory+"/*")    
-    print tmp
     for f in tmp:
-        #print f
         a = f.split("/")[-1]
         localList.append(a)
 
@@ -29,6 +27,7 @@ def XrdCopyLocalToRemote(remoteSite, remoteDir, localDir):
         if f in RemoteFileList:
             print f, " : Already present at Remote site " + remoteSite
         else:
-            command = "xrdcp " + localDir+"/" + f + " root://cmseos.fnal.gov//" + remoteDir + "/"
+            command = "xrdcp " + localDir+"/" + f + " root://" + remoteSite + "//" + remoteDir + "/"
             os.system(command)
+            
 
