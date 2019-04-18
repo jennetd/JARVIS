@@ -13,7 +13,7 @@ from AllModules import *
 #######################################################################################
 
 NumSpillsPerRun = 2
-
+RP = True
 
 #################################Parsing arguments######################################
 
@@ -158,8 +158,9 @@ print ""
 
 # Get Start and stop seconds for the first iteration of the loop
 iteration = 0
-
+if RP: tp.RPGlobalComm("GlobalStart")
 while (AutoPilotStatus == 1):
+
 	if iteration % 20 == 0:
 		StartSeconds,StopSeconds = GetStartAndStopSeconds(30, 10)
 		print StartSeconds, StopSeconds
@@ -202,6 +203,8 @@ while (AutoPilotStatus == 1):
 	StartTime = datetime.now()  
 	print "\nRun %i started at %s" % (RunNumber,StartTime)
 	print ""
+	if RP: tp.RPComm(RunNumber, "start") 
+
 	if not Debug: tp.start_ots(RunNumber,False)
 
 	## Minimum run duration
@@ -214,7 +217,10 @@ while (AutoPilotStatus == 1):
 		WaitForScopeFinishAcquisition()
 		print "Waiting for TClock stop time"
 	wait_until(StopSeconds)
+
 	if not Debug: tp.stop_ots(False)
+
+	if RP: tp.RPComm(RunNumber, "stop")
 
 	StopTime = datetime.now()
 	print "\nRun %i stopped at %s" % (RunNumber,StopTime)
@@ -241,5 +247,6 @@ while (AutoPilotStatus == 1):
 		if (tmpString == "STOP" or tmpString == "stop"):
 			print "Detected stop signal.\nStopping AutoPilot...\n\n"
 			AutoPilotStatus = 0
+			if RP: tp.RPGlobalComm("GlobalStop")
 		tmpStatusFile.close()
 	iteration += 1

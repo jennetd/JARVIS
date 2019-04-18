@@ -32,6 +32,20 @@ def stop_ots(Delay=True):
     print "Stop: received message:", data
     if Delay: time.sleep(5)
 
+def RPComm(RunNumber, message):
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    MESSAGE = "%s, %d" % (message, RunNumber)#(GetRunNumber()+1)
+    sock.sendto(MESSAGE, ("192.168.133.220", 10001))
+    print "Sent %s message to raspberry pi" % message
+    return 
+
+def RPGlobalComm(message):
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    MESSAGE = "%s" % (message)#(GetRunNumber()+1)
+    sock.sendto(MESSAGE, ("192.168.133.220", 10001))
+    print "Sent %s message to raspberry pi" % message
+    return 
+
 def GetRunNumber():
     runFile = open(am.localRunFileName)
     nextRun = int(runFile.read().strip()) 
