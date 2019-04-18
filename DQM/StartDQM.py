@@ -11,7 +11,7 @@ LocalDataLocation = "/data2/"
 #change to name of the testbeam campaign directory
 CampaignDirectoryName = "2019_04_April_CMSTiming"
 
-VME_RECO_Version = "v1"
+VME_RECO_Version = "v3"
 DT_RECO_Version = "v1"
 KeySightScope_RECO_Version = "v1"
 
@@ -22,10 +22,15 @@ KeySightScope_RECO_DIR = LocalDataLocation+CampaignDirectoryName+"/KeySightScope
 
 #Define lists for runs and channels
 VMEChannelAmpThresholdDict = {
-  2 : 150,
-  3 : 150,
-  4 : 150,
-  5 : 150, 
+  0 : 30,
+  1 : 400,
+  2 : 400,
+  3 : 400,
+  4 : 400,
+  5 : 400, 
+  6 : 400,
+  19: 200,
+  20: 200  
 }
 DTChannelAmpThresholdDict = {
   0 : 15,
@@ -46,7 +51,7 @@ DTChannelAmpThresholdDict = {
   16 : 15,
 }
 KeySightScopeChannelAmpThresholdDict = {
-  2 : 150,
+  2 : 150
 }
 
 
@@ -97,7 +102,10 @@ for run in VMERunList :
                 os.makedirs(outputDir)
 
             #Make XYEff Plots
-            dqm.MakeXYEffPlots(mytree, VMEChannelAmpThresholdDict, outputDir, "VME")
+            if myfile.GetListOfKeys().Contains('pulse')==True:
+                dqm.MakeXYEffPlots(mytree, VMEChannelAmpThresholdDict, outputDir, "VME")
+            else:
+                print "Run "+str(run)+" missing pulse tree. Skipping DQM"
 
             f = open(outputDir+"/DQMDone_VME.txt", "w")
             f.write("DONE")
@@ -130,12 +138,16 @@ for run in DTRunList :
                 os.makedirs(outputDir)
 
             #Make XYEff Plots
-            dqm.MakeXYEffPlots(mytree, DTChannelAmpThresholdDict, outputDir, "DT5742")
-
+            if myfile.GetListOfKeys().Contains('pulse')==True:
+                print str(run)
+                dqm.MakeXYEffPlots(mytree, DTChannelAmpThresholdDict, outputDir, "DT5742")
+            else:
+                print "input file from Run {0} DOES NOT HAVE pulse tree. Skipping file".format(str(run))
             f = open(outputDir+"/DQMDone_DT.txt", "w")
             f.write("DONE")
             f.close()
-
+            
+            
     else :
         print "Data File " + LocalDataLocation+CampaignDirectoryName+"/DT5742/RecoData/RecoWithTracks/"+DT_RECO_Version+"/DT5742_RAW_Run"+str(run)+".root " + "not found."
 
