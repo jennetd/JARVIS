@@ -17,7 +17,7 @@ KeySightScope_RECO_Version = "v1"
 
 VME_RECO_DIR = LocalDataLocation+CampaignDirectoryName+"/VME/RecoData/RecoWithTracks/" + VME_RECO_Version + "/"
 DT_RECO_DIR = LocalDataLocation+CampaignDirectoryName+"/DT5742/RecoData/RecoWithTracks/" + DT_RECO_Version + "/"
-KeySightScope_RECO_DIR = LocalDataLocation+CampaignDirectoryName+"/KeySightScope/RecoData/TimingDAQRECO/"
+KeySightScope_RECO_DIR = LocalDataLocation+CampaignDirectoryName+"/KeySightScope/RecoData/TimingDAQRECO/RecoWithTracks/"+ KeySightScope_RECO_Version+"/"
 
 
 #Define lists for runs and channels
