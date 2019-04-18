@@ -38,17 +38,7 @@ while continueLoop :
     print   "##########################################\n"
 
 
-    #Copy All Data from timingdaq02
-    print "\n\n"
-    print "\n##########################################"
-    print   "Synchronization all data from timingdaq02"
-    print   "##########################################\n"
-    command = "rsync -artuv  --progress daq@timingdaq02:/home/daq/"+CampaignDirectoryName+"/* " + LocalDataLocation+CampaignDirectoryName+"/"
-    print command
-    #os.system(command)
-    time.sleep(0.5)
     
-
     #Copy VME RECO Data to CMSLPC EOS
     print "\n\n"
     print "\n###################################################"
@@ -70,11 +60,11 @@ while continueLoop :
     print   "Transferring DT5742 RECO Data to CMSLPC EOS & CERN EOS"
     print   "######################################################\n"
     TransferUtils.XrdCopyLocalToRemote("cmseos.fnal.gov", 
-                                       LPCRemoteDir + "/DT5742/RecoData/RecoWithTracks/"+ DTRecoVersion + "/",
-                                       LocalDir+"/DT5742/RecoData/RecoWithTracks/"+ DTRecoVersion + "/")
-    TransferUtils.XrdCopyLocalToRemote("eoscms.fnal.gov", 
-                                       CERNRemoteDir + "/DT5742/RecoData/RecoWithTracks/"+ DTRecoVersion + "/",
-                                       LocalDir+"/DT5742/RecoData/RecoWithTracks/"+ DTRecoVersion + "/")
+                                      LPCRemoteDir + "/DT5742/RecoData/RecoWithTracks/"+ DTRecoVersion + "/",
+                                      LocalDir+"/DT5742/RecoData/RecoWithTracks/"+ DTRecoVersion + "/")
+    TransferUtils.XrdCopyLocalToRemote("eoscms.cern.ch", 
+                                      CERNRemoteDir + "/DT5742/RecoData/RecoWithTracks/"+ DTRecoVersion + "/",
+                                      LocalDir+"/DT5742/RecoData/RecoWithTracks/"+ DTRecoVersion + "/")
     time.sleep(0.5)
 
  
@@ -84,10 +74,10 @@ while continueLoop :
     print   "Transferring KeysightScope RECO Data to CMSLPC EOS & CERN EOS"
     print   "#############################################################\n"
     TransferUtils.XrdCopyLocalToRemote("cmseos.fnal.gov", 
-                                       LPCRemoteDir + "/KeySightScope/RecoData/RecoWithTracks/",
+                                       LPCRemoteDir + "/KeySightScope/RecoData/TimingDAQRECO/RecoWithTracks/" + KeySightScopeRecoVersion + "/",
                                        LocalDir+"/KeySightScope/RecoData/TimingDAQRECO/RecoWithTracks/"+ KeySightScopeRecoVersion + "/")
     TransferUtils.XrdCopyLocalToRemote("eoscms.cern.ch", 
-                                       CERNRemoteDir + "/KeySightScope/RecoData/RecoWithTracks/",
+                                       CERNRemoteDir + "/KeySightScope/RecoData/TimingDAQRECO/RecoWithTracks/"+ KeySightScopeRecoVersion + "/",
                                        LocalDir+"/KeySightScope/RecoData/TimingDAQRECO/RecoWithTracks/"+ KeySightScopeRecoVersion + "/")
     time.sleep(0.5)
 
