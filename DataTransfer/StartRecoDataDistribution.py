@@ -19,9 +19,15 @@ LocalDataLocation = "/data2/"
 
 #change to name of the testbeam campaign directory
 CampaignDirectoryName = "2019_04_April_CMSTiming"
+CERNEOSCampaignDirectoryName = "MTDTB_FNAL_Apr2019"
 
-VMERecoVersion = "v1"
+LocalDir = LocalDataLocation + CampaignDirectoryName
+LPCRemoteDir = "/store/group/cmstestbeam/" + CampaignDirectoryName
+CERNRemoteDir = "/eos/cms/store/group/dpg_mtd/comm_mtd/TB/" + CERNEOSCampaignDirectoryName
+
+VMERecoVersion = "v3"
 DTRecoVersion = "v1"
+KeySightScopeRecoVersion = "v1"
 
 continueLoop = True
 while continueLoop : 
@@ -32,49 +38,57 @@ while continueLoop :
     print   "##########################################\n"
 
 
-    #Copy VME RECO Data from timingdaq02
+    #Copy All Data from timingdaq02
     print "\n\n"
     print "\n##########################################"
-    print   "Synchronization all data timingdaq02"
+    print   "Synchronization all data from timingdaq02"
     print   "##########################################\n"
     command = "rsync -artuv  --progress daq@timingdaq02:/home/daq/"+CampaignDirectoryName+"/* " + LocalDataLocation+CampaignDirectoryName+"/"
     print command
-    os.system(command)
+    #os.system(command)
     time.sleep(0.5)
-
     
+
     #Copy VME RECO Data to CMSLPC EOS
     print "\n\n"
-    print "\n##########################################"
-    print   "Transferring VME RECO Data to CMSLPC EOS"
-    print   "##########################################\n"
+    print "\n###################################################"
+    print   "Transferring VME RECO Data to CMSLPC EOS & CERN EOS"
+    print   "###################################################\n"
     TransferUtils.XrdCopyLocalToRemote("cmseos.fnal.gov", 
-                                       "/store/group/cmstestbeam/" + CampaignDirectoryName + "/VME/RecoData/RecoWithTracks/"+ VMERecoVersion + "/",
-                                       LocalDataLocation+CampaignDirectoryName+"/VME/RecoData/RecoWithTracks/"+ VMERecoVersion + "/")
+                                       LPCRemoteDir + "/VME/RecoData/RecoWithTracks/"+ VMERecoVersion + "/",
+                                       LocalDir+"/VME/RecoData/RecoWithTracks/"+ VMERecoVersion + "/")
+    TransferUtils.XrdCopyLocalToRemote("eoscms.cern.ch", 
+                                       CERNRemoteDir + "/VME/RecoData/RecoWithTracks/"+ VMERecoVersion + "/",
+                                       LocalDir+"/VME/RecoData/RecoWithTracks/"+ VMERecoVersion + "/")
     time.sleep(0.5)
 
     
+
     #Copy DT5742 RECO Data to CMSLPC EOS
     print "\n\n"
-    print "\n##########################################"
-    print   "Transferring DT5742 RECO Data to CMSLPC EOS"
-    print   "##########################################\n"
+    print "\n######################################################"
+    print   "Transferring DT5742 RECO Data to CMSLPC EOS & CERN EOS"
+    print   "######################################################\n"
     TransferUtils.XrdCopyLocalToRemote("cmseos.fnal.gov", 
-                                       "/store/group/cmstestbeam/" + CampaignDirectoryName + "/DT5742/RecoData/RecoWithTracks/"+ DTRecoVersion + "/",
-                                       LocalDataLocation+CampaignDirectoryName+"/DT5742/RecoData/RecoWithTracks/"+ DTRecoVersion + "/")
-    print command
-    os.system(command)
+                                       LPCRemoteDir + "/DT5742/RecoData/RecoWithTracks/"+ DTRecoVersion + "/",
+                                       LocalDir+"/DT5742/RecoData/RecoWithTracks/"+ DTRecoVersion + "/")
+    TransferUtils.XrdCopyLocalToRemote("eoscms.fnal.gov", 
+                                       CERNRemoteDir + "/DT5742/RecoData/RecoWithTracks/"+ DTRecoVersion + "/",
+                                       LocalDir+"/DT5742/RecoData/RecoWithTracks/"+ DTRecoVersion + "/")
     time.sleep(0.5)
 
  
     #Copy KeysightScope RECO Data to CMSLPC EOS
     print "\n\n"
-    print "\n###################################################"
-    print   "Transferring KeysightScope RECO Data to CMSLPC EOS"
-    print   "##################################################\n"
+    print "\n#############################################################"
+    print   "Transferring KeysightScope RECO Data to CMSLPC EOS & CERN EOS"
+    print   "#############################################################\n"
     TransferUtils.XrdCopyLocalToRemote("cmseos.fnal.gov", 
-                                       "/store/group/cmstestbeam/" + CampaignDirectoryName + "/KeySightScope/RecoData/RecoWithTracks/",
-                                       LocalDataLocation+CampaignDirectoryName+"/KeySightScope/RecoData/RecoWithTracks/")
+                                       LPCRemoteDir + "/KeySightScope/RecoData/RecoWithTracks/",
+                                       LocalDir+"/KeySightScope/RecoData/TimingDAQRECO/RecoWithTracks/"+ KeySightScopeRecoVersion + "/")
+    TransferUtils.XrdCopyLocalToRemote("eoscms.cern.ch", 
+                                       CERNRemoteDir + "/KeySightScope/RecoData/RecoWithTracks/",
+                                       LocalDir+"/KeySightScope/RecoData/TimingDAQRECO/RecoWithTracks/"+ KeySightScopeRecoVersion + "/")
     time.sleep(0.5)
 
  
