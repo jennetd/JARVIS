@@ -1,4 +1,9 @@
-void analyze_FNAL(string bar, const int& firstRun, const int& lastRun)
+void printCanvas(TCanvas* c0, string title, string outputDir)
+{
+
+}
+
+void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string timeAlgo="IL_50", string outputDir="./")
 {
   gStyle->SetPadTopMargin(0.05);
   gStyle->SetPadBottomMargin(0.13);
@@ -225,7 +230,7 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun)
   
   //myTree->SetBranchStatus("*",0);
   myTree -> SetBranchAddress("amp",       &amp);
-  myTree -> SetBranchAddress("IL_50",     &time);
+  myTree -> SetBranchAddress(timeAlgo.c_str(),     &time);
   myTree -> SetBranchAddress("gaus_mean", &gaus_mean);
   myTree -> SetBranchAddress("x_dut",     x_dut);
   myTree -> SetBranchAddress("y_dut",     y_dut);
@@ -481,12 +486,6 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun)
     
     for(int iCh = 0; iCh < NCH; ++iCh)
     {      
-      cout << "!! ben, entry: " << entry << "\n"
-	   << "amp[" << ampch_id[iCh] << "]= " <<  amp[ampch_id[iCh]] << " :: > max() :: max1= " << mip_peak[iCh]*rel_amp_cut_low << " , max2= " << ampmin_cut[iCh] << "\n" 
-	   << "amp[" << ampch_id[iCh] << "]= " <<  amp[ampch_id[iCh]] << " :: < min() :: min1= " << mip_peak[iCh]*rel_amp_cut_hig << " , max2= " << ampmax_cut[iCh] << "\n"
-	   << "time["<< timech_id[iCh] << "]= " <<  time[timech_id[iCh]] << " :: > max() :: max1= " << time_peak[iCh]-time_sigma[iCh]*nSigmaTimeCut << " , max2= " << lowerTimeCut << "\n"
-	   << "time["<< timech_id[iCh] << "]= " <<  time[timech_id[iCh]] << " :: < min() :: min1= " << time_peak[iCh]+time_sigma[iCh]*nSigmaTimeCut << " , min2= " << upperTimeCut << "\n" << endl;
-
       if( amp[ampch_id[iCh]] > std::max(mip_peak[iCh]*rel_amp_cut_low,ampmin_cut[iCh]) &&
           amp[ampch_id[iCh]] < std::min(mip_peak[iCh]*rel_amp_cut_hig,ampmax_cut[iCh]) &&
           time[timech_id[iCh]] > std::max(time_peak[iCh]-time_sigma[iCh]*nSigmaTimeCut,lowerTimeCut) &&
@@ -515,7 +514,6 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun)
   
   for(int iCh = 1; iCh < NCH; ++iCh)
   {
-    cout << "ben, channel: " << iCh << endl;
     c_time_vs_amp -> cd(iCh);
     
     h2_deltat_vs_amp[iCh]->SetStats(0);
@@ -531,9 +529,8 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun)
     // fitAmpCorr[iCh]->SetParameters(-0.3,6e-13,-10.);
     fitAmpCorr[iCh] = new TF1(Form("fitAmpCorr_%s", namech[iCh].c_str()),"pol4",0.,1000.);
     //fitAmpCorr[iCh] = new TF1(Form("fitAmpCorr_%s", namech[iCh].c_str()),"pol4",0.,200.);
-    cout << "ben, preFit" << endl;
+
     p_deltat_vs_amp[iCh] -> Fit(fitAmpCorr[iCh],"QNRS+");
-    cout << "ben, postFit" << endl;
     fitAmpCorr[iCh] -> SetLineColor(kMagenta);
     fitAmpCorr[iCh] -> Draw("same");
     
