@@ -1,4 +1,4 @@
-void analyze_FNAL(const int& firstRun, const int& lastRun)
+void analyze_FNAL(string bar, const int& firstRun, const int& lastRun)
 {
   gStyle->SetPadTopMargin(0.05);
   gStyle->SetPadBottomMargin(0.13);
@@ -13,7 +13,8 @@ void analyze_FNAL(const int& firstRun, const int& lastRun)
   //----------------
   // ntuple location
   //std::string dataFolder = "/eos/cms/store/group/dpg_mtd/comm_mtd/TB/MTDTB_FNAL_Nov2018/reco/v6/";
-  std::string dataFolder = "/data2/2019_04_April_CMSTiming/VME/RecoData/RecoWithTracks/v3/"; // BBT, 4-18-19
+  //std::string dataFolder = "/data2/2019_04_April_CMSTiming/VME/RecoData/RecoWithTracks/v3/"; // BBT, 4-18-19, local
+  std::string dataFolder = "/eos/uscms/store/group/cmstestbeam/2019_04_April_CMSTiming/VME/RecoData/RecoWithTracks/v3/"; // BBT, 4-18-19, LPC EOS
   
   
   //----------------
@@ -26,43 +27,46 @@ void analyze_FNAL(const int& firstRun, const int& lastRun)
   float ampmin_cut[NCH];
   float ampmax_cut[NCH];
   
-  ampch_id[0]  = 0; // digitizer index of reference channel (MCP)
-  timech_id[0] = 0; // digitizer index of reference channel (MCP)
-  namech[0] = "photek";
-  ampmin_cut[0] = 50.;  //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
-  ampmax_cut[0] = 850.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
-  
-  ampch_id[1]  = 11; // digitizer index of 1st bar, left SiPM
-  timech_id[1] = 2;  // digitizer index of 1st bar, left SiPM
-  namech[1] = "middle left";
-  ampmin_cut[1] = 200.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
-  ampmax_cut[1] = 600.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
-  
-   ampch_id[2]  = 14; // digitizer index of 1st bar, right SiPM
-   timech_id[2] = 5;  // digitizer index of 1st bar, right SiPM
-   namech[2] = "middle right";
-   ampmin_cut[2] = 200.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
-   ampmax_cut[2] = 600.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
-  
-   /*
-  ampch_id[0]  = 17; // digitizer index of reference channel (MCP)
-  timech_id[0] = 17; // digitizer index of reference channel (MCP)
-  namech[0] = "photek";
-  ampmin_cut[0] = 50.;  //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
-  ampmax_cut[0] = 850.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
-
-   ampch_id[1]  = 18; // digitizer index of 2nd bar, left SiPM
-   timech_id[1] = 20;  // digitizer index of 2nd bar, left SiPM
-   namech[1] = "FBK left";
-   ampmin_cut[1] = 200.;  //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
-   ampmax_cut[1] = 600.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
-  
-   ampch_id[2]  = 21; // digitizer index of 2nd bar, right SiPM 
-   timech_id[2] = 19;  // digitizer index of 2nd bar, right SiPM
-   namech[2] = "FBK right";
-   ampmin_cut[2] = 200.;  //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
-   ampmax_cut[2] = 600.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
-   */
+  if (bar == "box2"){
+    cout << bar << endl;
+    ampch_id[0]  = 0; // digitizer index of reference channel (MCP)
+    timech_id[0] = 0; // digitizer index of reference channel (MCP)
+    namech[0] = "photek";
+    ampmin_cut[0] = 50.;  //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    ampmax_cut[0] = 850.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    
+    ampch_id[1]  = 11; // digitizer index of 1st bar, left SiPM
+    timech_id[1] = 2;  // digitizer index of 1st bar, left SiPM
+    namech[1] = "middle left";
+    ampmin_cut[1] = 100.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    ampmax_cut[1] = 500.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    
+    ampch_id[2]  = 14; // digitizer index of 1st bar, right SiPM
+    timech_id[2] = 5;  // digitizer index of 1st bar, right SiPM
+    namech[2] = "middle right";
+    ampmin_cut[2] = 100.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    ampmax_cut[2] = 500.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
+  }
+  else if (bar == "bar"){
+    cout << bar << endl;
+    ampch_id[0]  = 18; // digitizer index of reference channel (MCP)
+    timech_id[0] = 18; // digitizer index of reference channel (MCP)
+    namech[0] = "photek";
+    ampmin_cut[0] = 50.;  //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    ampmax_cut[0] = 450.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    
+    ampch_id[1]  = 19; // digitizer index of 2nd bar, left SiPM
+    timech_id[1] = 21;  // digitizer index of 2nd bar, left SiPM
+    namech[1] = "FBK left";
+    ampmin_cut[1] = 20.;  //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    ampmax_cut[1] = 400.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    
+    ampch_id[2]  = 20; // digitizer index of 2nd bar, right SiPM 
+    timech_id[2] = 22;  // digitizer index of 2nd bar, right SiPM
+    namech[2] = "FBK right";
+    ampmin_cut[2] = 20.;  //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    ampmax_cut[2] = 400.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
+  }
   
   //------------------
   // define selections
@@ -73,18 +77,39 @@ void analyze_FNAL(const int& firstRun, const int& lastRun)
   float upperTimeCut = 60.; // high time cut in ns
   float nSigmaTimeCut = 2.; // n of sigma on time cut
   
-  float minX = -10.;   // range of X in mm
-  float maxX = +30.;   // range of X in mm
-  float centerX = 9.; // hodoscope X coordinate of crystal center in mm
-  float BSX = 4.;     // half-size of beam spot selection around the center in mm
+  float minX = -99.;   // range of X in mm
+  float maxX = -99.;   // range of X in mm
+  float centerX = -99.; // hodoscope X coordinate of crystal center in mm
+  float BSX = -99.;     // half-size of beam spot selection around the center in mm
+  float minY = -99.;    // range of Y in mm
+  float maxY = -99.;    // range of Y in mm
+  float centerY = -99.; // hodoscope Y coordinate of crystal center in mm
+  float BSY = -99;      // half-size of beam spot selection around the center in mm
+
+  if( bar == "box2"){
+    minX = -10.;   // range of X in mm
+    maxX = +30.;   // range of X in mm
+    centerX = 9.; // hodoscope X coordinate of crystal center in mm
+    BSX = 4.;     // half-size of beam spot selection around the center in mm
+    minY = 0.;    // range of Y in mm
+    maxY = +40.;    // range of Y in mm
+    centerY = 25.5; // hodoscope Y coordinate of crystal center in mm
+    BSY = 1.5;      // half-size of beam spot selection around the center in mm
+  }
+  else if( bar == "bar"){
+    minX = -10.;   // range of X in mm
+    maxX = +30.;   // range of X in mm
+    centerX = 9.; // hodoscope X coordinate of crystal center in mm
+    BSX = 3.;     // half-size of beam spot selection around the center in mm
+    minY = 0.;    // range of Y in mm
+    maxY = +40.;    // range of Y in mm
+    centerY = 27; // hodoscope Y coordinate of crystal center in mm
+    BSY = 2;      // half-size of beam spot selection around the center in mm
+  }
+
   const int NPOSCUTSX = 8; // number of bins along X for binned time resolution
   float lowerPosCutX = centerX-BSX;
   float upperPosCutX = centerX+BSX;  
-  
-  float minY = 0.;    // range of Y in mm
-  float maxY = +40.;    // range of Y in mm
-  float centerY = 25.5; // hodoscope Y coordinate of crystal center in mm
-  float BSY = 1.5;      // half-size of beam spot selection around the center in mm
   const int NPOSCUTSY = 5; // number of bins along Y for binned time resolution
   float lowerPosCutY = centerY-BSY;
   float upperPosCutY = centerY+BSY;
@@ -369,6 +394,7 @@ void analyze_FNAL(const int& firstRun, const int& lastRun)
   
   // event loop
   nSelectedEntries = 0;
+  double nCountedEntries = 0;
   for(int entry = 0; entry < nEntries; ++entry)
   {
     std::cout << ">>> 2nd loop: reading entry " << entry << " / " << nEntries << "\r" << std::flush;
@@ -393,9 +419,14 @@ void analyze_FNAL(const int& firstRun, const int& lastRun)
          time_ref > std::min(time_peak[0]+time_sigma[0]*nSigmaTimeCut,upperTimeCut) )
       continue;
     
-    
     for(int iCh = 0; iCh < NCH; ++iCh)
     {      
+      cout << "!! ben, entry: " << entry << "\n"
+	   << "amp[" << ampch_id[iCh] << "]= " <<  amp[ampch_id[iCh]] << " :: > max() :: max1= " << mip_peak[iCh]*rel_amp_cut_low << " , max2= " << ampmin_cut[iCh] << "\n" 
+	   << "amp[" << ampch_id[iCh] << "]= " <<  amp[ampch_id[iCh]] << " :: < min() :: min1= " << mip_peak[iCh]*rel_amp_cut_hig << " , max2= " << ampmax_cut[iCh] << "\n"
+	   << "time["<< timech_id[iCh] << "]= " <<  time[timech_id[iCh]] << " :: > max() :: max1= " << time_peak[iCh]-time_sigma[iCh]*nSigmaTimeCut << " , max2= " << lowerTimeCut << "\n"
+	   << "time["<< timech_id[iCh] << "]= " <<  time[timech_id[iCh]] << " :: < min() :: min1= " << time_peak[iCh]+time_sigma[iCh]*nSigmaTimeCut << " , min2= " << upperTimeCut << "\n" << endl;
+
       if( amp[ampch_id[iCh]] > std::max(mip_peak[iCh]*rel_amp_cut_low,ampmin_cut[iCh]) &&
           amp[ampch_id[iCh]] < std::min(mip_peak[iCh]*rel_amp_cut_hig,ampmax_cut[iCh]) &&
           time[timech_id[iCh]] > std::max(time_peak[iCh]-time_sigma[iCh]*nSigmaTimeCut,lowerTimeCut) &&
@@ -405,12 +436,14 @@ void analyze_FNAL(const int& firstRun, const int& lastRun)
         
         h2_deltat_vs_amp[iCh] -> Fill( amp[ampch_id[iCh]],time[timech_id[iCh]]-time_ref );
         p_deltat_vs_amp[iCh]  -> Fill( amp[ampch_id[iCh]],time[timech_id[iCh]]-time_ref );
+	++nCountedEntries;
       }
     }
     
     ++nSelectedEntries;
   }
   std::cout << "\n>>> 2nd loop: selected entries " << nSelectedEntries << std::endl;
+  std::cout << "\n>>> 2nd loop: counted entries " << nCountedEntries << std::endl;
   
   
   
@@ -422,6 +455,7 @@ void analyze_FNAL(const int& firstRun, const int& lastRun)
   
   for(int iCh = 1; iCh < NCH; ++iCh)
   {
+    cout << "ben, channel: " << iCh << endl;
     c_time_vs_amp -> cd(iCh);
     
     h2_deltat_vs_amp[iCh]->SetStats(0);
@@ -436,7 +470,10 @@ void analyze_FNAL(const int& firstRun, const int& lastRun)
     // fitAmpCorr[iCh] = new TF1(Form("fitAmpCorr_%s", namech[iCh].c_str()),"[0]*log([1]*x)+[2]",0.,1000.);
     // fitAmpCorr[iCh]->SetParameters(-0.3,6e-13,-10.);
     fitAmpCorr[iCh] = new TF1(Form("fitAmpCorr_%s", namech[iCh].c_str()),"pol4",0.,1000.);
+    //fitAmpCorr[iCh] = new TF1(Form("fitAmpCorr_%s", namech[iCh].c_str()),"pol4",0.,200.);
+    cout << "ben, preFit" << endl;
     p_deltat_vs_amp[iCh] -> Fit(fitAmpCorr[iCh],"QNRS+");
+    cout << "ben, postFit" << endl;
     fitAmpCorr[iCh] -> SetLineColor(kMagenta);
     fitAmpCorr[iCh] -> Draw("same");
     
