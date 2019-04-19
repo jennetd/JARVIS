@@ -1,6 +1,14 @@
-void printCanvas(TCanvas* c0, string title, string outputDir)
+void printCanvas(TCanvas* _c0, string _outputDir, string _timeAlgo)
 {
+  _c0->Draw();
+  TLatex* _algoLabel = new TLatex(0.74, 0.96, Form("%s", _timeAlgo.c_str()));
+  _algoLabel->SetNDC(kTRUE);
+  _algoLabel->SetTextFont(42);
+  _algoLabel->SetTextSize(0.03);
+  _algoLabel->Draw("same");
+  _c0->Print( ( _outputDir + "/" + _c0->GetTitle() + "_" + _timeAlgo + ".png").c_str() );
 
+  return;
 }
 
 void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string timeAlgo="IL_50", string outputDir="./")
@@ -42,13 +50,13 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string ti
     
     ampch_id[1]  = 10; // digitizer index of 1st bar, left SiPM
     timech_id[1] = 1;  // digitizer index of 1st bar, left SiPM
-    namech[1] = "middle left";
+    namech[1] = "top left";
     ampmin_cut[1] = 100.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
     ampmax_cut[1] = 500.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
     
     ampch_id[2]  = 13; // digitizer index of 1st bar, right SiPM
     timech_id[2] = 4;  // digitizer index of 1st bar, right SiPM
-    namech[2] = "middle right";
+    namech[2] = "top right";
     ampmin_cut[2] = 100.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
     ampmax_cut[2] = 500.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
   }
@@ -82,17 +90,17 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string ti
     
     ampch_id[1]  = 12; // digitizer index of 1st bar, left SiPM
     timech_id[1] = 3;  // digitizer index of 1st bar, left SiPM
-    namech[1] = "middle left";
+    namech[1] = "bottom left";
     ampmin_cut[1] = 100.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
     ampmax_cut[1] = 500.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
     
     ampch_id[2]  = 15; // digitizer index of 1st bar, right SiPM
     timech_id[2] = 6;  // digitizer index of 1st bar, right SiPM
-    namech[2] = "middle right";
+    namech[2] = "bottom right";
     ampmin_cut[2] = 100.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
     ampmax_cut[2] = 500.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
   }
-  else if (bar == "bar"){
+  else if (bar == "single"){
     cout << bar << endl;
     ampch_id[0]  = 18; // digitizer index of reference channel (MCP)
     timech_id[0] = 18; // digitizer index of reference channel (MCP)
@@ -138,8 +146,8 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string ti
     BSX = 15.;     // half-size of beam spot selection around the center in mm
     minY = 0.;    // range of Y in mm
     maxY = +40.;    // range of Y in mm
-    centerY = 29.; // hodoscope Y coordinate of crystal center in mm
-    BSY = 1.5;      // half-size of beam spot selection around the center in mm
+    centerY = 28.5; // hodoscope Y coordinate of crystal center in mm
+    BSY = 1;      // half-size of beam spot selection around the center in mm
   }
   else if( bar == "box2"){
     minX = -10.;   // range of X in mm
@@ -161,21 +169,21 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string ti
     centerY = 22.0; // hodoscope Y coordinate of crystal center in mm
     BSY = 1.5;      // half-size of beam spot selection around the center in mm
   }
-  else if( bar == "bar"){
+  else if( bar == "single"){
     minX = -10.;   // range of X in mm
     maxX = +30.;   // range of X in mm
-    centerX = 9.; // hodoscope X coordinate of crystal center in mm
-    BSX = 14.;     // half-size of beam spot selection around the center in mm
+    centerX = 9.5; // hodoscope X coordinate of crystal center in mm
+    BSX = 13.5;     // half-size of beam spot selection around the center in mm
     minY = 0.;    // range of Y in mm
     maxY = +40.;    // range of Y in mm
-    centerY = 27; // hodoscope Y coordinate of crystal center in mm
-    BSY = 2;      // half-size of beam spot selection around the center in mm
+    centerY = 26.5; // hodoscope Y coordinate of crystal center in mm
+    BSY = 1.5;      // half-size of beam spot selection around the center in mm
   }
 
   const int NPOSCUTSX = 8; // number of bins along X for binned time resolution
   float lowerPosCutX = centerX-BSX;
   float upperPosCutX = centerX+BSX;  
-  const int NPOSCUTSY = 5; // number of bins along Y for binned time resolution
+  const int NPOSCUTSY = 6; // number of bins along Y for binned time resolution
   float lowerPosCutY = centerY-BSY;
   float upperPosCutY = centerY+BSY;
   
@@ -335,7 +343,7 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string ti
   y_BS_min->SetLineWidth(2);
   y_BS_max->SetLineColor(kRed);
   y_BS_max->SetLineWidth(2);
-  
+
   TCanvas* c_amp_vs_XY = new TCanvas("c_amp_vs_XY","c_amp_vs_XY",1000,500*((NCH-1))/2);
   c_amp_vs_XY -> Divide(2,(NCH-1)/2);
   for(int iCh = 1; iCh < NCH; ++iCh)
@@ -354,13 +362,13 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string ti
     latex[iCh] -> Draw("same");
   }
   
-  
   // ---------------------------- fitting and drawing mip peak ----------------------------
   float mip_peak[NCH];
   
   TCanvas* c_amp = new TCanvas("c_amp","c_amp",1000,500*(NCH+1)/2);
   c_amp -> Divide(2,(NCH+1)/2);
-  
+  TLatex *l_peakAmp = new TLatex();
+
   for (int iCh = 0; iCh < NCH; ++iCh)
   {
     c_amp -> cd(iCh+1);
@@ -391,11 +399,16 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string ti
       TLine* higcut = new TLine(std::min(rel_amp_cut_hig*mip_peak[iCh],ampmax_cut[iCh]),0.,std::min(rel_amp_cut_hig*mip_peak[iCh],ampmax_cut[iCh]),h_amp[iCh]->GetMaximum());
       lowcut->Draw("same");
       higcut->Draw("same");
+      
+      l_peakAmp = new TLatex(0.55, 0.8, Form("Fit Peak: %.2f mV", mip_peak[iCh]));
+      l_peakAmp->SetNDC();
+      l_peakAmp->SetTextFont(42);
+      l_peakAmp->SetTextSize(0.03);
+      l_peakAmp->Draw("same");
     }
     
     latex[iCh] -> Draw("same");
   }
-  
   
   // ---------------------------- fitting and drawing time peak ----------------------------
   TF1* fitTimePeak = new TF1("fitTimePeak","gaus",lowerTimeCut,upperTimeCut);
@@ -433,10 +446,6 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string ti
     
     latex[iCh] -> Draw("same");
   }
-  
-  
-  
-  
   
   
   //-----------------------------------------------------------------------------
@@ -536,10 +545,6 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string ti
     
     latex[iCh] -> Draw("same");
   }
-  
-  
-  
-  
   
   
   //--------------------------------------------------------------------------
@@ -852,7 +857,6 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string ti
   leg->AddEntry(p_avg_vs_diff,   "t_{avg} - t_{MCP}", "lpe");     
   leg->Draw("same");
   
-  
   // ---------------------------- compare left, right, sum time resolution ----------------------------
   TCanvas* c_timeRes_comp = new TCanvas("c_timeRes_comp","c_timeRes_comp",1000,500);
   c_timeRes_comp->Divide(2,1);
@@ -929,7 +933,6 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string ti
   float sigmaRightCorr = sqrt(pow(fitdeltat_right_ampCorr->GetParameter(2),2) - pow(sigma_ref,2) );    
   float sigmaAvgCorr   = sqrt(pow(fitdeltat_avg_ampCorr->GetParameter(2),2)   - pow(sigma_ref,2) );    
   
-  
   // ---------------------------- BS cut plots ----------------------------
   TF1* fitdeltat_ampCorr_BSCut_L = new TF1("fitdeltat_ampCorr_BSCut_L", "gaus", h_deltat_left_ampCorr->GetMean() -h_deltat_left_ampCorr->GetRMS()*2,  h_deltat_left_ampCorr->GetMean() +h_deltat_left_ampCorr->GetRMS()*2);
   TF1* fitdeltat_ampCorr_BSCut_R = new TF1("fitdeltat_ampCorr_BSCut_R", "gaus", h_deltat_right_ampCorr->GetMean()-h_deltat_right_ampCorr->GetRMS()*2, h_deltat_right_ampCorr->GetMean()+h_deltat_right_ampCorr->GetRMS()*2);
@@ -972,6 +975,7 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string ti
     }
   }
   
+
   TCanvas* c_timeRes_vs_BS = new TCanvas("c_timeRes_vs_BS","c_timeRes_vs_BS",500,500);
   c_timeRes_vs_BS->cd();
   gPad->SetGridy();
@@ -1002,7 +1006,6 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string ti
   leg->AddEntry(gdeltat_vs_BS_R, Form("right only"), "lpe");     
   leg->AddEntry(gdeltat_vs_BS,   Form("avgrage"), "lpe");     
   leg->Draw("same");
-  
   
   // ---------------------------- plots in position bins ----------------------------
   TGraphErrors* g_timeRes_left_vs_X = new TGraphErrors ();
@@ -1083,7 +1086,8 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string ti
     
     delete fitdeltat_ampCorr_posCut;
   }
-  
+
+
   TCanvas* c_timeRes_vs_X_Y = new TCanvas("c_timeRes_vs_X_Y","c_timeRes_vs_X_Y",1000,500);
   c_timeRes_vs_X_Y -> Divide(2,1);
   c_timeRes_vs_X_Y->cd(1);
@@ -1114,7 +1118,7 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string ti
   leg->Draw("same");
   
   // Y position
-  // avgrage
+  // average
   myPoint = 0;
   for(int iPosCut = 0; iPosCut < NPOSCUTSY; ++iPosCut)
   {
@@ -1239,7 +1243,8 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string ti
       delete fitdeltat_ampCorr_posCut;
     }
   }
-  
+
+
   TCanvas* c_timeRes_vs_XY = new TCanvas ("c_timeRes_vs_XY","c_timeRes_vs_XY",500,500);
   gStyle -> SetPaintTextFormat(".3f");
   h2_timeRes_avg_vs_XY->SetStats(0);
@@ -1247,10 +1252,7 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string ti
   h2_timeRes_avg_vs_XY->GetZaxis()->SetRangeUser(0, 0.08);
   h2_timeRes_avg_vs_XY->SetTitle(";x [mm];y [mm];#sigma_{t} [ns]");
   
-  
-  
-  
-  
+    
   
   //----------------------------------------------------------------------
   //                    (4) fourth loop events --> to apply pos correction
@@ -1358,6 +1360,17 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string ti
   leg->Draw("same");
 
 
+  // print canvasses
+  printCanvas(c_timeRes_vs_XY, outputDir, timeAlgo);    
+  printCanvas(c_timeRes_vs_X_Y, outputDir, timeAlgo);    
+  printCanvas(c_beamXY, outputDir, timeAlgo);
+  printCanvas(c_amp_vs_XY, outputDir, timeAlgo);
+  printCanvas(c_amp, outputDir, timeAlgo);  
+  printCanvas(c_time, outputDir, timeAlgo);
+  printCanvas(c_time_vs_amp, outputDir, timeAlgo);  
+  printCanvas(c_time_vs_X, outputDir, timeAlgo);  
+  printCanvas(c_timeRes_comp, outputDir, timeAlgo);  
+  printCanvas(c_timeRes_vs_BS, outputDir, timeAlgo);    
 
-  
+ 
 }
