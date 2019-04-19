@@ -82,4 +82,8 @@ Common Failures:
 	The kinit on rulinux might have expired. Reissue the ticket on otsdaq@rulinux04.dhcp.fnal.gov
 * Keep checking the run number and if the run number in digitizer listener doesn't match the otsdaq run number
  	 Reissue the ticket on timingdaq02, change the run number in the file /data-08/TestBeam/Users/RunNumber/OtherRuns0NextRunNumber.txt to the next run number from the run table and see if the problem is fixed.
+* VME TimingDAQ failure:
+	 Make sure the vme rsync is on in workspace 4
+* See "N/A" in Olmo's fields:
+	 Make sure the RP rsync is on in workspace 4  	 
 
