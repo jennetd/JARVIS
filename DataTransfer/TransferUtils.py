@@ -6,9 +6,9 @@ def ListXrdRemote(site, directory):
     output = os.popen(command).read().splitlines()    
     processedRemoteFileDict = {}
     for f in output:
-        tmp = f.split(" ")
-        filesize=tmp[5]
-        filename=(tmp[6].split("/")[-1])        
+        tmp = f.split()
+        filesize=tmp[3]
+        filename=(tmp[4].split("/")[-1])        
         processedRemoteFileDict[filename] = filesize
     return processedRemoteFileDict
 
