@@ -12,7 +12,7 @@ from AllModules import *
 ################ Periodically make sure this value makes sense. #######################
 #######################################################################################
 
-NumSpillsPerRun = 2
+NumSpillsPerRun = 1
 RP = True
 
 #################################Parsing arguments######################################
@@ -29,17 +29,7 @@ Configuration = args.Configuration
 
 ########################### Only when Run table is used ############################
 ########### Get Key ###########
-keyFilePath = "../RecoProcesses/key"
-key = None
-NoKeyFile = False
-if os.path.exists(keyFilePath): 
-	keyFile = open(keyFilePath, "r")
-	key = str(keyFile.read().strip())
-	keyFile.close()
-else:
-	NoKeyFile = True
-if key == '' or NoKeyFile:
-	raise Exception('\n\n ################################################################################################ \n ###### Either the key file is not present in the current directory or there is no key in it! ########\n ########################################################################################################### \n\n')
+key = GetKey()
 
 ############ Getting the digitizer list from the configuration table #############
 DigitizerList = pf.GetDigiFromConfig(Configuration, False, key)
@@ -162,7 +152,7 @@ if RP: tp.RPGlobalComm("GlobalStart")
 while (AutoPilotStatus == 1):
 
 	if iteration % 20 == 0:
-		StartSeconds,StopSeconds = GetStartAndStopSeconds(30, 10)
+		StartSeconds,StopSeconds = GetStartAndStopSeconds(30, 15)
 		print StartSeconds, StopSeconds
 
 	## Refresh this
@@ -236,15 +226,17 @@ while (AutoPilotStatus == 1):
 			if "TekScope" in DigiListThisRun: DigiListThisRun.remove("TekScope")
 			if "KeySightScope" in DigiListThisRun: 
 				DigiListThisRun.remove("KeySightScope")
-				ConversionKeySightScope = 'N/A'
 				TimingDAQKeySightScope = 'N/A'
 				TimingDAQNoTracksKeySightScope = 'N/A'
 				LabviewRecoKeySightScope = 'N/A'
+				ConversionKeySightScope = 'N/A'
 		else:
 			ConversionKeySightScope = 'Not started'
 			TimingDAQKeySightScope = 'Not started'
 			TimingDAQNoTracksKeySightScope = 'Not started'
 			LabviewRecoKeySightScope = 'Not started'
+		
+		 ######If the scope is included It's gonna update this field to "Not Started" in scope listener script
 
 		# Get Raspberry Pi Value list, Make sure raspberry pi rsync is on
 		BoxTemp, x_stage, y_stage, BoxVoltage, BarCurrent, z_rotation, BoxHum, BoxCurrent, BarVoltage  = ReadRPFile(RunNumber)
