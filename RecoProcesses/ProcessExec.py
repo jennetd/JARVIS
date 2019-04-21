@@ -141,8 +141,6 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 			am.time.sleep(4)
 
 
-
-
 def ProcessExecBTL(OrderOfExecution, PID, SaveWaveformBool = None, Version1 = None, Version2 = None, RunNumber = -1, DigitizerKey = -1 , MyKey = None, GetRunListEachTime = True):
 	
 	if not DigitizerKey == -1: Digitizer = am.DigitizerDict[DigitizerKey]
