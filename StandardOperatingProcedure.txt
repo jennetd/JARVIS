@@ -64,6 +64,9 @@ Run Auto-Processing:
 	". VMEReco.sh"
 	". KeySightScopeReco.sh" 
 
+If you want to run TimingDAQ for two configs, just use VMERecoBTL.sh: It can do TimingDAQ with tracks and without tracks for 2 configs. You can mention the two configs in StartVMEProcessingBTL.py
+If the script fails for some reason, use VMEReco.sh with just one configuration
+
 
 For Reprocessing single run, or a range of runs:
 
