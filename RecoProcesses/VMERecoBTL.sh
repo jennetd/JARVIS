@@ -1,0 +1,1 @@
+gnome-terminal --tab --title="VME Reco" --command="bash -c 'cd /home/daq/JARVIS/RecoProcesses; python StartVMEProcessingBTL.py; $SHELL'" --tab --title="TimingDAQ Logs" --command="bash -c 'cd /home/daq/2019_04_April_CMSTiming/ProcessLog/TimingDAQVME; python /home/daq/JARVIS/BackEndProcesses/CheckLogs.py; $SHELL'"

@@ -14,6 +14,7 @@ from AllModules import *
 
 NumSpillsPerRun = 1
 RP = True
+ETLTemp = True
 
 #################################Parsing arguments######################################
 

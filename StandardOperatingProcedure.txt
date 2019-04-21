@@ -82,11 +82,12 @@ Common Failures:
 		2) Start OTS server again, and then initialize and configure
 		3) Start the autopilot
 	Look at the histograms in otsdaq visualizer and make sure they are fine
-	The kinit on rulinux might have expired. Reissue the ticket on otsdaq@rulinux04.dhcp.fnal.gov
+		Maybe the tracking was fine on Rulinux but it is not copied back to daq02, Check the log to see if this is the case. Reissue the ticket on otsdaq@rulinux04.dhcp.fnal.gov
 * Keep checking the run number and if the run number in digitizer listener doesn't match the otsdaq run number
  	 Reissue the ticket on timingdaq02, change the run number in the file /data-08/TestBeam/Users/RunNumber/OtherRuns0NextRunNumber.txt to the next run number from the run table and see if the problem is fixed.
 * VME TimingDAQ failure:
 	 Make sure the vme rsync is on in workspace 4
 * See "N/A" in Olmo's fields:
-	 Make sure the RP rsync is on in workspace 4  	 
+	 Make sure the RP rsync is on in workspace 4 
+
 
