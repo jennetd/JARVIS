@@ -27,24 +27,13 @@ while continueLoop :
     print   "##########################################\n"
 
     command = "rsync -artuv --progress daq@timingdaq02:/home/daq/"+CampaignDirectoryName+"/VME/RecoData/RecoWithTracks/v3/* " + LocalDataLocation+CampaignDirectoryName+"/VME/RecoData/RecoWithTracks/v3/"
-    #print command
     os.system(command)
  
     command = "rsync -artuv --progress daq@timingdaq02:/home/daq/"+CampaignDirectoryName+"/KeySightScope/RecoData/TimingDAQRECO/RecoWithTracks/v1/* " + LocalDataLocation+CampaignDirectoryName+"/KeySightScope/RecoData/TimingDAQRECO/RecoWithTracks/v1/"
-    #print command
-    os.system(command)
-
-    command = "rsync -artuv --progress daq@timingdaq02:/home/daq/"+CampaignDirectoryName+"/KeySightScope/RecoData/TimingDAQRECO/RecoWithTracks/v1/* " + LocalDataLocation+CampaignDirectoryName+"/KeySightScope/RecoData/TimingDAQRECO/RecoWithTracks/v1/"
-    #print command
     os.system(command)
 
     command = "rsync -artuv --progress daq@timingdaq02:/home/daq/"+CampaignDirectoryName+"/Tracks/* " + LocalDataLocation+CampaignDirectoryName+"/Tracks/"
-    #print command
     os.system(command)
 
-    command = "rsync -artuv --progress daq@timingdaq02:/home/daq/"+CampaignDirectoryName+"/* " + LocalDataLocation+CampaignDirectoryName+"/"
-    #print command
-    #os.system(command)
-    time.sleep(60)
     
     
