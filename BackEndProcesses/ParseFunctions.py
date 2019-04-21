@@ -152,6 +152,16 @@ def UpdateAttributeStatus(FieldID, UpdateAttributeName, UpdateAttributeStatus, D
     ResponseDict = am.ast.literal_eval(response.text)
     if Debug: return ResponseDict
 
+def UpdateAttributeStatus2(FieldID, UpdateAttributeName, UpdateAttributeStatus, Debug, MyKey):
+    headers = {
+        'Authorization': 'Bearer %s' % MyKey, 
+        'Content-Type': 'application/json',
+    }
+    data = '{"fields":{"%s": %d}}' % (UpdateAttributeName,UpdateAttributeStatus)
+    response = am.requests.patch(am.CurlBaseCommand + '/' + FieldID, headers=headers, data=data)
+    ResponseDict = am.ast.literal_eval(response.text)
+    if Debug: return ResponseDict
+
 def GetFieldIDOtherTable(TableName,ConditionAttributeName, ConditionAttributeStatus, Debug, MyKey):     
     if TableName == 'Sensor' :
         CurlBaseCommand = am.CurlBaseCommandSensor

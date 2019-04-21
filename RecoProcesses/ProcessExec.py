@@ -126,7 +126,18 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 					print 'Bad %s execution for run %d. Either the CMD format is wrong or somwthing else was wrong while execution. Please check the ProcessLog to know more.\n' % (ProcessName, run)
 				else:
 					if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[0], False, MyKey)
-				
+					if PID == 2 and DigitizerKey == 3:
+						from GetEntries import *
+						EntriesWithTracks, EntriesWithTracksAndHit, EntriesWithTracksAndPhotekHit = RunEntries(ResultFileLocation)
+						if pf.QueryGreenSignal(True): 
+							pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithTracksScope", int(EntriesWithTracks), False, MyKey)
+							time.sleep(0.5)
+						if pf.QueryGreenSignal(True): 
+							pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithTracksAndHitScope", int(EntriesWithTracksAndHit), False, MyKey)
+							time.sleep(0.5)
+						if pf.QueryGreenSignal(True): 
+							pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithTracksAndPhotekHitScope", int(EntriesWithTracksAndPhotekHit), False, MyKey)
+
 				print 'Finished process %s for run %d' % (ProcessName, run)		
 				print '###############################\n'
 			
