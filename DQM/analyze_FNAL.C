@@ -27,7 +27,8 @@ int returnNumberOfBinsAboveAmpThreshold(TProfile* _tp0, double _threshold = 0.5)
 bool checkTrackingSynchronization(const char* _fileName)
 {
 
-  TFile* _fileToCheck = new TFile( _fileName, "READ");
+  //TFile* _fileToCheck = new TFile( _fileName, "READ");
+  TFile* _fileToCheck = TFile::Open( _fileName );
   if (_fileToCheck->GetListOfKeys()->Contains("pulse")==false)
     return false;
 
@@ -70,7 +71,7 @@ bool checkTrackingSynchronization(const char* _fileName)
   return false;
 }
 
-void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string timeAlgo="LP2_30", string outputDir="./")
+void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string timeAlgo="LP2_30", string outputDir="./", string isCondor="")
 {
   gStyle->SetPadTopMargin(0.05);
   gStyle->SetPadBottomMargin(0.13);
@@ -87,6 +88,8 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string ti
   //std::string dataFolder = "/eos/cms/store/group/dpg_mtd/comm_mtd/TB/MTDTB_FNAL_Nov2018/reco/v6/";
   //std::string dataFolder = "/data2/2019_04_April_CMSTiming/VME/RecoData/RecoWithTracks/v3/"; // BBT, 4-18-19, local
   std::string dataFolder = "/eos/uscms/store/group/cmstestbeam/2019_04_April_CMSTiming/VME/RecoData/RecoWithTracks/v3/"; // BBT, 4-18-19, LPC EOS
+  if (isCondor=="True")
+    dataFolder = "root://cmseos.fnal.gov//store/group/cmstestbeam/2019_04_April_CMSTiming/VME/RecoData/RecoWithTracks/v3/"; // BBT, 4-18-19, LPC EOS
   //std::string dataFolder = "/data2/2019_04_April_CMSTiming/VME/RecoData/RecoWithTracks/v3/";
   
   //----------------
@@ -277,9 +280,16 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string ti
   //------------
   // define tree  
   TChain* myTree = new TChain("pulse", "pulse");
+  TFile *f0 = new TFile();
   bool trackingIsSynced = false;
   for (int iRun = firstRun; iRun <= lastRun; iRun++)
   {   
+  f0 = TFile::Open( Form("%s/RawDataSaver0CMSVMETiming_Run%d_0_Raw.root",dataFolder.c_str(),iRun) );
+    if ( f0 == NULL ) {
+      std::cout << " !! FILE NOT FOUND " << Form("%s/RawDataSaver0CMSVMETiming_Run%d_0_Raw.root",dataFolder.c_str(),iRun) << std::endl;
+      continue;
+    }
+
     trackingIsSynced = checkTrackingSynchronization( Form("%s/RawDataSaver0CMSVMETiming_Run%d_0_Raw.root",dataFolder.c_str(),iRun) );
 
     if (trackingIsSynced == true) {
