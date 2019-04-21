@@ -11,7 +11,66 @@ void printCanvas(TCanvas* _c0, string _outputDir, string _timeAlgo)
   return;
 }
 
-void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string timeAlgo="IL_50", string outputDir="./")
+int returnNumberOfBinsAboveAmpThreshold(TProfile* _tp0, double _threshold = 0.5)
+{
+  int _binsAboveThreshold = 0 ;
+
+  for(int iBin=1; iBin < _tp0->GetNbinsX(); iBin++){
+    if ( _tp0->GetBinContent(iBin) > _threshold ) 
+      _binsAboveThreshold++;
+  }
+
+  return _binsAboveThreshold;
+
+}
+
+bool checkTrackingSynchronization(const char* _fileName)
+{
+
+  TFile* _fileToCheck = new TFile( _fileName, "READ");
+  if (_fileToCheck->GetListOfKeys()->Contains("pulse")==false)
+    return false;
+
+  TTree* _pulse = (TTree*)_fileToCheck->Get("pulse");
+  
+  TProfile* h_box1_L = new TProfile("h_box1_L", "h_box1_L", 30, 10, 35);
+  TProfile* h_box1_R = new TProfile("h_box1_R", "h_box1_R", 30, 10, 35);
+  TProfile* h_box2_L = new TProfile("h_box2_L", "h_box2_L", 30, 10, 35);
+  TProfile* h_box2_R = new TProfile("h_box2_R", "h_box2_R", 30, 10, 35);
+  TProfile* h_box3_L = new TProfile("h_box3_L", "h_box3_L", 30, 10, 35);
+  TProfile* h_box3_R = new TProfile("h_box3_R", "h_box3_R", 30, 10, 35);
+  TProfile* h_single_L = new TProfile("h_single_L", "h_single_L", 30, 10, 35);
+  TProfile* h_single_R = new TProfile("h_single_R", "h_single_R", 30, 10, 35);
+  
+  _pulse->Draw("amp[1] > 400 :  y_dut[0]>>+h_box1_L", "ntracks==1");
+  _pulse->Draw("amp[2] > 400 :  y_dut[0]>>+h_box2_L", "ntracks==1");
+  _pulse->Draw("amp[3] > 400 :  y_dut[0]>>+h_box3_L", "ntracks==1");
+  _pulse->Draw("amp[4] > 400 :  y_dut[0]>>+h_box1_R", "ntracks==1");
+  _pulse->Draw("amp[5] > 400 :  y_dut[0]>>+h_box2_R", "ntracks==1");
+  _pulse->Draw("amp[6] > 400 :  y_dut[0]>>+h_box3_R", "ntracks==1");
+  _pulse->Draw("amp[19] > 200 : y_dut[0]>>+h_single_L", "ntracks==1");
+  _pulse->Draw("amp[20] > 200 : y_dut[0]>>+h_single_R", "ntracks==1");
+
+  int _nBinsForSyncedFlag = 2;
+  bool found_box1_L = returnNumberOfBinsAboveAmpThreshold(h_box1_L) >= _nBinsForSyncedFlag ? true : false;
+  bool found_box2_L = returnNumberOfBinsAboveAmpThreshold(h_box2_L) >= _nBinsForSyncedFlag ? true : false;
+  bool found_box3_L = returnNumberOfBinsAboveAmpThreshold(h_box3_L) >= _nBinsForSyncedFlag ? true : false;
+  bool found_box1_R = returnNumberOfBinsAboveAmpThreshold(h_box1_R) >= _nBinsForSyncedFlag ? true : false;
+  bool found_box2_R = returnNumberOfBinsAboveAmpThreshold(h_box2_R) >= _nBinsForSyncedFlag ? true : false;
+  bool found_box3_R = returnNumberOfBinsAboveAmpThreshold(h_box3_R) >= _nBinsForSyncedFlag ? true : false;
+  bool found_single_L = returnNumberOfBinsAboveAmpThreshold(h_single_L) >= _nBinsForSyncedFlag ? true : false;
+  bool found_single_R = returnNumberOfBinsAboveAmpThreshold(h_single_R) >= _nBinsForSyncedFlag ? true : false;
+
+  // ** A. This is the tightest "goodness" condition possible. looser is potentially an option
+  //if (found_box1_L == true && found_box2_L == true && found_box3_L == true && found_box1_R == true && found_box2_R == true && found_box3_R == true && found_single_L == true && found_single_R == true)
+  // ** B. This checks tracking using box2+box3+single but skipping box1 (top bar in box)
+  if (found_box2_L == true && found_box3_L == true && found_box2_R == true && found_box3_R == true && found_single_L == true && found_single_R == true)
+    return true;
+  
+  return false;
+}
+
+void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string timeAlgo="LP2_30", string outputDir="./")
 {
   gStyle->SetPadTopMargin(0.05);
   gStyle->SetPadBottomMargin(0.13);
@@ -27,8 +86,8 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string ti
   // ntuple location
   //std::string dataFolder = "/eos/cms/store/group/dpg_mtd/comm_mtd/TB/MTDTB_FNAL_Nov2018/reco/v6/";
   //std::string dataFolder = "/data2/2019_04_April_CMSTiming/VME/RecoData/RecoWithTracks/v3/"; // BBT, 4-18-19, local
-  //std::string dataFolder = "/eos/uscms/store/group/cmstestbeam/2019_04_April_CMSTiming/VME/RecoData/RecoWithTracks/v3/"; // BBT, 4-18-19, LPC EOS
-  std::string dataFolder = "/data2/2019_04_April_CMSTiming/VME/RecoData/RecoWithTracks/v3/";
+  std::string dataFolder = "/eos/uscms/store/group/cmstestbeam/2019_04_April_CMSTiming/VME/RecoData/RecoWithTracks/v3/"; // BBT, 4-18-19, LPC EOS
+  //std::string dataFolder = "/data2/2019_04_April_CMSTiming/VME/RecoData/RecoWithTracks/v3/";
   
   //----------------
   // define channels
@@ -218,12 +277,19 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string ti
   //------------
   // define tree  
   TChain* myTree = new TChain("pulse", "pulse");
-  
+  bool trackingIsSynced = false;
   for (int iRun = firstRun; iRun <= lastRun; iRun++)
   {   
-    //myTree->Add( Form("%s/DataVMETiming_Run%d.root",dataFolder.c_str(),iRun) );
-    myTree->Add( Form("%s/RawDataSaver0CMSVMETiming_Run%d_0_Raw.root",dataFolder.c_str(),iRun) ); // BBT, 4-18-19 
-    std::cout << "adding run: " << iRun << " " <<  Form("%s/RawDataSaver0CMSVMETiming_Run%d_0_Raw.root",dataFolder.c_str(),iRun) << std::endl;
+    trackingIsSynced = checkTrackingSynchronization( Form("%s/RawDataSaver0CMSVMETiming_Run%d_0_Raw.root",dataFolder.c_str(),iRun) );
+
+    if (trackingIsSynced == true) {
+      //myTree->Add( Form("%s/DataVMETiming_Run%d.root",dataFolder.c_str(),iRun) );
+      myTree->Add( Form("%s/RawDataSaver0CMSVMETiming_Run%d_0_Raw.root",dataFolder.c_str(),iRun) ); // BBT, 4-18-19 
+      std::cout << "adding run: " << iRun << " " <<  Form("%s/RawDataSaver0CMSVMETiming_Run%d_0_Raw.root",dataFolder.c_str(),iRun) << std::endl;
+    }
+    else
+      std::cout << "!! TRACKING DE-SYNCED, skiping run: " << iRun << " " <<  Form("%s/RawDataSaver0CMSVMETiming_Run%d_0_Raw.root",dataFolder.c_str(),iRun) << std::endl;
+    
   }
   
   int nEntries = myTree->GetEntries();
