@@ -65,11 +65,11 @@ ConfigFileBasePath = '%sconfig/FNAL_TestBeam_1904/' % TimingDAQDir
 ip_address = "192.168.133.46"
 use_socket = 17000
 runFileName ="/data-08/TestBeam/Users/RunNumber/OtherRuns0NextRunNumber.txt"
-localRunFileName = "otsdaq_runNumber.txt"
+localRunFileName = "/home/daq/JARVIS/AutoPilot/otsdaq_runNumber.txt"
 TClockFilePath = "/home/daq/JARVIS/AutoPilot/TClock"
 
 ########## Key File Path starting from Recoprocesses in Javis
-keyFilePath = "key"
+keyFilePath = "/home/daq/JARVIS/RecoProcesses/key"
 
 ############### Conversion Commands for different digitizer ###########
 TwoStageRecoDigitizers = {
