@@ -107,6 +107,16 @@ def Resistance_calc(T): #Function to calculate resistance for any temperature
     return RT
 
 
+def Temp_calc_NTC(R): #Function to calculate temperature for any resistance                                                                                                                                                                       
+    Temp_x = np.linspace(-30, 30, num=61) #Points to be used for interpolation                                                                                                                                                               
+    Resis_y = np.array([88500,83200,78250,73600,69250,65200,61450,57900,54550,51450,48560,45830,43270,40860,38610,36490,34500,32630,30880,29230,27670,26210,24830,23540,22320,21170,20080,19060,18100,17190,16330,15520,14750,14030,13340,12700,12090,11510,10960,10440,9950,9485,9045,8630,8230,7855,7500,7160,6840,6535,6245,5970,5710,5460,5225,5000,4787,4583,4389,4204,4029])
+    #for i in range(len(Temp_x)):
+    #    Resis_y = np.append(Resis_y,Resistance_calc(Temp_x[i]))
+    Temperature_R = np.interp(R, np.sort(Resis_y), -np.sort(Temp_x))
+    #plt.plot(Temp_x, Resis_y, 'o')                                                                                                                                                                                                           
+    #plt.show()                                                                                                                                                                                                                               
+    return Temperature_R
+
 def Temp_calc(R): #Function to calculate temperature for any resistance                                                                                                                                                                       
     Temp_x = np.linspace(-30, 30, num=100) #Points to be used for interpolation                                                                                                                                                               
     Resis_y = np.array([])
@@ -121,35 +131,35 @@ def ConvertEnv(timestamp):
 	Resis13, Resis14, Resis15, Resis16, Resis17, Resis18, Resis19, Resis20, Voltage1, Current1, Voltage2, Current2, Voltage3, Current3 = GetEnvMeas(timestamp)
 	
 	if Resis13 != -1 and Resis13 != 0:
-		Temp13 = Temp_calc(Resis13)
+		Temp13 = round(Temp_calc_NTC(Resis13),2)
 	else:
 		Temp13 = -999	
 	if Resis14 != -1 and Resis14 != 0:
-		Temp14 = Temp_calc(Resis14)
+		Temp14 = round(Temp_calc_NTC(Resis14),2)
 	else:
 		Temp14 = -999
 	if Resis15 != -1 and Resis15 != 0:
-		Temp15 = Temp_calc(Resis15)
+		Temp15 = round(Temp_calc_NTC(Resis15),2)
 	else:
 		Temp15 = -999
 	if Resis16 != -1 and Resis16 != 0:
-		Temp16 = Temp_calc(Resis16)
+		Temp16 = round(Temp_calc_NTC(Resis16),2)
 	else:
 		Temp16 = -999
 	if Resis17 != -1 and Resis17 != 0:
-		Temp17 = Temp_calc(Resis17)
+		Temp17 = round(Temp_calc(Resis17),2)
 	else:
 		Temp17 = -999 
 	if Resis18 != -1 and Resis18 != 0:
-		Temp18 = Temp_calc(Resis18)	
+		Temp18 = round(Temp_calc(Resis18),2)	
 	else:
 		Temp18 = -999
 	if Resis19 != -1 and Resis19 != 0:
-		Temp19 = Temp_calc(Resis19)		
+		Temp19 = round(Temp_calc(Resis19),2)		
 	else:
 		Temp19 = -999
 	if Resis20 != -1 and Resis20 != 0:
-		Temp20 = Temp_calc(Resis20)
+		Temp20 = round(Temp_calc(Resis20),2)
 	else: 
 		Temp20 = -999
 	return Temp13, Temp14, Temp15, Temp16, Temp17, Temp18, Temp19, Temp20, Voltage1, Current1, Voltage2, Current2, Voltage3, Current3

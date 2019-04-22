@@ -6,11 +6,13 @@ def RunEntries(FileLocation):
 	f = ROOT.TFile.Open(FileLocation)
 	if hasattr(f, 'pulse'):
 		##### Number of Entries with Tracks
-		EntriesWithTracks = f.pulse.GetEntries("ntracks==1&&nplanes>=19")
+		EntriesWithTrack = f.pulse.GetEntries("ntracks==1&&nplanes>=19")
 		##### Number of Entries with Tracks and hit in one or more of the three channels
-		EntriesWithTracksAndHit = f.pulse.GetEntries("ntracks==1&&nplanes>=19&&(amp[0]>20||amp[1]>20||amp[2]>20)")
-		##### Number of Entries with Tracks and hit in the photek
-		EntriesWithTracksAndPhotekHit = f.pulse.GetEntries("ntracks==1&&nplanes>=19&&amp[3]>30")
-		return EntriesWithTracks, EntriesWithTracksAndHit, EntriesWithTracksAndPhotekHit
+		EntriesWithTrackAndHit = f.pulse.GetEntries("ntracks==1&&nplanes>=19&&(amp[0]>20||amp[1]>20||amp[2]>20)")
+		##### Number of Entries with a hit 
+		EntriesWithHit = f.pulse.GetEntries("amp[0]>20||amp[1]>20||amp[2]>20")
+		##### Number of tracks without nplanes condition
+		EntriesWithTrackWithoutNplanes = f.pulse.GetEntries("ntracks==1")
+		return EntriesWithTrack, EntriesWithTrackAndHit, EntriesWithHit, EntriesWithTrackWithoutNplanes
 	else:
 		return -1,-1,-1

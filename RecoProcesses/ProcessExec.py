@@ -127,16 +127,18 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 				else:
 					if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[0], False, MyKey)
 					if PID == 2 and DigitizerKey == 3:
-						from GetEntries import *
-						EntriesWithTracks, EntriesWithTracksAndHit, EntriesWithTracksAndPhotekHit = RunEntries(ResultFileLocation)
+						import GetEntries as ge
+						EntriesWithTrack, EntriesWithTrackAndHit, EntriesWithHit, EntriesWithTrackWithoutNplanes = ge.RunEntries(ResultFileLocation)
 						if pf.QueryGreenSignal(True): 
-							pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithTracksScope", int(EntriesWithTracks), False, MyKey)
-							time.sleep(0.5)
+							pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithTrackScope", int(EntriesWithTrack), False, MyKey)
+							am.time.sleep(0.5)
 						if pf.QueryGreenSignal(True): 
-							pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithTracksAndHitScope", int(EntriesWithTracksAndHit), False, MyKey)
-							time.sleep(0.5)
+							pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithTrackAndHitScope", int(EntriesWithTrackAndHit), False, MyKey)
+							am.time.sleep(0.5)
 						if pf.QueryGreenSignal(True): 
-							pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithTracksAndPhotekHitScope", int(EntriesWithTracksAndPhotekHit), False, MyKey)
+							pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithHitScope", int(EntriesWithHit), False, MyKey)
+						if pf.QueryGreenSignal(True): 
+							pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithTrackWithoutNplanesScope", int(EntriesWithTrackWithoutNplanes), False, MyKey)
 
 				print 'Finished process %s for run %d' % (ProcessName, run)		
 				print '###############################\n'

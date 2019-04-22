@@ -168,9 +168,9 @@ def ScopeState():
     ScopeStateHandle.close()
     return ScopeState
 
-def ScopeStatusAutoPilot():
+def ScopeStatusAutoPilot(runNumber):
     ScopeCommFile = open(ScopeCommFileName, "w")
-    ScopeCommFile.write(str(1))
+    ScopeCommFile.write(str(runNumber))
     ScopeCommFile.close()
     return
 

@@ -9,9 +9,9 @@ horizontalWindow = 40 #ns
 trigCh = "AUX" 
 trig = 0.15 #V
 
-vScale1 = 0.025 #V
-vScale2 = 0.025 #V
-vScale3 = 0.025 #V
+vScale1 = 0.05 #V
+vScale2 = 0.05 #V
+vScale3 = 0.05 #V
 vScale4 = 0.05 #V
 
 timeoffset = -100 #ns
@@ -20,14 +20,14 @@ timeoffset = -100 #ns
 ############### Assuming the directory structure in the KeySightScope repository is the same as on this computer
 
 AutoPilotStatusFile = '%sAcquisition/ScopeStatus.txt' % ScopeControlDir
-AgilentScopeCommand = 'python %sAcquisition/acquisition.py --numEvents %d --sampleRate %d --horizontalWindow %d --trigCh %s --trig %f --vScale1 %f --vScale2 %f --vScale3 %f --vScale4 %f --timeoffset %i --trigSlope POS' % (ScopeControlDir, numEvents, sampleRate, horizontalWindow, trigCh, trig, vScale1, vScale2, vScale3, vScale4, timeoffset) 
-print AgilentScopeCommand
+#AgilentScopeCommand = 'python %sAcquisition/acquisition.py --numEvents %d --sampleRate %d --horizontalWindow %d --trigCh %s --trig %f --vScale1 %f --vScale2 %f --vScale3 %f --vScale4 %f --timeoffset %i --trigSlope POS' % (ScopeControlDir, numEvents, sampleRate, horizontalWindow, trigCh, trig, vScale1, vScale2, vScale3, vScale4, timeoffset) 
+#print AgilentScopeCommand
 while True:
 
 	inFile = open(AutoPilotStatusFile,"r")
-	status = inFile.readline(1)
+	runNumber = inFile.readline().strip()
 	time.sleep(1)
-	if (status == str(1)):
+	if (runNumber != str(0)):
 	   	############### checking the status for the next runs #################  
 	    with open(AutoPilotStatusFile,'w') as file:
 	        file.write(str(0))
@@ -35,7 +35,8 @@ while True:
 	    
 	    #### Reading run number ####
 	    #RunNumber = tp.GetRunNumber()
-
+            AgilentScopeCommand = 'python %sAcquisition/acquisition.py --runNum %s --numEvents %d --sampleRate %d --horizontalWindow %d --trigCh %s --trig %f --vScale1 %f --vScale2 %f --vScale3 %f --vScale4 %f --timeoffset %i --trigSlope POS' % (ScopeControlDir,runNumber, numEvents, sampleRate, horizontalWindow, trigCh, trig, vScale1, vScale2, vScale3, vScale4, timeoffset) 
+            print AgilentScopeCommand
 	    #### Starting the acquisition script ####
 	    os.system(AgilentScopeCommand)
 
