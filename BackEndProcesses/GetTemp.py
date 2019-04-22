@@ -95,8 +95,6 @@ def GetEnvMeas(timestamp):
             Current3 = -1
     return Resis13, Resis14, Resis15, Resis16, Resis17, Resis18, Resis19, Resis20, Voltage1, Current1, Voltage2, Current2, Voltage3, Current3
 
-
-
 def Resistance_calc(T): #Function to calculate resistance for any temperature                                                                                                                                                                 
     R0 = 100 #Resistance in ohms at 0 degree celsius                                                                                                                                                                                          
     alpha = 0.00385
@@ -121,22 +119,37 @@ def Temp_calc(R): #Function to calculate temperature for any resistance
 
 def ConvertEnv(timestamp):
 	Resis13, Resis14, Resis15, Resis16, Resis17, Resis18, Resis19, Resis20, Voltage1, Current1, Voltage2, Current2, Voltage3, Current3 = GetEnvMeas(timestamp)
-	if Resis13 != -1 and Resis14 != -1 and Resis15 != -1 and Resis16 != -1  and Resis17 != -1 and Resis18 != -1 and Resis19 != -1 and Resis20 != -1:
+	
+	if Resis13 != -1 and Resis13 != 0:
 		Temp13 = Temp_calc(Resis13)
+	else:
+		Temp13 = -999	
+	if Resis14 != -1 and Resis14 != 0:
 		Temp14 = Temp_calc(Resis14)
+	else:
+		Temp14 = -999
+	if Resis15 != -1 and Resis15 != 0:
 		Temp15 = Temp_calc(Resis15)
+	else:
+		Temp15 = -999
+	if Resis16 != -1 and Resis16 != 0:
 		Temp16 = Temp_calc(Resis16)
+	else:
+		Temp16 = -999
+	if Resis17 != -1 and Resis17 != 0:
 		Temp17 = Temp_calc(Resis17)
-		Temp18 = Temp_calc(Resis18)
-		Temp19 = Temp_calc(Resis19)
+	else:
+		Temp17 = -999 
+	if Resis18 != -1 and Resis18 != 0:
+		Temp18 = Temp_calc(Resis18)	
+	else:
+		Temp18 = -999
+	if Resis19 != -1 and Resis19 != 0:
+		Temp19 = Temp_calc(Resis19)		
+	else:
+		Temp19 = -999
+	if Resis20 != -1 and Resis20 != 0:
 		Temp20 = Temp_calc(Resis20)
 	else: 
-		Temp13 = -1
-		Temp14 = -1
-		Temp15 = -1
-		Temp16 = -1
-		Temp17 = -1
-		Temp18 = -1
-		Temp19 = -1
-		Temp20 = -1
+		Temp20 = -999
 	return Temp13, Temp14, Temp15, Temp16, Temp17, Temp18, Temp19, Temp20, Voltage1, Current1, Voltage2, Current2, Voltage3, Current3
