@@ -13,7 +13,7 @@ ls $6/*.png
 echo "List all files"
 ls 
 echo "*******************************************"
-OUTDIR=root://cmseos.fnal.gov//store/user/benjtann/
+OUTDIR=root://cmseos.fnal.gov//store/user/$USER/testbeam_04-2019/
 echo "xrdcp output for condor"
 for FILE in $6/*.png
 do

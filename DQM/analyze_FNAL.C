@@ -208,8 +208,8 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string ti
     BSX = 15.;     // half-size of beam spot selection around the center in mm
     minY = 0.;    // range of Y in mm
     maxY = +40.;    // range of Y in mm
-    centerY = 28.5; // hodoscope Y coordinate of crystal center in mm
-    BSY = 1;      // half-size of beam spot selection around the center in mm
+    centerY = 28.25; // hodoscope Y coordinate of crystal center in mm
+    BSY = 1.25;      // half-size of beam spot selection around the center in mm
   }
   else if( bar == "box2"){
     minX = -10.;   // range of X in mm
@@ -218,7 +218,7 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string ti
     BSX = 15.;     // half-size of beam spot selection around the center in mm
     minY = 0.;    // range of Y in mm
     maxY = +40.;    // range of Y in mm
-    centerY = 25.5; // hodoscope Y coordinate of crystal center in mm
+    centerY = 25.; // hodoscope Y coordinate of crystal center in mm
     BSY = 1.5;      // half-size of beam spot selection around the center in mm
   }
   else if( bar == "box3"){
@@ -228,7 +228,7 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string ti
     BSX = 15.;     // half-size of beam spot selection around the center in mm
     minY = 0.;    // range of Y in mm
     maxY = +40.;    // range of Y in mm
-    centerY = 22.0; // hodoscope Y coordinate of crystal center in mm
+    centerY = 21.5; // hodoscope Y coordinate of crystal center in mm
     BSY = 1.5;      // half-size of beam spot selection around the center in mm
   }
   else if( bar == "single"){
@@ -238,7 +238,7 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string ti
     BSX = 13.5;     // half-size of beam spot selection around the center in mm
     minY = 0.;    // range of Y in mm
     maxY = +40.;    // range of Y in mm
-    centerY = 26.5; // hodoscope Y coordinate of crystal center in mm
+    centerY = 26.; // hodoscope Y coordinate of crystal center in mm
     BSY = 1.5;      // half-size of beam spot selection around the center in mm
   }
 

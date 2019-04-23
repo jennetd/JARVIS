@@ -4,7 +4,7 @@
 #Date: April 21, 2019
 #Purpose: Script to submit condor jobs for april TB timing analysis
 
-import os,sys, argparse
+import os,sys, argparse, getpass
 
 # *** 0. setup parser for command line
 parser = argparse.ArgumentParser()
@@ -66,31 +66,39 @@ if ( not os.path.exists(os.path.expandvars("$X509_USER_PROXY")) ):
 
 
 # *** 1. Parse together output directory and create if does not exist
-# ** A. Top level directory of which runs
+# ** A. Super-Top level directory for testbeam analysis
+username = getpass.getuser()
+eosDir = "/eos/uscms/store/user/{0}/testbeam_04-2019/"
+if ( not os.path.exists(eosDir) ):
+    print "Specified top directory {0} DNE.\nCREATING NOW".format(eosDir)
+    os.system("mkdir {0}".format(eosDir))
+
+# ** B. Top level directory of which runs
 outputDir = 'Runs_'+args.firstRun+'to'+args.lastRun
 if ( not os.path.exists(outputDir) ):
     print "Specified run directory {0} DNE.\nCREATING NOW".format(outputDir)
     os.system("mkdir {0}".format(outputDir))
-    if ( not os.path.exists("/eos/uscms/store/user/benjtann/{0}/".format(outputDir)) ):
-        os.system("mkdir /eos/uscms/store/user/benjtann/{0}/".format(outputDir))
+    if ( not os.path.exists(eosDir+'/{0}/'.format(outputDir)) ):
+        os.system("mkdir "+eosDir+'/{0}/'.format(outputDir))
 
-# ** B. Sub-level directory of which bar
+
+# ** C. Sub-level directory of which bar
 outputDir = outputDir + '/' + args.bar
 if ( not os.path.exists(outputDir) ):
     print "Specified bar sub-directory {0} DNE.\nCREATING NOW".format(outputDir)
     os.system("mkdir {0}".format(outputDir))
-    if ( not os.path.exists("/eos/uscms/store/user/benjtann/{0}/".format(outputDir)) ):
-        os.system("mkdir /eos/uscms/store/user/benjtann/{0}/".format(outputDir))
+    if ( not os.path.exists(eosDir+'/{0}/'.format(outputDir)) ):
+        os.system("mkdir "+eosDir+'/{0}/'.format(outputDir))
 
-# ** C. Sub-level directory of which time algorithm
+# ** D. Sub-level directory of which time algorithm
 outputDir = outputDir + '/' + args.timeAlgo 
 if ( not os.path.exists(outputDir) ):
     print "Specified timeAlgo sub-directory {0} DNE.\nCREATING NOW".format(outputDir)
     os.system("mkdir {0}".format(outputDir))
-    if ( not os.path.exists("/eos/uscms/store/user/benjtann/{0}/".format(outputDir)) ):
-        os.system("mkdir /eos/uscms/store/user/benjtann/{0}/".format(outputDir))
+    if ( not os.path.exists(eosDir+'/{0}/'.format(outputDir)) ):
+        os.system("mkdir "+eosDir+'/{0}/'.format(outputDir))
 
-# ** D. Make folders for condor output storage
+# ** E. Make folders for condor output storage
 if ( not os.path.exists( (outputDir + '/condor_logs/') ) ):
     os.system("mkdir {0}".format( (outputDir + '/condor_logs/')) )
 if ( not os.path.exists( (outputDir + '/condor_err/') ) ):
@@ -109,7 +117,7 @@ tarball_name = "{0}.tar.gz".format(outputDir.replace('/', '__'))
 os.system("tar -cvzf {0} ./ --exclude 'Runs*' --exclude 'submitOneFile_' --exclude '*.tar.gz' --exclude '*.*~' ".format(tarball_name))
 #if ( not os.path.exists("/eos/uscms/store/user/benjtann/{0}/".format(outputDir)) ):
 #    os.system("mkdir /eos/uscms/store/user/benjtann/{0}/".format(outputDir))
-os.system("xrdcp {0} root://cmseos.fnal.gov//store/user/benjtann/{1}/".format(tarball_name, outputDir))
+os.system("xrdcp {0} root://cmseos.fnal.gov//store/user/benjtann/testbeam_04-2019/{1}/".format(tarball_name, outputDir))
 
 
 
