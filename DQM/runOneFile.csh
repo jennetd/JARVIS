@@ -5,20 +5,20 @@ cd ${_CONDOR_SCRATCH_DIR}
 export USER=$(whoami)
 echo "User is"
 echo $USER
-tar -xf $5
-rm $5
+tar -xf $6
+rm $6
 
-python analyzeBarForTiming.py --bar ${1} --firstRun ${2} --lastRun ${3} --timeAlgo ${4} --isCondor True
+python analyzeBarForTiming.py --bar ${1} --firstRun ${2} --lastRun ${3} --biasVoltage ${4} --timeAlgo ${5} --isCondor True
 
 ### Now that the run is over, there is one or more root files created
 echo "List all produced .png files = "
-ls $6/*.png
+ls $7/*.png
 echo "List all files"
 ls 
 echo "*******************************************"
 OUTDIR=root://cmseos.fnal.gov//store/user/$USER/testbeam_04-2019/
 echo "xrdcp output for condor"
-for FILE in $6/*.png
+for FILE in $7/*.png
 do
   echo "xrdcp -f ${FILE} ${OUTDIR}/${FILE}"
   xrdcp -f ${FILE} ${OUTDIR}/${FILE} 2>&1

@@ -11,7 +11,7 @@ void printCanvas(TCanvas* _c0, string _outputDir, string _timeAlgo)
   return;
 }
 
-int returnNumberOfBinsAboveAmpThreshold(TProfile* _tp0, double _threshold = 0.5)
+int returnNumberOfBinsAboveAmpThreshold(TProfile* _tp0, double _threshold = 0.35)
 {
   int _binsAboveThreshold = 0 ;
 
