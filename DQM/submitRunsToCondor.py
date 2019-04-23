@@ -68,7 +68,7 @@ if ( not os.path.exists(os.path.expandvars("$X509_USER_PROXY")) ):
 # *** 1. Parse together output directory and create if does not exist
 # ** A. Super-Top level directory for testbeam analysis
 username = getpass.getuser()
-eosDir = "/eos/uscms/store/user/{0}/testbeam_04-2019/"
+eosDir = "/eos/uscms/store/user/{0}/testbeam_04-2019/".format(username)
 if ( not os.path.exists(eosDir) ):
     print "Specified top directory {0} DNE.\nCREATING NOW".format(eosDir)
     os.system("mkdir {0}".format(eosDir))
@@ -114,10 +114,14 @@ print '-- Setting outputDir = {0}'.format(outputDir)
 # *** 2. Create .tar of directory and store in personal EOS
 print "##########     Tarring workdir     ##########"
 tarball_name = "{0}.tar.gz".format(outputDir.replace('/', '__'))
+# remove EOS tarball
+if os.path.isfile( eosDir+'/'+outputDir+'/'+tarball_name ) :
+    os.system('rm {0}'.format(eosDir+'/'+outputDir+'/'+tarball_name))
+# remove local tarball
+if os.path.isfile( './'+tarball_name ) :
+    os.system('rm {0}'.format(tarball_name)) 
 os.system("tar -cvzf {0} ./ --exclude 'Runs*' --exclude 'submitOneFile_' --exclude '*.tar.gz' --exclude '*.*~' ".format(tarball_name))
-#if ( not os.path.exists("/eos/uscms/store/user/benjtann/{0}/".format(outputDir)) ):
-#    os.system("mkdir /eos/uscms/store/user/benjtann/{0}/".format(outputDir))
-os.system("xrdcp {0} root://cmseos.fnal.gov//store/user/benjtann/testbeam_04-2019/{1}/".format(tarball_name, outputDir))
+os.system("xrdcp {0} root://cmseos.fnal.gov//store/user/{1}/testbeam_04-2019/{2}/".format(tarball_name, username, outputDir))
 
 
 
