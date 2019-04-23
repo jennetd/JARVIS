@@ -1,7 +1,10 @@
 #!/bin/bash
 source /cvmfs/sft.cern.ch/lcg/views/LCG_89/x86_64-slc6-gcc62-opt/setup.sh
 cd ${_CONDOR_SCRATCH_DIR}
-#xrdcp -s root://cmseos.fnal.gov//store/user/benjtann/$2/$7 .
+#setenv USER `whoami`
+export USER=$(whoami)
+echo "User is"
+echo $USER
 tar -xf $5
 rm $5
 
