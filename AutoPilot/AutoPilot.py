@@ -13,7 +13,7 @@ import GetTemp as gt
 ################ Periodically make sure this value makes sense. #######################
 #######################################################################################
 
-NumSpillsPerRun = 2
+NumSpillsPerRun = 1
 RP = True
 ETLTemp = True
 

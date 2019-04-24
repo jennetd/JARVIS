@@ -72,7 +72,7 @@ For Reprocessing single run, or a range of runs:
 
 1) On timingdaq02 : Go to /home/daq/JARVIS/RecoProcesses
 2) Run the Reprocess scripts for the respective digitizers after hardcoding the range of runs, and the version (if doing timingdaq) correctly.
-
+3) If you want the entries for the scope root files: make sure to source root first before running the keysighscope reprocess script.
 
 
 Common Failures:
@@ -81,8 +81,9 @@ Common Failures:
 		1) Stop the autopilot
 		2) Start OTS server again, and then initialize and configure
 		3) Start the autopilot
-	Look at the histograms in otsdaq visualizer and make sure they are fine
-		Maybe the tracking was fine on Rulinux but it is not copied back to daq02, Check the log to see if this is the case. Reissue the ticket on otsdaq@rulinux04.dhcp.fnal.gov
+	Look at the histograms in otsdaq visualizer and make sure they are fine: Look at the trigger and the strip
+	Maybe the tracking was fine on Rulinux but it is not copied back to daq02, Check the log to see if this is the case. Reissue the ticket on otsdaq@rulinux04.dhcp.fnal.gov
+	
 * Keep checking the run number and if the run number in digitizer listener doesn't match the otsdaq run number
  	 Reissue the ticket on timingdaq02, change the run number in the file /data-08/TestBeam/Users/RunNumber/OtherRuns0NextRunNumber.txt to the next run number from the run table and see if the problem is fixed.
 * VME TimingDAQ failure:
