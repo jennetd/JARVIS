@@ -93,10 +93,17 @@ Common Failures:
 
 
 If running VME on daq08:
+
+JARVIS on DAQ08 Lives in /home/otsdaq/CMSTimingJarvis/
+Data on DAQ08 lives in /home/otsdaq/CMSTimingJarvis/2019_04_April_CMSTiming/
+TimingDAQ which is used for processing lives in /home/otsdaq/CMSTimingJarvis/
+
 * Make sure that no otsdaq environment is sourced before you run VMEProcessing and Tracking Reco on DAQ08.
 * Make sure not to commit anything from DAQ-08.
 * Make sure the paths in AllModules for timingdaq02 and PCCITFNAL01 are commented out.
 * Make sure TransferVME is not running on timingdaq02 for the raw VME files.
+* Make sure if you are changing the configuration for the VME, you change it here /home/otsdaq/CMSTimingJarvis/TimingDAQ/ on DAQ08
+* Also if you want to compile timingdaq source /home/otsdaq/CMSTimingJarvis/setup.sh
 
 If running VME on DAQ02:
 * Make sure the TransferVME is progressing in workspace 4 on DAQ02 for the RawVME files.
