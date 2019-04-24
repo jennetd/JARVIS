@@ -139,7 +139,7 @@ if os.path.isfile( eosDir+'/'+outputDir+'/'+tarball_name ) :
 # remove local tarball
 if os.path.isfile( './'+tarball_name ) :
     os.system('rm {0}'.format(tarball_name)) 
-os.system("tar -cvzf {0} ./ --exclude 'Runs*' --exclude 'submitOneFile_' --exclude '*.tar.gz' --exclude '*.*~' --exclude 'test*'".format(tarball_name))
+os.system("tar -cvzf {0} ./ --exclude 'Runs*' --exclude 'submitOneFile_' --exclude '*.tar.gz' --exclude '*.*~' --exclude 'temp' --exclude 'test*' --exclude '*04-*-19'".format(tarball_name))
 os.system("xrdcp {0} root://cmseos.fnal.gov//store/user/{1}/testbeam_04-2019/{2}/".format(tarball_name, username, outputDir))
 
 
