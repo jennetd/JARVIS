@@ -1,3 +1,280 @@
+float* getChannelData(float _channelData[], string _bar, const int& _biasVoltage, const int& _angleScan)
+{
+  
+  // *** 1. Photek
+  if (_bar == "box1" || _bar=="box2" || _bar=="box3"){
+    _channelData[0] = 0; // digitizer index of reference channel (MCP)
+    _channelData[1] = 0; // digitizer index of reference channel (MCP)
+    _channelData[3] = 50;  //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    _channelData[4] = 850;  //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
+  }
+  else{
+    _channelData[0] = 18; // digitizer index of reference channel (MCP)
+    _channelData[1] = 18; // digitizer index of reference channel (MCP)
+    _channelData[3] = 50;  //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    _channelData[4] = 450;  //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
+  }
+
+
+  // *** 2. Bar timing+amplitude channels
+  // ** A. Channel names and digitizer indices
+  if (_bar == "box1"){ 
+    // ** I. Left SiPM
+    _channelData[5] = 10; // digitizer amp index of 1st bar, left SiPM
+    _channelData[6] = 1;  // digitizer timing index of 1st bar, left SiPM
+    // ** II. Right SiPM
+    _channelData[10] = 13; // digitizer amp index of 1st bar, left SiPM
+    _channelData[11] = 4;  // digitizer timing index of 1st bar, left SiPM
+  }
+  else if (_bar == "box2"){ 
+    // ** I. Left SiPM
+    _channelData[5] = 11; // digitizer amp index of 1st bar, left SiPM
+    _channelData[6] = 2;  // digitizer timing index of 1st bar, left SiPM
+    // ** II. Right SiPM
+    _channelData[10] = 14; // digitizer amp index of 1st bar, left SiPM
+    _channelData[11] = 5;  // digitizer timing index of 1st bar, left SiPM
+  }
+  else if (_bar == "box3"){ 
+    // ** I. Left SiPM
+    _channelData[5] = 12; // digitizer amp index of 1st bar, left SiPM
+    _channelData[6] = 3;  // digitizer timing index of 1st bar, left SiPM
+    // ** II. Right SiPM
+    _channelData[10] = 15; // digitizer amp index of 1st bar, left SiPM
+    _channelData[11] = 6;  // digitizer timing index of 1st bar, left SiPM
+  }
+  else if (_bar == "single"){ 
+    // ** I. Left SiPM
+    _channelData[5] = 21; // digitizer amp index of 1st bar, left SiPM
+    _channelData[6] = 19;  // digitizer timing index of 1st bar, left SiPM
+    // ** II. Right SiPM
+    _channelData[10] = 22; // digitizer amp index of 1st bar, left SiPM
+    _channelData[11] = 20;  // digitizer timing index of 1st bar, left SiPM
+  }
+
+  // ** B. Channel Amplitude limits
+  if ( _bar=="box1" || _bar=="box2" || _bar=="box3" ){
+    if (_biasVoltage==72){
+      if (_angleScan==14 || _angleScan==20){
+	_channelData[8] = 300.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
+	_channelData[13] = 300.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
+      }
+      else{
+	_channelData[8] = 100.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
+	_channelData[13] = 100.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
+      }
+    }
+    else if (_biasVoltage==69) {
+      _channelData[8] = 25.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
+      _channelData[13] = 25.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    }
+    _channelData[9] = 750; // high amp cut in mV
+    _channelData[14] = 750; // high amp cut in mV
+  }
+  else if (_bar=="single"){
+    _channelData[8] = 20.;  //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    _channelData[9] = 20.;  //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    _channelData[13] = 400.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    _channelData[14] = 400.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
+  }
+
+
+  // *** 3. X/Y Bar Positioning
+  _channelData[15] = -10.;   // range of X in mm
+  _channelData[16] = +35.;   // range of X in mm
+  _channelData[19] = 0.;     // range of Y in mm
+  _channelData[20] = +40.;   // range of Y in mm
+
+  // ** A. X-Positioning for Box
+  if ( _bar=="box1" || _bar=="box2" || _bar=="box3" ){
+    // *I. Angle = 90
+    // *II. Angle = 60
+    if (_angleScan == 60 ){
+      _channelData[17] = 17.; // hodoscope X coordinate of crystal center in mm
+      _channelData[18] = 14.; // half-size of beam spot selection around the center in mm
+    }
+    // *III. Angle = 53
+    if (_angleScan == 53 ){
+      _channelData[17] = 15.5; // hodoscope X coordinate of crystal center in mm
+      _channelData[18] = 11.5; // half-size of beam spot selection around the center in mm
+    }
+    // *IV. Angle = 45
+    if (_angleScan == 45 ){
+      _channelData[17] = 13.5; // hodoscope X coordinate of crystal center in mm
+      _channelData[18] = 15.5; // half-size of beam spot selection around the center in mm
+    }
+    // *V. Angle = 37
+    if (_angleScan == 37 ){
+      _channelData[17] = 14.; // hodoscope X coordinate of crystal center in mm
+      _channelData[18] = 13.; // half-size of beam spot selection around the center in mm
+    }
+    // *VI. Angle = 30
+    if (_angleScan == 30 ){
+      _channelData[17] = 15.5; // hodoscope X coordinate of crystal center in mm
+      _channelData[18] = 13.5; // half-size of beam spot selection around the center in mm
+    }
+    // *VII. Angle = 20
+    if (_angleScan == 20 ){
+      _channelData[17] = 12.; // hodoscope X coordinate of crystal center in mm
+      _channelData[18] = 12.; // half-size of beam spot selection around the center in mm
+    }
+    // *VIII. Angle = 14
+    if (_angleScan == 14 ){
+      _channelData[17] = 11.5; // hodoscope X coordinate of crystal center in mm
+      _channelData[18] = 9.5;  // half-size of beam spot selection around the center in mm
+    }
+  }
+  // ** B. Y-Positioning for Box
+  // *I. Angle = 90
+  // *II. Angle = 60
+  if (_angleScan == 60 ){
+    if ( _bar=="box1"){
+      _channelData[21] = 28.5; // hodoscope Y coordinate of crystal center in mm
+      _channelData[22] = 1.;   // half-size of beam spot selection around the center in mm
+    }
+    else if ( _bar=="box2"){
+      _channelData[21] = 25.5; // hodoscope Y coordinate of crystal center in mm
+      _channelData[22] = 1.5;  // half-size of beam spot selection around the center in mm
+    }
+    else if ( _bar=="box3"){
+      _channelData[21] = 22.;  // hodoscope Y coordinate of crystal center in mm
+      _channelData[22] = 1.5;  // half-size of beam spot selection around the center in mm
+    }
+  }
+  // *III. Angle = 53
+    if (_angleScan == 53 ){
+    if ( _bar=="box1"){
+      _channelData[21] = 28.5;  // hodoscope Y coordinate of crystal center in mm
+      _channelData[22] = 1.5;   // half-size of beam spot selection around the center in mm
+    }
+    else if ( _bar=="box2"){
+      _channelData[21] = 24.75; // hodoscope Y coordinate of crystal center in mm
+      _channelData[22] = 1.5;   // half-size of beam spot selection around the center in mm
+    }
+    else if ( _bar=="box3"){
+      _channelData[21] = 21.25; // hodoscope Y coordinate of crystal center in mm
+      _channelData[22] = 1.5;   // half-size of beam spot selection around the center in mm
+    }
+  }
+
+  // *IV. Angle = 45
+    if (_angleScan == 45 ){
+    if ( _bar=="box1"){
+      _channelData[21] = 28.5;  // hodoscope Y coordinate of crystal center in mm
+      _channelData[22] = 1.5;   // half-size of beam spot selection around the center in mm
+    }
+    else if ( _bar=="box2"){
+      _channelData[21] = 24.75; // hodoscope Y coordinate of crystal center in mm
+      _channelData[22] = 1.5;   // half-size of beam spot selection around the center in mm
+    }
+    else if ( _bar=="box3"){
+      _channelData[21] = 21.25; // hodoscope Y coordinate of crystal center in mm
+      _channelData[22] = 1.5;   // half-size of beam spot selection around the center in mm
+    }
+  }
+
+  // *V. Angle = 37
+  if (_angleScan == 37 ){
+    if ( _bar=="box1"){
+      _channelData[21] = 28.;   // hodoscope Y coordinate of crystal center in mm
+      _channelData[22] = 1.5;   // half-size of beam spot selection around the center in mm
+    }
+    else if ( _bar=="box2"){
+      _channelData[21] = 24.75; // hodoscope Y coordinate of crystal center in mm
+      _channelData[22] = 1.5;   // half-size of beam spot selection around the center in mm
+    }
+    else if ( _bar=="box3"){
+      _channelData[21] = 21.25; // hodoscope Y coordinate of crystal center in mm
+      _channelData[22] = 1.5;   // half-size of beam spot selection around the center in mm
+    }
+  }
+
+  // *VI. Angle = 30
+  if (_angleScan == 30 ){
+    if ( _bar=="box1"){
+      _channelData[21] = 28.;   // hodoscope Y coordinate of crystal center in mm
+      _channelData[22] = 1.5;   // half-size of beam spot selection around the center in mm
+    }
+    else if ( _bar=="box2"){
+      _channelData[21] = 24.75; // hodoscope Y coordinate of crystal center in mm
+      _channelData[22] = 1.5;   // half-size of beam spot selection around the center in mm
+    }
+    else if ( _bar=="box3"){
+      _channelData[21] = 21.25; // hodoscope Y coordinate of crystal center in mm
+      _channelData[22] = 1.5;   // half-size of beam spot selection around the center in mm
+    }
+  }
+
+  // *VII. Angle = 20
+  if (_angleScan == 20 ){
+    if ( _bar=="box1"){
+      _channelData[21] = 29.; // hodoscope Y coordinate of crystal center in mm
+      _channelData[22] = 1.5; // half-size of beam spot selection around the center in mm
+    }
+    else if ( _bar=="box2"){
+      _channelData[21] = 25.5; // hodoscope Y coordinate of crystal center in mm
+      _channelData[22] = 1.5; // half-size of beam spot selection around the center in mm
+    }
+    else if ( _bar=="box3"){
+      _channelData[21] = 22.; // hodoscope Y coordinate of crystal center in mm
+      _channelData[22] = 1.5; // half-size of beam spot selection around the center in mm
+    }
+  }
+
+  // *VIII. Angle = 14
+  if (_angleScan == 14 ){
+    if ( _bar=="box1"){
+      _channelData[21] = 29.; // hodoscope Y coordinate of crystal center in mm
+      _channelData[22] = 1.5; // half-size of beam spot selection around the center in mm
+    }
+    else if ( _bar=="box2"){
+      _channelData[21] = 25.5; // hodoscope Y coordinate of crystal center in mm
+      _channelData[22] = 1.5; // half-size of beam spot selection around the center in mm
+    }
+    else if ( _bar=="box3"){
+      _channelData[21] = 22.; // hodoscope Y coordinate of crystal center in mm
+      _channelData[22] = 1.5; // half-size of beam spot selection around the center in mm
+    }
+  }
+
+
+  // ** C. XY-Positioning for Single Bar
+  else if ( _bar=="single" ){
+    // *I. Angle = 90
+    // *II. Angle = 60
+    if (_angleScan == 60 ){
+      _channelData[17] = 13.;  // hodoscope X coordinate of crystal center in mm
+      _channelData[18] = 18.;  // half-size of beam spot selection around the center in mm
+      _channelData[21] = 13.;  // hodoscope Y coordinate of crystal center in mm
+      _channelData[22] = 18.;  // half-size of beam spot selection around the center in mm
+    }
+    // *III. Angle = 45
+    if (_angleScan == 45 ){
+      _channelData[17] = 8.;   // hodoscope X coordinate of crystal center in mm
+      _channelData[18] = 17.;  // half-size of beam spot selection around the center in mm
+      _channelData[21] = 13.;  // hodoscope Y coordinate of crystal center in mm
+      _channelData[22] = 18.;  // half-size of beam spot selection around the center in mm
+    }
+    // *IV. Angle = 30
+    if (_angleScan == 30 ){
+      _channelData[17] = 7.5;  // hodoscope X coordinate of crystal center in mm
+      _channelData[18] = 16.5; // half-size of beam spot selection around the center in mm
+      _channelData[21] = 13.;  // hodoscope Y coordinate of crystal center in mm
+      _channelData[22] = 18.;  // half-size of beam spot selection around the center in mm
+    }
+    // *V. Angle = 20 || Angle = 14
+    if (_angleScan == 20 || _angleScan == 14){
+      _channelData[17] = 8.;   // hodoscope X coordinate of crystal center in mm
+      _channelData[18] = 18.;  // half-size of beam spot selection around the center in mm
+      _channelData[21] = 13.;  // hodoscope Y coordinate of crystal center in mm
+      _channelData[22] = 18.;  // half-size of beam spot selection around the center in mm
+    }
+
+  }
+
+  
+  return _channelData;
+}
+
 void printCanvas(TCanvas* _c0, string _outputDir, string _timeAlgo)
 {
   _c0->Draw();
@@ -11,7 +288,7 @@ void printCanvas(TCanvas* _c0, string _outputDir, string _timeAlgo)
   return;
 }
 
-int returnNumberOfBinsAboveAmpThreshold(TProfile* _tp0, double _threshold = 0.5)
+int returnNumberOfBinsAboveAmpThreshold(TProfile* _tp0, double _threshold = 0.35)
 {
   int _binsAboveThreshold = 0 ;
 
@@ -71,7 +348,7 @@ bool checkTrackingSynchronization(const char* _fileName)
   return false;
 }
 
-void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string timeAlgo="LP2_30", string outputDir="./", string isCondor="")
+void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, const int& biasVoltage, string timeAlgo="LP2_30", string outputDir="./", string isCondor="")
 {
   gStyle->SetPadTopMargin(0.05);
   gStyle->SetPadBottomMargin(0.13);
@@ -101,88 +378,7 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string ti
   std::string namech[NCH];
   float ampmin_cut[NCH];
   float ampmax_cut[NCH];
-  
-  if (bar == "box1"){
-    cout << bar << endl;
-    ampch_id[0]  = 0; // digitizer index of reference channel (MCP)
-    timech_id[0] = 0; // digitizer index of reference channel (MCP)
-    namech[0] = "photek";
-    ampmin_cut[0] = 50.;  //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
-    ampmax_cut[0] = 850.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
-    
-    ampch_id[1]  = 10; // digitizer index of 1st bar, left SiPM
-    timech_id[1] = 1;  // digitizer index of 1st bar, left SiPM
-    namech[1] = "top left";
-    ampmin_cut[1] = 100.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
-    ampmax_cut[1] = 500.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
-    
-    ampch_id[2]  = 13; // digitizer index of 1st bar, right SiPM
-    timech_id[2] = 4;  // digitizer index of 1st bar, right SiPM
-    namech[2] = "top right";
-    ampmin_cut[2] = 100.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
-    ampmax_cut[2] = 500.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
-  }
-  else if (bar == "box2"){
-    cout << bar << endl;
-    ampch_id[0]  = 0; // digitizer index of reference channel (MCP)
-    timech_id[0] = 0; // digitizer index of reference channel (MCP)
-    namech[0] = "photek";
-    ampmin_cut[0] = 50.;  //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
-    ampmax_cut[0] = 850.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
-    
-    ampch_id[1]  = 11; // digitizer index of 1st bar, left SiPM
-    timech_id[1] = 2;  // digitizer index of 1st bar, left SiPM
-    namech[1] = "middle left";
-    ampmin_cut[1] = 100.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
-    ampmax_cut[1] = 500.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
-    
-    ampch_id[2]  = 14; // digitizer index of 1st bar, right SiPM
-    timech_id[2] = 5;  // digitizer index of 1st bar, right SiPM
-    namech[2] = "middle right";
-    ampmin_cut[2] = 100.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
-    ampmax_cut[2] = 500.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
-  }
-  else if (bar == "box3"){
-    cout << bar << endl;
-    ampch_id[0]  = 0; // digitizer index of reference channel (MCP)
-    timech_id[0] = 0; // digitizer index of reference channel (MCP)
-    namech[0] = "photek";
-    ampmin_cut[0] = 50.;  //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
-    ampmax_cut[0] = 850.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
-    
-    ampch_id[1]  = 12; // digitizer index of 1st bar, left SiPM
-    timech_id[1] = 3;  // digitizer index of 1st bar, left SiPM
-    namech[1] = "bottom left";
-    ampmin_cut[1] = 100.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
-    ampmax_cut[1] = 500.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
-    
-    ampch_id[2]  = 15; // digitizer index of 1st bar, right SiPM
-    timech_id[2] = 6;  // digitizer index of 1st bar, right SiPM
-    namech[2] = "bottom right";
-    ampmin_cut[2] = 100.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
-    ampmax_cut[2] = 500.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
-  }
-  else if (bar == "single"){
-    cout << bar << endl;
-    ampch_id[0]  = 18; // digitizer index of reference channel (MCP)
-    timech_id[0] = 18; // digitizer index of reference channel (MCP)
-    namech[0] = "photek";
-    ampmin_cut[0] = 50.;  //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
-    ampmax_cut[0] = 450.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
-    
-    ampch_id[1]  = 21; // digitizer index of 2nd bar, left SiPM
-    timech_id[1] = 19;  // digitizer index of 2nd bar, left SiPM
-    namech[1] = "FBK left";
-    ampmin_cut[1] = 20.;  //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
-    ampmax_cut[1] = 400.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
-    
-    ampch_id[2]  = 22; // digitizer index of 2nd bar, right SiPM 
-    timech_id[2] = 20;  // digitizer index of 2nd bar, right SiPM
-    namech[2] = "FBK right";
-    ampmin_cut[2] = 20.;  //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
-    ampmax_cut[2] = 400.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
-  }
-  
+
   //------------------
   // define selections
   float rel_amp_cut_low = 0.85; //  low amp cut in fraction of MIP peak
@@ -201,46 +397,68 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string ti
   float centerY = -99.; // hodoscope Y coordinate of crystal center in mm
   float BSY = -99;      // half-size of beam spot selection around the center in mm
 
-  if( bar == "box1"){
-    minX = -10.;   // range of X in mm
-    maxX = +30.;   // range of X in mm
-    centerX = 13.; // hodoscope X coordinate of crystal center in mm
-    BSX = 15.;     // half-size of beam spot selection around the center in mm
-    minY = 0.;    // range of Y in mm
-    maxY = +40.;    // range of Y in mm
-    centerY = 28.5; // hodoscope Y coordinate of crystal center in mm
-    BSY = 1;      // half-size of beam spot selection around the center in mm
-  }
-  else if( bar == "box2"){
-    minX = -10.;   // range of X in mm
-    maxX = +30.;   // range of X in mm
-    centerX = 13.; // hodoscope X coordinate of crystal center in mm
-    BSX = 15.;     // half-size of beam spot selection around the center in mm
-    minY = 0.;    // range of Y in mm
-    maxY = +40.;    // range of Y in mm
-    centerY = 25.5; // hodoscope Y coordinate of crystal center in mm
-    BSY = 1.5;      // half-size of beam spot selection around the center in mm
-  }
-  else if( bar == "box3"){
-    minX = -10.;   // range of X in mm
-    maxX = +30.;   // range of X in mm
-    centerX = 13.; // hodoscope X coordinate of crystal center in mm
-    BSX = 15.;     // half-size of beam spot selection around the center in mm
-    minY = 0.;    // range of Y in mm
-    maxY = +40.;    // range of Y in mm
-    centerY = 22.0; // hodoscope Y coordinate of crystal center in mm
-    BSY = 1.5;      // half-size of beam spot selection around the center in mm
-  }
-  else if( bar == "single"){
-    minX = -10.;   // range of X in mm
-    maxX = +30.;   // range of X in mm
-    centerX = 9.5; // hodoscope X coordinate of crystal center in mm
-    BSX = 13.5;     // half-size of beam spot selection around the center in mm
-    minY = 0.;    // range of Y in mm
-    maxY = +40.;    // range of Y in mm
-    centerY = 26.5; // hodoscope Y coordinate of crystal center in mm
-    BSY = 1.5;      // half-size of beam spot selection around the center in mm
-  }
+
+  //------------------
+  // get channel inputs
+  const int nInputs = 23;
+  float helper_channelData[nInputs];
+  int angleScan = -99;
+  if (firstRun==1000)      angleScan = 90;
+  else if (firstRun==7404) angleScan = 60;
+  else if (firstRun==8482) angleScan = 53;
+  else if (firstRun==7682) angleScan = 45;
+  else if (firstRun==8560) angleScan = 37;
+  else if (firstRun==7881) angleScan = 30;
+  else if (firstRun==8173) angleScan = 20;
+  else if (firstRun==8335) angleScan = 14;
+
+  float* channelData = getChannelData( helper_channelData, bar, biasVoltage, angleScan);
+
+  ampch_id[0]  = channelData[0]; // digitizer amp index of reference channel (MCP)
+  timech_id[0] = channelData[1]; // digitizer time index of reference channel (MCP)
+  if (timech_id[0]==0 || timech_id[0]==18 )
+    namech[0]    = "photek";
+  ampmin_cut[0] = channelData[3];  //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
+  ampmax_cut[0] = channelData[4]; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    
+  ampch_id[1]   = channelData[5]; // digitizer amp index of 1st bar, left SiPM
+  timech_id[1]  = channelData[6];  // digitizer time index of 1st bar, left SiPM
+  if (timech_id[1]==1)
+    namech[1]    = "top left";
+  else if (timech_id[1]==2)
+    namech[1]    = "middle left";
+  else if (timech_id[1]==3)
+    namech[1]    = "bottom left";
+  else if (timech_id[1]==19)
+    namech[1]    = "FBK left";
+  ampmin_cut[1] = channelData[8]; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
+  ampmax_cut[1] = channelData[9]; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    
+  ampch_id[2]   = channelData[10]; // digitizer index of 1st bar, right SiPM
+  timech_id[2]  = channelData[11];  // digitizer index of 1st bar, right SiPM
+  if (timech_id[2]==4)
+    namech[2]    = "top right";
+  else if (timech_id[2]==5)
+    namech[2]    = "middle right";
+  else if (timech_id[2]==6)
+    namech[2]    = "bottom right";
+  else if (timech_id[2]==20)
+    namech[2]    = "FBK right";
+  ampmin_cut[2] = channelData[13]; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
+  ampmax_cut[2] = channelData[14]; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
+
+  minX     = channelData[15];  // range of X in mm
+  maxX     = channelData[16];  // range of X in mm
+  centerX  = channelData[17];  // hodoscope X coordinate of crystal center in mm
+  BSX      = channelData[18];  // half-size of beam spot selection around the center in mm
+  minY     = channelData[19];  // range of Y in mm
+  maxY     = channelData[20];  // range of Y in mm
+  centerY  = channelData[21];  // hodoscope Y coordinate of crystal center in mm
+  BSY      = channelData[22];  // half-size of beam spot selection around the center in mm
+
+  
+  //------------------
+  // set more constants
 
   const int NPOSCUTSX = 8; // number of bins along X for binned time resolution
   float lowerPosCutX = centerX-BSX;
@@ -326,11 +544,7 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string ti
     latex[iCh] -> SetNDC();
     latex[iCh] -> SetTextFont(42);
     latex[iCh] -> SetTextSize(0.03);
-  }
-  
-  
-  
-  
+  } 
   
   
   //------------------------------------------------------------------------
@@ -440,6 +654,7 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string ti
   
   // ---------------------------- fitting and drawing mip peak ----------------------------
   float mip_peak[NCH];
+  float mip_peak_err[NCH];
   
   TCanvas* c_amp = new TCanvas("c_amp","c_amp",1000,500*(NCH+1)/2);
   c_amp -> Divide(2,(NCH+1)/2);
@@ -469,14 +684,15 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string ti
       fitMipPeak->SetLineWidth(2);
       h_amp_cut[iCh] -> Fit(fitMipPeak,"SQR");
       mip_peak[iCh] = fitMipPeak->GetParameter(1);
-      std::cout << "peak[" << iCh << "] = " << mip_peak[iCh] << " mV" << std::endl;
+      mip_peak_err[iCh] = fitMipPeak->GetParError(1);
+      std::cout << "peak[" << iCh << "] = " << mip_peak[iCh] << " #pm " << mip_peak_err[iCh] << " mV" << std::endl;
       
       TLine* lowcut = new TLine(std::max(rel_amp_cut_low*mip_peak[iCh],ampmin_cut[iCh]),0.,std::max(rel_amp_cut_low*mip_peak[iCh],ampmin_cut[iCh]),h_amp[iCh]->GetMaximum());
       TLine* higcut = new TLine(std::min(rel_amp_cut_hig*mip_peak[iCh],ampmax_cut[iCh]),0.,std::min(rel_amp_cut_hig*mip_peak[iCh],ampmax_cut[iCh]),h_amp[iCh]->GetMaximum());
       lowcut->Draw("same");
       higcut->Draw("same");
       
-      l_peakAmp = new TLatex(0.55, 0.8, Form("Fit Peak: %.2f mV", mip_peak[iCh]));
+      l_peakAmp = new TLatex(0.55, 0.8, Form("Fit Peak: %.1f #pm %.1f mV", mip_peak[iCh], mip_peak_err[iCh]));
       l_peakAmp->SetNDC();
       l_peakAmp->SetTextFont(42);
       l_peakAmp->SetTextSize(0.03);
@@ -1419,8 +1635,11 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string ti
   
   float sigmaWeiCorr    = sqrt(pow(fitdeltat_wei_ampCorr->GetParameter(2),2)         - pow(sigma_ref,2) );
   float sigmaAvgCorrPos = sqrt(pow(fitdeltat_avg_ampCorr_posCorr->GetParameter(2),2) - pow(sigma_ref,2) );
+  float sigmaWeiCorr_err    = fitdeltat_wei_ampCorr->GetParError(2);
+  float sigmaAvgCorrPos_err = fitdeltat_avg_ampCorr_posCorr->GetParError(2);
   
-  leg = new TLegend(0.65,0.68,0.80,0.93,NULL,"brNDC");
+  leg = new TLegend(0.5,0.68,0.80,0.93,NULL,"brNDC");
+  //leg = new TLegend(0.65,0.68,0.80,0.93,NULL,"brNDC");
   leg->SetBorderSize(0);
   leg->SetTextFont(42);
   leg->SetTextSize(0.03);
@@ -1431,8 +1650,10 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, string ti
   leg->AddEntry(h_deltat_left_ampCorr,       Form("#sigma^{left}_{t} = %.1f ps", sigmaLeftCorr*1000), "l");     
   leg->AddEntry(h_deltat_right_ampCorr,      Form("#sigma^{right}_{t} = %.1f ps", sigmaRightCorr*1000), "l");
   leg->AddEntry(h_deltat_avg_ampCorr,        Form("#sigma^{avg}_{t} = %.1f ps", sigmaAvgCorr*1000), "l");
-  leg->AddEntry(h_deltat_wei_ampCorr,        Form("#sigma^{wei}_{t} = %.1f ps", sigmaWeiCorr*1000), "l");
-  leg->AddEntry(h_deltat_avg_ampCorr_posCorr,Form("#sigma^{avg+pos}_{t} = %.1f ps", sigmaAvgCorrPos*1000), "l");
+  //leg->AddEntry(h_deltat_wei_ampCorr,        Form("#sigma^{wei}_{t} = %.1f ps", sigmaWeiCorr*1000), "l");
+  //leg->AddEntry(h_deltat_avg_ampCorr_posCorr,Form("#sigma^{avg+pos}_{t} = %.1f ps", sigmaAvgCorrPos*1000), "l");
+  leg->AddEntry(h_deltat_wei_ampCorr,        Form("#sigma^{wei}_{t} = %.1f #pm %.1f ps", sigmaWeiCorr*1000, sigmaWeiCorr_err*1000), "l");
+  leg->AddEntry(h_deltat_avg_ampCorr_posCorr,Form("#sigma^{avg+pos}_{t} = %.1f #pm %.1f ps", sigmaAvgCorrPos*1000, sigmaAvgCorrPos_err*1000), "l");
   leg->Draw("same");
 
 
