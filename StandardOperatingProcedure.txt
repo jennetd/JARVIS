@@ -83,7 +83,7 @@ Common Failures:
 		3) Start the autopilot
 	Look at the histograms in otsdaq visualizer and make sure they are fine: Look at the trigger and the strip
 	Maybe the tracking was fine on Rulinux but it is not copied back to daq02, Check the log to see if this is the case. Reissue the ticket on otsdaq@rulinux04.dhcp.fnal.gov
-	
+
 * Keep checking the run number and if the run number in digitizer listener doesn't match the otsdaq run number
  	 Reissue the ticket on timingdaq02, change the run number in the file /data-08/TestBeam/Users/RunNumber/OtherRuns0NextRunNumber.txt to the next run number from the run table and see if the problem is fixed.
 * VME TimingDAQ failure:
@@ -92,3 +92,11 @@ Common Failures:
 	 Make sure the RP rsync is on in workspace 4 
 
 
+If running VME on daq08:
+* Make sure that no otsdaq environment is sourced before you run VMEProcessing and Tracking Reco on DAQ08.
+* Make sure not to commit anything from DAQ-08.
+* Make sure the paths in AllModules for timingdaq02 and PCCITFNAL01 are commented out.
+* Make sure TransferVME is not running on timingdaq02 for the raw VME files.
+
+If running VME on DAQ02:
+* Make sure the TransferVME is progressing in workspace 4 on DAQ02 for the RawVME files.
