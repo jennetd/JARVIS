@@ -115,14 +115,23 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, const int
     namech[1] = "top left";
     if (biasVoltage==72)       ampmin_cut[1] = 100.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
     else if (biasVoltage==69)  ampmin_cut[1] = 25.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
-    ampmax_cut[1] = 500.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
-    
+    ampmax_cut[1] = 750.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    /*
+    if (biasVoltage==72)       ampmin_cut[1] = 300.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    else if (biasVoltage==69)  ampmin_cut[1] = 25.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    ampmax_cut[1] = 800.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    */
     ampch_id[2]  = 13; // digitizer index of 1st bar, right SiPM
     timech_id[2] = 4;  // digitizer index of 1st bar, right SiPM
     namech[2] = "top right";
     if (biasVoltage==72)       ampmin_cut[2] = 100.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
     else if (biasVoltage==69)  ampmin_cut[2] = 25.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
-    ampmax_cut[2] = 500.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    ampmax_cut[2] = 750.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    /*
+    if (biasVoltage==72)       ampmin_cut[2] = 300.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    else if (biasVoltage==69)  ampmin_cut[2] = 25.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    ampmax_cut[2] = 800.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    */
   }
   else if (bar == "box2"){
     cout << bar << endl;
@@ -137,14 +146,23 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, const int
     namech[1] = "middle left";
     if (biasVoltage==72)       ampmin_cut[1] = 100.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
     else if (biasVoltage==69)  ampmin_cut[1] = 25.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    ampmax_cut[1] = 750.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    /*
+    if (biasVoltage==72)       ampmin_cut[1] = 300.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    else if (biasVoltage==69)  ampmin_cut[1] = 25.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
     ampmax_cut[1] = 500.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
-    
+    */
     ampch_id[2]  = 14; // digitizer index of 1st bar, right SiPM
     timech_id[2] = 5;  // digitizer index of 1st bar, right SiPM
     namech[2] = "middle right";
     if (biasVoltage==72)       ampmin_cut[2] = 100.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
     else if (biasVoltage==69)  ampmin_cut[2] = 25.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
-    ampmax_cut[2] = 500.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    ampmax_cut[2] = 750.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    /*
+    if (biasVoltage==72)       ampmin_cut[2] = 300.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    else if (biasVoltage==69)  ampmin_cut[2] = 25.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    ampmax_cut[1] = 500.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    */
   }
   else if (bar == "box3"){
     cout << bar << endl;
@@ -159,14 +177,24 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, const int
     namech[1] = "bottom left";
     if (biasVoltage==72)       ampmin_cut[1] = 100.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
     else if (biasVoltage==69)  ampmin_cut[1] = 25.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
-    ampmax_cut[1] = 500.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    ampmax_cut[1] = 750.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    /*
+    if (biasVoltage==72)       ampmin_cut[1] = 300.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    else if (biasVoltage==69)  ampmin_cut[1] = 25.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    ampmax_cut[1] = 800.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    */
     
     ampch_id[2]  = 15; // digitizer index of 1st bar, right SiPM
     timech_id[2] = 6;  // digitizer index of 1st bar, right SiPM
     namech[2] = "bottom right";
     if (biasVoltage==72)       ampmin_cut[2] = 100.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
     else if (biasVoltage==69)  ampmin_cut[2] = 25.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
-    ampmax_cut[2] = 500.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    ampmax_cut[2] = 750.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    /*
+    if (biasVoltage==72)       ampmin_cut[2] = 300.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    else if (biasVoltage==69)  ampmin_cut[2] = 25.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    ampmax_cut[1] = 800.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    */
   }
   else if (bar == "single"){
     cout << bar << endl;
@@ -210,42 +238,41 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, const int
   if( bar == "box1"){
     minX = -10.;   // range of X in mm
     maxX = +35.;   // range of X in mm
-    centerX = 17.; // hodoscope X coordinate of crystal center in mm
-    BSX = 14.;     // half-size of beam spot selection around the center in mm
+    centerX = 11.5; // hodoscope X coordinate of crystal center in mm
+    BSX = 9.5;     // half-size of beam spot selection around the center in mm
     minY = 0.;    // range of Y in mm
     maxY = +40.;    // range of Y in mm
-    centerY = 28.5; // hodoscope Y coordinate of crystal center in mm
-    BSY = 1.;      // half-size of beam spot selection around the center in mm
+    centerY = 29.; // hodoscope Y coordinate of crystal center in mm
+    BSY = 1.5;      // half-size of beam spot selection around the center in mm
   }
   else if( bar == "box2"){
     minX = -10.;   // range of X in mm
     maxX = +35.;   // range of X in mm
-    centerX = 17.; // hodoscope X coordinate of crystal center in mm
-    BSX = 14.;     // half-size of beam spot selection around the center in mm
+    centerX = 11.5; // hodoscope X coordinate of crystal center in mm
+    BSX = 9.5;     // half-size of beam spot selection around the center in mm
     minY = 0.;    // range of Y in mm
     maxY = +40.;    // range of Y in mm
-    //centerY = 25.; // hodoscope Y coordinate of crystal center in mm
     centerY = 25.5; // hodoscope Y coordinate of crystal center in mm
     BSY = 1.5;      // half-size of beam spot selection around the center in mm
   }
   else if( bar == "box3"){
     minX = -10.;   // range of X in mm
     maxX = +35.;   // range of X in mm
-    centerX = 17.; // hodoscope X coordinate of crystal center in mm
-    BSX = 14.;     // half-size of beam spot selection around the center in mm
+    centerX = 11.5; // hodoscope X coordinate of crystal center in mm
+    BSX = 9.5;     // half-size of beam spot selection around the center in mm
     minY = 0.;    // range of Y in mm
     maxY = +40.;    // range of Y in mm
-    centerY = 22; // hodoscope Y coordinate of crystal center in mm
+    centerY = 22.; // hodoscope Y coordinate of crystal center in mm
     BSY = 1.5;      // half-size of beam spot selection around the center in mm
   }
   else if( bar == "single"){
     minX = -10.;   // range of X in mm
     maxX = +35.;   // range of X in mm
-    centerX = 13; // hodoscope X coordinate of crystal center in mm
-    BSX = 18;     // half-size of beam spot selection around the center in mm
+    centerX = 8.; // hodoscope X coordinate of crystal center in mm
+    BSX = 18.;     // half-size of beam spot selection around the center in mm
     minY = 0.;    // range of Y in mm
     maxY = +40.;    // range of Y in mm
-    centerY = 26.; // hodoscope Y coordinate of crystal center in mm
+    centerY = 26.25; // hodoscope Y coordinate of crystal center in mm
     BSY = 1.5;      // half-size of beam spot selection around the center in mm
   }
 
