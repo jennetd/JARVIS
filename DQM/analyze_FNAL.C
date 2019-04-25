@@ -23,32 +23,32 @@ float* getChannelData(float _channelData[], string _bar, const int& _biasVoltage
     _channelData[5] = 10; // digitizer amp index of 1st bar, left SiPM
     _channelData[6] = 1;  // digitizer timing index of 1st bar, left SiPM
     // ** II. Right SiPM
-    _channelData[10] = 13; // digitizer amp index of 1st bar, left SiPM
-    _channelData[11] = 4;  // digitizer timing index of 1st bar, left SiPM
+    _channelData[10] = 13; // digitizer amp index of 1st bar, right SiPM
+    _channelData[11] = 4;  // digitizer timing index of 1st bar, right SiPM
   }
   else if (_bar == "box2"){ 
     // ** I. Left SiPM
-    _channelData[5] = 11; // digitizer amp index of 1st bar, left SiPM
-    _channelData[6] = 2;  // digitizer timing index of 1st bar, left SiPM
+    _channelData[5] = 11; // digitizer amp index of 2nd bar, left SiPM
+    _channelData[6] = 2;  // digitizer timing index of 2nd bar, left SiPM
     // ** II. Right SiPM
-    _channelData[10] = 14; // digitizer amp index of 1st bar, left SiPM
-    _channelData[11] = 5;  // digitizer timing index of 1st bar, left SiPM
+    _channelData[10] = 14; // digitizer amp index of 2nd bar, right SiPM
+    _channelData[11] = 5;  // digitizer timing index of 2nd bar, right SiPM
   }
   else if (_bar == "box3"){ 
     // ** I. Left SiPM
-    _channelData[5] = 12; // digitizer amp index of 1st bar, left SiPM
-    _channelData[6] = 3;  // digitizer timing index of 1st bar, left SiPM
+    _channelData[5] = 12; // digitizer amp index of 3rd bar, left SiPM
+    _channelData[6] = 3;  // digitizer timing index of 3rd bar, left SiPM
     // ** II. Right SiPM
-    _channelData[10] = 15; // digitizer amp index of 1st bar, left SiPM
-    _channelData[11] = 6;  // digitizer timing index of 1st bar, left SiPM
+    _channelData[10] = 15; // digitizer amp index of 3rd bar, right SiPM
+    _channelData[11] = 6;  // digitizer timing index of 3rd bar, right SiPM
   }
   else if (_bar == "single"){ 
     // ** I. Left SiPM
-    _channelData[5] = 21; // digitizer amp index of 1st bar, left SiPM
-    _channelData[6] = 19;  // digitizer timing index of 1st bar, left SiPM
+    _channelData[5] = 21; // digitizer amp index of single bar, left SiPM
+    _channelData[6] = 19;  // digitizer timing index of single bar, left SiPM
     // ** II. Right SiPM
-    _channelData[10] = 22; // digitizer amp index of 1st bar, left SiPM
-    _channelData[11] = 20;  // digitizer timing index of 1st bar, left SiPM
+    _channelData[10] = 22; // digitizer amp index of single bar, right SiPM
+    _channelData[11] = 20;  // digitizer timing index of single bar, right SiPM
   }
 
   // ** B. Channel Amplitude limits
@@ -94,8 +94,8 @@ float* getChannelData(float _channelData[], string _bar, const int& _biasVoltage
     }
     // *III. Angle = 53
     if (_angleScan == 53 ){
-      _channelData[17] = 15.5; // hodoscope X coordinate of crystal center in mm
-      _channelData[18] = 11.5; // half-size of beam spot selection around the center in mm
+      _channelData[17] = 11.5; // hodoscope X coordinate of crystal center in mm
+      _channelData[18] = 15.5; // half-size of beam spot selection around the center in mm
     }
     // *IV. Angle = 45
     if (_angleScan == 45 ){
