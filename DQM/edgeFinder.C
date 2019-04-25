@@ -140,21 +140,25 @@ void edgeFinder(const int& firstRun, const int& lastRun, string outputDir="./", 
   h_box1->SetXTitle("X Coordinate [mm]");
   h_box1->SetYTitle("Y Coordinate [mm]");
   myTree->Draw("amp[1] > 400 :  y_dut[0]:x_dut[0]>>+h_box1", "ntracks==1", "profcolz");
+  c_box1->Print("topBar_Runs8629to8992_YZangle45.png");
 
   c_box2->cd();
   h_box2->SetXTitle("X Coordinate [mm]");
   h_box2->SetYTitle("Y Coordinate [mm]");
   myTree->Draw("amp[2] > 400 :  y_dut[0]:x_dut[0]>>+h_box2", "ntracks==1", "profcolz");
+  c_box2->Print("middleBar_Runs8629to8992_YZangle45.png");
 
   c_box3->cd();
   h_box3->SetXTitle("X Coordinate [mm]");
   h_box3->SetYTitle("Y Coordinate [mm]");
   myTree->Draw("amp[3] > 400 :  y_dut[0]:x_dut[0]>>+h_box3", "ntracks==1", "profcolz");
+  c_box3->Print("bottomBar_Runs8629to8992_YZangle45.png");
 
   c_single->cd();
   h_single->SetXTitle("X Coordinate [mm]");
   h_single->SetYTitle("Y Coordinate [mm]");
   myTree->Draw("amp[20] > 200 :  y_dut[0]:x_dut[0]>>+h_single", "ntracks==1", "profcolz");
+  c_single->Print("single_Runs8629to8992_YZangle45.png");
 
   return;
 

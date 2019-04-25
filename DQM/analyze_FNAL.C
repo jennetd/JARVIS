@@ -1,3 +1,13 @@
+#include <iostream>
+#include <TCanvas.h>
+#include <TH1.h>
+#include <TGraphErrors.h>
+#include <TChain.h>
+#include <TH2.h>
+#include <TFile.h>
+#include <iostream>
+#include <fstream>
+
 float* getChannelData(float _channelData[], string _bar, const int& _biasVoltage, const int& _angleScan)
 {
   
@@ -23,32 +33,32 @@ float* getChannelData(float _channelData[], string _bar, const int& _biasVoltage
     _channelData[5] = 10; // digitizer amp index of 1st bar, left SiPM
     _channelData[6] = 1;  // digitizer timing index of 1st bar, left SiPM
     // ** II. Right SiPM
-    _channelData[10] = 13; // digitizer amp index of 1st bar, right SiPM
-    _channelData[11] = 4;  // digitizer timing index of 1st bar, right SiPM
+    _channelData[10] = 13; // digitizer amp index of 1st bar, left SiPM
+    _channelData[11] = 4;  // digitizer timing index of 1st bar, left SiPM
   }
   else if (_bar == "box2"){ 
     // ** I. Left SiPM
-    _channelData[5] = 11; // digitizer amp index of 2nd bar, left SiPM
-    _channelData[6] = 2;  // digitizer timing index of 2nd bar, left SiPM
+    _channelData[5] = 11; // digitizer amp index of 1st bar, left SiPM
+    _channelData[6] = 2;  // digitizer timing index of 1st bar, left SiPM
     // ** II. Right SiPM
-    _channelData[10] = 14; // digitizer amp index of 2nd bar, right SiPM
-    _channelData[11] = 5;  // digitizer timing index of 2nd bar, right SiPM
+    _channelData[10] = 14; // digitizer amp index of 1st bar, left SiPM
+    _channelData[11] = 5;  // digitizer timing index of 1st bar, left SiPM
   }
   else if (_bar == "box3"){ 
     // ** I. Left SiPM
-    _channelData[5] = 12; // digitizer amp index of 3rd bar, left SiPM
-    _channelData[6] = 3;  // digitizer timing index of 3rd bar, left SiPM
+    _channelData[5] = 12; // digitizer amp index of 1st bar, left SiPM
+    _channelData[6] = 3;  // digitizer timing index of 1st bar, left SiPM
     // ** II. Right SiPM
-    _channelData[10] = 15; // digitizer amp index of 3rd bar, right SiPM
-    _channelData[11] = 6;  // digitizer timing index of 3rd bar, right SiPM
+    _channelData[10] = 15; // digitizer amp index of 1st bar, left SiPM
+    _channelData[11] = 6;  // digitizer timing index of 1st bar, left SiPM
   }
   else if (_bar == "single"){ 
     // ** I. Left SiPM
-    _channelData[5] = 21; // digitizer amp index of single bar, left SiPM
-    _channelData[6] = 19;  // digitizer timing index of single bar, left SiPM
+    _channelData[5] = 21; // digitizer amp index of 1st bar, left SiPM
+    _channelData[6] = 19;  // digitizer timing index of 1st bar, left SiPM
     // ** II. Right SiPM
-    _channelData[10] = 22; // digitizer amp index of single bar, right SiPM
-    _channelData[11] = 20;  // digitizer timing index of single bar, right SiPM
+    _channelData[10] = 22; // digitizer amp index of 1st bar, left SiPM
+    _channelData[11] = 20;  // digitizer timing index of 1st bar, left SiPM
   }
 
   // ** B. Channel Amplitude limits
@@ -87,6 +97,10 @@ float* getChannelData(float _channelData[], string _bar, const int& _biasVoltage
   // ** A. X-Positioning for Box
   if ( _bar=="box1" || _bar=="box2" || _bar=="box3" ){
     // *I. Angle = 90
+    if (_angleScan == 90 ){
+      _channelData[17] = 9.; // hodoscope X coordinate of crystal center in mm
+      _channelData[18] = 16.5; // half-size of beam spot selection around the center in mm
+    }
     // *II. Angle = 60
     if (_angleScan == 60 ){
       _channelData[17] = 17.; // hodoscope X coordinate of crystal center in mm
@@ -94,8 +108,8 @@ float* getChannelData(float _channelData[], string _bar, const int& _biasVoltage
     }
     // *III. Angle = 53
     if (_angleScan == 53 ){
-      _channelData[17] = 11.5; // hodoscope X coordinate of crystal center in mm
-      _channelData[18] = 15.5; // half-size of beam spot selection around the center in mm
+      _channelData[17] = 15.5; // hodoscope X coordinate of crystal center in mm
+      _channelData[18] = 11.5; // half-size of beam spot selection around the center in mm
     }
     // *IV. Angle = 45
     if (_angleScan == 45 ){
@@ -125,6 +139,20 @@ float* getChannelData(float _channelData[], string _bar, const int& _biasVoltage
   }
   // ** B. Y-Positioning for Box
   // *I. Angle = 90
+  if (_angleScan == 90 ){
+    if ( _bar=="box1"){
+      _channelData[21] = 28.25; // hodoscope Y coordinate of crystal center in mm
+      _channelData[22] = 1.5;   // half-size of beam spot selection around the center in mm
+    }
+    else if ( _bar=="box2"){
+      _channelData[21] = 24.75; // hodoscope Y coordinate of crystal center in mm
+      _channelData[22] = 1.5;  // half-size of beam spot selection around the center in mm
+    }
+    else if ( _bar=="box3"){
+      _channelData[21] = 21.25;  // hodoscope Y coordinate of crystal center in mm
+      _channelData[22] = 1.5;  // half-size of beam spot selection around the center in mm
+    }
+  }
   // *II. Angle = 60
   if (_angleScan == 60 ){
     if ( _bar=="box1"){
@@ -303,7 +331,6 @@ int returnNumberOfBinsAboveAmpThreshold(TProfile* _tp0, double _threshold = 0.35
 
 bool checkTrackingSynchronization(const char* _fileName)
 {
-
   //TFile* _fileToCheck = new TFile( _fileName, "READ");
   TFile* _fileToCheck = TFile::Open( _fileName );
   if (_fileToCheck->GetListOfKeys()->Contains("pulse")==false)
@@ -350,6 +377,10 @@ bool checkTrackingSynchronization(const char* _fileName)
 
 void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, const int& biasVoltage, string timeAlgo="LP2_30", string outputDir="./", string isCondor="")
 {
+  ofstream txtOutputFitInfo;
+  txtOutputFitInfo.open( (outputDir+"/timeAndAmptFitInfo.txt").c_str() );
+
+
   gStyle->SetPadTopMargin(0.05);
   gStyle->SetPadBottomMargin(0.13);
   gStyle->SetPadLeftMargin(0.13);
@@ -403,7 +434,7 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, const int
   const int nInputs = 23;
   float helper_channelData[nInputs];
   int angleScan = -99;
-  if (firstRun==1000)      angleScan = 90;
+  if (firstRun==7639)      angleScan = 90;
   else if (firstRun==7404) angleScan = 60;
   else if (firstRun==8482) angleScan = 53;
   else if (firstRun==7682) angleScan = 45;
@@ -686,7 +717,8 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, const int
       mip_peak[iCh] = fitMipPeak->GetParameter(1);
       mip_peak_err[iCh] = fitMipPeak->GetParError(1);
       std::cout << "peak[" << iCh << "] = " << mip_peak[iCh] << " #pm " << mip_peak_err[iCh] << " mV" << std::endl;
-      
+      txtOutputFitInfo << Form("Angle: %d, ", angleScan) << namech[iCh].c_str() <<", amp peak[" << iCh << "] = " << Form("%.2f #pm %.2f mV", mip_peak[iCh], mip_peak_err[iCh]) << std::endl;
+
       TLine* lowcut = new TLine(std::max(rel_amp_cut_low*mip_peak[iCh],ampmin_cut[iCh]),0.,std::max(rel_amp_cut_low*mip_peak[iCh],ampmin_cut[iCh]),h_amp[iCh]->GetMaximum());
       TLine* higcut = new TLine(std::min(rel_amp_cut_hig*mip_peak[iCh],ampmax_cut[iCh]),0.,std::min(rel_amp_cut_hig*mip_peak[iCh],ampmax_cut[iCh]),h_amp[iCh]->GetMaximum());
       lowcut->Draw("same");
@@ -1224,6 +1256,9 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, const int
   float sigmaLeftCorr  = sqrt(pow(fitdeltat_left_ampCorr->GetParameter(2),2)  - pow(sigma_ref,2) );    
   float sigmaRightCorr = sqrt(pow(fitdeltat_right_ampCorr->GetParameter(2),2) - pow(sigma_ref,2) );    
   float sigmaAvgCorr   = sqrt(pow(fitdeltat_avg_ampCorr->GetParameter(2),2)   - pow(sigma_ref,2) );    
+  float sigmaLeftCorr_err  = fitdeltat_left_ampCorr->GetParError(2);
+  float sigmaRightCorr_err = fitdeltat_right_ampCorr->GetParError(2);
+  float sigmaAvgCorr_err   = fitdeltat_avg_ampCorr->GetParError(2);
   
   // ---------------------------- BS cut plots ----------------------------
   TF1* fitdeltat_ampCorr_BSCut_L = new TF1("fitdeltat_ampCorr_BSCut_L", "gaus", h_deltat_left_ampCorr->GetMean() -h_deltat_left_ampCorr->GetRMS()*2,  h_deltat_left_ampCorr->GetMean() +h_deltat_left_ampCorr->GetRMS()*2);
@@ -1637,7 +1672,7 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, const int
   float sigmaAvgCorrPos = sqrt(pow(fitdeltat_avg_ampCorr_posCorr->GetParameter(2),2) - pow(sigma_ref,2) );
   float sigmaWeiCorr_err    = fitdeltat_wei_ampCorr->GetParError(2);
   float sigmaAvgCorrPos_err = fitdeltat_avg_ampCorr_posCorr->GetParError(2);
-  
+	
   leg = new TLegend(0.5,0.68,0.80,0.93,NULL,"brNDC");
   //leg = new TLegend(0.65,0.68,0.80,0.93,NULL,"brNDC");
   leg->SetBorderSize(0);
@@ -1656,6 +1691,11 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, const int
   leg->AddEntry(h_deltat_avg_ampCorr_posCorr,Form("#sigma^{avg+pos}_{t} = %.1f #pm %.1f ps", sigmaAvgCorrPos*1000, sigmaAvgCorrPos_err*1000), "l");
   leg->Draw("same");
 
+  txtOutputFitInfo << Form("Angle: %d, #sigma^{left}_{t} = %.1f #pm %.1f ps", angleScan, sigmaLeftCorr*1000, sigmaLeftCorr_err*1000) << " (" << timeAlgo.c_str() << ")"<< std::endl;
+  txtOutputFitInfo << Form("Angle: %d, #sigma^{right}_{t} = %.1f #pm %.1f ps", angleScan,  sigmaRightCorr*1000, sigmaRightCorr_err*1000) << " (" << timeAlgo.c_str() << ")"<< std::endl;
+  txtOutputFitInfo << Form("Angle: %d, #sigma^{avg}_{t} = %.1f #pm %.1f ps", angleScan,  sigmaAvgCorr*1000, sigmaAvgCorr_err*1000) << " (" << timeAlgo.c_str() << ")"<< std::endl;
+  txtOutputFitInfo << Form("Angle: %d, #sigma^{avg+pos}_{t} = %.1f #pm %.1f ps", angleScan,  sigmaAvgCorrPos*1000, sigmaAvgCorrPos_err*1000) << " (" << timeAlgo.c_str() << ")"<< std::endl;
+  txtOutputFitInfo << Form("Angle: %d, #sigma^{wei}_{t} = %.1f #pm %.1f ps", angleScan,  sigmaWeiCorr*1000, sigmaWeiCorr_err*1000) << " (" << timeAlgo.c_str() << ")"<< std::endl;
 
   // print canvasses
   printCanvas(c_timeRes_vs_XY, outputDir, timeAlgo);    
@@ -1668,6 +1708,9 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, const int
   printCanvas(c_time_vs_X, outputDir, timeAlgo);  
   printCanvas(c_timeRes_comp, outputDir, timeAlgo);  
   printCanvas(c_timeRes_vs_BS, outputDir, timeAlgo);    
+
+
+  txtOutputFitInfo.close();
 
  
 }
