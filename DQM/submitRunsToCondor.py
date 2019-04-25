@@ -81,48 +81,56 @@ if ( not os.path.exists(os.path.expandvars("$X509_USER_PROXY")) ):
 # ** A. Super-Top level directory for testbeam analysis
 username = getpass.getuser()
 eosDir = "/eos/uscms/store/user/{0}/testbeam_04-2019/".format(username)
-if ( not os.path.exists(eosDir) ):
+if ( not os.path.isdir(eosDir) ):
     print "Specified top directory {0} DNE.\nCREATING NOW".format(eosDir)
+    os.system("rm -rf {0}".format(outputDir))
     os.system("mkdir {0}".format(eosDir))
 
 # ** B. Top level directory of which runs
 outputDir = 'Runs_'+args.firstRun+'to'+args.lastRun
-if ( not os.path.exists(outputDir) ):
+if ( not os.path.isdir(outputDir) ):
     print "Specified run directory {0} DNE.\nCREATING NOW".format(outputDir)
+    os.system("rm -rf {0}".format(outputDir))
     os.system("mkdir {0}".format(outputDir))
-    if ( not os.path.exists(eosDir+'/{0}/'.format(outputDir)) ):
-        os.system("mkdir "+eosDir+'/{0}/'.format(outputDir))
+if ( not os.path.isdir(eosDir+'/{0}/'.format(outputDir)) ):
+    os.system("mkdir "+eosDir+'/{0}/'.format(outputDir))
 
 # ** C. Sub-level directory of what bias
 outputDir = outputDir + '/' + args.biasVoltage + 'V'
-if ( not os.path.exists(outputDir) ):
+if ( not os.path.isdir(outputDir) ):
     print "Specified bias voltage sub-directory {0} DNE.\nCREATING NOW".format(outputDir)
+    os.system("rm -rf {0}".format(outputDir))
     os.system("mkdir {0}".format(outputDir))
-    if ( not os.path.exists(eosDir+'/{0}/'.format(outputDir)) ):
-        os.system("mkdir "+eosDir+'/{0}/'.format(outputDir))
+if ( not os.path.isdir(eosDir+'/{0}/'.format(outputDir)) ):
+    os.system("mkdir "+eosDir+'/{0}/'.format(outputDir))
 
 # ** D. Sub-level directory of which bar
 outputDir = outputDir + '/' + args.bar
-if ( not os.path.exists(outputDir) ):
+if ( not os.path.isdir(outputDir) ):
     print "Specified bar sub-directory {0} DNE.\nCREATING NOW".format(outputDir)
+    os.system("rm -rf {0}".format(outputDir))
     os.system("mkdir {0}".format(outputDir))
-    if ( not os.path.exists(eosDir+'/{0}/'.format(outputDir)) ):
-        os.system("mkdir "+eosDir+'/{0}/'.format(outputDir))
+if ( not os.path.isdir(eosDir+'/{0}/'.format(outputDir)) ):
+    os.system("rm -rf "+eosDir+'/{0}/'.format(outputDir))
+    os.system("mkdir "+eosDir+'/{0}/'.format(outputDir))
 
 # ** D. Sub-level directory of which time algorithm
 outputDir = outputDir + '/' + args.timeAlgo 
-if ( not os.path.exists(outputDir) ):
+if ( not os.path.isdir(outputDir) ):
     print "Specified timeAlgo sub-directory {0} DNE.\nCREATING NOW".format(outputDir)
+    os.system("rm -rf {0}".format(outputDir))
     os.system("mkdir {0}".format(outputDir))
-    if ( not os.path.exists(eosDir+'/{0}/'.format(outputDir)) ):
-        os.system("mkdir "+eosDir+'/{0}/'.format(outputDir))
+if ( not os.path.isdir(eosDir+'/{0}/'.format(outputDir)) ):
+    print "EOS Specified timeAlgo sub-directory {0} DNE.\nCREATING NOW".format(outputDir)
+    os.system("rm -rf "+eosDir+'/{0}'.format(outputDir))
+    os.system("mkdir "+eosDir+'/{0}/'.format(outputDir))
 
 # ** E. Make folders for condor output storage
-if ( not os.path.exists( (outputDir + '/condor_logs/') ) ):
+if ( not os.path.isdir( (outputDir + '/condor_logs/') ) ):
     os.system("mkdir {0}".format( (outputDir + '/condor_logs/')) )
-if ( not os.path.exists( (outputDir + '/condor_err/') ) ):
+if ( not os.path.isdir( (outputDir + '/condor_err/') ) ):
     os.system("mkdir {0}".format( (outputDir + '/condor_err/')) )
-if ( not os.path.exists( (outputDir + '/condor_out/') ) ):
+if ( not os.path.isdir( (outputDir + '/condor_out/') ) ):
     os.system("mkdir {0}".format( (outputDir + '/condor_out/')) )
     
 print '-- Setting outputDir = {0}'.format(outputDir)
@@ -136,6 +144,7 @@ tarball_name = "{0}.tar.gz".format(outputDir.replace('/', '__'))
 # remove EOS tarball
 if os.path.isfile( eosDir+'/'+outputDir+'/'+tarball_name ) :
     os.system('rm {0}'.format(eosDir+'/'+outputDir+'/'+tarball_name))
+    print ("WARNING: Removing {0}.\nTHIS MEANS YOU HAVE RUN THIS CONFIGURATION ONCE BEFORE. IF YOU HAVEN'T SAVED THE PREVIOUS TARBALL BEFORE, IT'S TOO LATE NOW.\n".format(eosDir+'/'+outputDir+'/'+tarball_name))
 # remove local tarball
 if os.path.isfile( './'+tarball_name ) :
     os.system('rm {0}'.format(tarball_name)) 
