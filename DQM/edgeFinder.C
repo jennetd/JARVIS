@@ -16,7 +16,7 @@ int returnNumberOfBinsAboveAmpThreshold(TProfile* _tp0, double _threshold = 0.35
   int _binsAboveThreshold = 0 ;
 
   for(int iBin=1; iBin < _tp0->GetNbinsX(); iBin++){
-    if ( _tp0->GetBinContent(iBin) > _threshold ) 
+    if ( _tp0->GetBinContent(iBin) > _threshold && _tp0->GetBinContent(iBin+1) > _threshold) 
       _binsAboveThreshold++;
   }
 
@@ -87,8 +87,8 @@ void edgeFinder(const int& firstRun, const int& lastRun, string outputDir="./", 
   //----------------
   // ntuple location
   //std::string dataFolder = "/eos/cms/store/group/dpg_mtd/comm_mtd/TB/MTDTB_FNAL_Nov2018/reco/v6/";
-  //std::string dataFolder = "/data2/2019_04_April_CMSTiming/VME/RecoData/RecoWithTracks/v3/"; // BBT, 4-18-19, local
-  std::string dataFolder = "/eos/uscms/store/group/cmstestbeam/2019_04_April_CMSTiming/VME/RecoData/RecoWithTracks/v3/"; // BBT, 4-18-19, LPC EOS
+  std::string dataFolder = "/data2/2019_04_April_CMSTiming/VME/RecoData/RecoWithTracks/v3/"; // BBT, 4-18-19, local
+  //std::string dataFolder = "/eos/uscms/store/group/cmstestbeam/2019_04_April_CMSTiming/VME/RecoData/RecoWithTracks/v3/"; // BBT, 4-18-19, LPC EOS
   if (isCondor=="True")
     dataFolder = "root://cmseos.fnal.gov//store/group/cmstestbeam/2019_04_April_CMSTiming/VME/RecoData/RecoWithTracks/v3/"; // BBT, 4-18-19, LPC EOS
   //std::string dataFolder = "/data2/2019_04_April_CMSTiming/VME/RecoData/RecoWithTracks/v3/";
@@ -140,21 +140,25 @@ void edgeFinder(const int& firstRun, const int& lastRun, string outputDir="./", 
   h_box1->SetXTitle("X Coordinate [mm]");
   h_box1->SetYTitle("Y Coordinate [mm]");
   myTree->Draw("amp[1] > 400 :  y_dut[0]:x_dut[0]>>+h_box1", "ntracks==1", "profcolz");
+  c_box1->Print("topBar_Runs8629to8992_YZangle45.png");
 
   c_box2->cd();
   h_box2->SetXTitle("X Coordinate [mm]");
   h_box2->SetYTitle("Y Coordinate [mm]");
   myTree->Draw("amp[2] > 400 :  y_dut[0]:x_dut[0]>>+h_box2", "ntracks==1", "profcolz");
+  c_box2->Print("middleBar_Runs8629to8992_YZangle45.png");
 
   c_box3->cd();
   h_box3->SetXTitle("X Coordinate [mm]");
   h_box3->SetYTitle("Y Coordinate [mm]");
   myTree->Draw("amp[3] > 400 :  y_dut[0]:x_dut[0]>>+h_box3", "ntracks==1", "profcolz");
+  c_box3->Print("bottomBar_Runs8629to8992_YZangle45.png");
 
   c_single->cd();
   h_single->SetXTitle("X Coordinate [mm]");
   h_single->SetYTitle("Y Coordinate [mm]");
   myTree->Draw("amp[20] > 200 :  y_dut[0]:x_dut[0]>>+h_single", "ntracks==1", "profcolz");
+  c_single->Print("single_Runs8629to8992_YZangle45.png");
 
   return;
 
