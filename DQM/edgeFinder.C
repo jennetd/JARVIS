@@ -16,7 +16,7 @@ int returnNumberOfBinsAboveAmpThreshold(TProfile* _tp0, double _threshold = 0.35
   int _binsAboveThreshold = 0 ;
 
   for(int iBin=1; iBin < _tp0->GetNbinsX(); iBin++){
-    if ( _tp0->GetBinContent(iBin) > _threshold ) 
+    if ( _tp0->GetBinContent(iBin) > _threshold && _tp0->GetBinContent(iBin+1) > _threshold) 
       _binsAboveThreshold++;
   }
 
@@ -87,8 +87,8 @@ void edgeFinder(const int& firstRun, const int& lastRun, string outputDir="./", 
   //----------------
   // ntuple location
   //std::string dataFolder = "/eos/cms/store/group/dpg_mtd/comm_mtd/TB/MTDTB_FNAL_Nov2018/reco/v6/";
-  //std::string dataFolder = "/data2/2019_04_April_CMSTiming/VME/RecoData/RecoWithTracks/v3/"; // BBT, 4-18-19, local
-  std::string dataFolder = "/eos/uscms/store/group/cmstestbeam/2019_04_April_CMSTiming/VME/RecoData/RecoWithTracks/v3/"; // BBT, 4-18-19, LPC EOS
+  std::string dataFolder = "/data2/2019_04_April_CMSTiming/VME/RecoData/RecoWithTracks/v3/"; // BBT, 4-18-19, local
+  //std::string dataFolder = "/eos/uscms/store/group/cmstestbeam/2019_04_April_CMSTiming/VME/RecoData/RecoWithTracks/v3/"; // BBT, 4-18-19, LPC EOS
   if (isCondor=="True")
     dataFolder = "root://cmseos.fnal.gov//store/group/cmstestbeam/2019_04_April_CMSTiming/VME/RecoData/RecoWithTracks/v3/"; // BBT, 4-18-19, LPC EOS
   //std::string dataFolder = "/data2/2019_04_April_CMSTiming/VME/RecoData/RecoWithTracks/v3/";
