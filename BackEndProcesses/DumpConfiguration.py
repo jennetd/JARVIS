@@ -43,7 +43,7 @@ def DumpConfiguration(RunNumber, DigitizerKey, Debug):
 		DigiResponseDict = am.ast.literal_eval(response.text)
 		if Debug: print DigiResponseDict, DigiCMD
 
-		for ColumnNames,ColumnEntries in  DigiResponseDict["fields"].items():
+		for ColumnNames,ColumnEntries in DigiResponseDict["fields"].items():
 			
 			if ColumnNames == 'Configuration number':
 			CMD = am.CurlBaseCommandSensor + '/' + ID

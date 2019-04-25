@@ -20,65 +20,70 @@ def greatest_number_less_than_value(seq,value):
 def GetEnvMeas(timestamp):
                                                                                                                                                                                                                                 
     LabviewFlag = False
+    all_labview_array = np.array([])    
 
     labview_file_list = sorted([float(x.split("lab_meas_unsync_")[-1].split(".txt")[0]) for x in glob.glob(labview_unsync_base_path + "/lab_meas_unsync_*")])
     exact_labview_file = greatest_number_less_than_value(labview_file_list, timestamp)
     index_labview_file = labview_file_list.index(exact_labview_file)
-
-    all_labview_array = np.array([])
     labview_file_name = labview_unsync_base_path + "/lab_meas_unsync_%.3f.txt" % labview_file_list[index_labview_file]
+    all_labview_array = np.array(np.loadtxt(labview_file_name, delimiter='\t', unpack=False))
 
-    labview_array = np.array(np.loadtxt(labview_file_name, delimiter='\t', unpack=False))
-    all_labview_array = labview_array
-    if len(all_labview_array.shape) == 1:
-        all_labview_array_time_list = all_labview_array[0]
-    else:
-        all_labview_array_time_list = all_labview_array[:,0].tolist()
-                                                                                                                                                                                
-    synced_array = np.array([])
-    if (not isinstance(all_labview_array_time_list,list)):
-        labview_time = all_labview_array_time_list
-        delta_time = labview_time - timestamp
-        if abs(delta_time) > 100:
-            LabviewFlag = True
-        else:
-            Resis13 = all_labview_array[1]
-            Resis14 = all_labview_array[2]
-            Resis15 = all_labview_array[3]
-            Resis16 = all_labview_array[4]
-            Resis17 = all_labview_array[5]
-            Resis18 = all_labview_array[6]
-            Resis19 = all_labview_array[7]
-            Resis20 = all_labview_array[8]
-            Voltage1 = all_labview_array[9]
-            Current1 = all_labview_array[10]
-            Voltage2 = all_labview_array[11]
-            Current2 = all_labview_array[12]
-            Voltage3 = all_labview_array[13]
-            Current3 = all_labview_array[14]
-    else:
-        labview_time = min(all_labview_array_time_list, key=lambda x:abs(x-float(timestamp)))
-        delta_time = labview_time - timestamp
-        if abs(delta_time) > 100:
-            LabviewFlag = True
-        else:
-            index_labview_time = all_labview_array_time_list.index(float(labview_time))
-            Resis13 = all_labview_array[index_labview_time,1]
-            Resis14 = all_labview_array[index_labview_time,2]
-            Resis15 = all_labview_array[index_labview_time, 3]
-            Resis16 = all_labview_array[index_labview_time, 4]
-            Resis17 = all_labview_array[index_labview_time, 5]
-            Resis18 = all_labview_array[index_labview_time, 6]
-            Resis19 = all_labview_array[index_labview_time, 7]
-            Resis20 = all_labview_array[index_labview_time, 8]
-            Voltage1 = all_labview_array[index_labview_time, 9]
-            Current1 = all_labview_array[index_labview_time, 10]
-            Voltage2 = all_labview_array[index_labview_time, 11]
-            Current2 = all_labview_array[index_labview_time, 12]
-            Voltage3 = all_labview_array[index_labview_time, 13]
-            Current3 = all_labview_array[index_labview_time, 14]
+    if all_labview_array.size == 0:
+        index_labview_file = index_labview_file - 1
+        labview_file_name = labview_unsync_base_path + "/lab_meas_unsync_%.3f.txt" % labview_file_list[index_labview_file]
+        all_labview_array = np.array(np.loadtxt(labview_file_name, delimiter='\t', unpack=False))
 
-    if LabviewFlag:
+    if all_labview_array.size != 0:
+    
+        if len(all_labview_array.shape) == 1:
+            all_labview_array_time_list = all_labview_array[0]
+        else:
+            all_labview_array_time_list = all_labview_array[:,0].tolist()
+                                                                                                                                                                                    
+        synced_array = np.array([])
+        if (not isinstance(all_labview_array_time_list,list)):
+            labview_time = all_labview_array_time_list
+            delta_time = labview_time - timestamp
+            if abs(delta_time) > 100:
+                LabviewFlag = True
+            else:
+                Resis13 = all_labview_array[1]
+                Resis14 = all_labview_array[2]
+                Resis15 = all_labview_array[3]
+                Resis16 = all_labview_array[4]
+                Resis17 = all_labview_array[5]
+                Resis18 = all_labview_array[6]
+                Resis19 = all_labview_array[7]
+                Resis20 = all_labview_array[8]
+                Voltage1 = all_labview_array[9]
+                Current1 = all_labview_array[10]
+                Voltage2 = all_labview_array[11]
+                Current2 = all_labview_array[12]
+                Voltage3 = all_labview_array[13]
+                Current3 = all_labview_array[14]
+        else:
+            labview_time = min(all_labview_array_time_list, key=lambda x:abs(x-float(timestamp)))
+            delta_time = labview_time - timestamp
+            if abs(delta_time) > 100:
+                LabviewFlag = True
+            else:
+                index_labview_time = all_labview_array_time_list.index(float(labview_time))
+                Resis13 = all_labview_array[index_labview_time,1]
+                Resis14 = all_labview_array[index_labview_time,2]
+                Resis15 = all_labview_array[index_labview_time, 3]
+                Resis16 = all_labview_array[index_labview_time, 4]
+                Resis17 = all_labview_array[index_labview_time, 5]
+                Resis18 = all_labview_array[index_labview_time, 6]
+                Resis19 = all_labview_array[index_labview_time, 7]
+                Resis20 = all_labview_array[index_labview_time, 8]
+                Voltage1 = all_labview_array[index_labview_time, 9]
+                Current1 = all_labview_array[index_labview_time, 10]
+                Voltage2 = all_labview_array[index_labview_time, 11]
+                Current2 = all_labview_array[index_labview_time, 12]
+                Voltage3 = all_labview_array[index_labview_time, 13]
+                Current3 = all_labview_array[index_labview_time, 14]
+        
+        if LabviewFlag:
             Resis13 = -1
             Resis14 = -1
             Resis15 = -1
@@ -93,6 +98,23 @@ def GetEnvMeas(timestamp):
             Current2 = -1
             Voltage3 = -1
             Current3 = -1
+
+    else:
+            Resis13 = -1
+            Resis14 = -1
+            Resis15 = -1
+            Resis16 = -1
+            Resis17 = -1
+            Resis18 = -1
+            Resis19 = -1
+            Resis20 = -1
+            Voltage1 = -1
+            Current1 = -1
+            Voltage2 = -1
+            Current2 = -1
+            Voltage3 = -1
+            Current3 = -1
+
     return Resis13, Resis14, Resis15, Resis16, Resis17, Resis18, Resis19, Resis20, Voltage1, Current1, Voltage2, Current2, Voltage3, Current3
 
 def Resistance_calc(T): #Function to calculate resistance for any temperature                                                                                                                                                                 

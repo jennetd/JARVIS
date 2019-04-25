@@ -9,9 +9,9 @@ horizontalWindow = 40 #ns
 trigCh = "AUX" 
 trig = 0.15 #V
 
-vScale1 = 0.05 #V
+vScale1 = 0.02 #V
 vScale2 = 0.05 #V
-vScale3 = 0.05 #V
+vScale3 = 0.02 #V
 vScale4 = 0.05 #V
 
 timeoffset = -100 #ns

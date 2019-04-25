@@ -23,6 +23,7 @@ SensorTableName = 'tblAUIj7OVFteuAEL'
 ConfigTableName = 'tblPKdZ7mOWfPr3K0'
 
 BaseID = 'appd8tCrKgKiaAfre'
+CurlBaseCommandWithoutTable = 'https://api.airtable.com/v0/%s' % (BaseID)
 CurlBaseCommand = 'https://api.airtable.com/v0/%s/%s' % (BaseID, RunTableName)
 CurlBaseCommandSensor = 'https://api.airtable.com/v0/%s/%s' % (BaseID, SensorTableName)
 CurlBaseCommandConfig = 'https://api.airtable.com/v0/%s/%s' % (BaseID, ConfigTableName)
@@ -129,7 +130,7 @@ DigitizerDict = {
                 }
 
 ProcessDict = {
-                    0 : {'Tracking' : {'SizeCut' : 20000}},
+                    0 : {'Tracking' : {'SizeCut' : 7000}},
                     1 : {'Conversion' : {'SizeCut' : 20000}},
                     2 : {'TimingDAQ' : {'SizeCut' : 20000}},
                     3 : {'TimingDAQNoTracks' : {'SizeCut' : 20000}},
