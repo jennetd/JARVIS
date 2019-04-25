@@ -27,7 +27,7 @@ while(True):
 		warning = '[WARNING]: Only {} free left on disk {} ({})\n\n'.format(sfree, out[0], out[-1])
 		print warning
 		if args.email():
-			cmd 'echo \"'+warning+'\" | mail -s \"'+subject+'\" ' + args.email
+			cmd = 'echo \"'+warning+'\" | mail -s \"'+subject+'\" ' + args.email
 			os.system(cmd)
 
 	time.sleep(5)
