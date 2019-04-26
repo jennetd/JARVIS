@@ -81,9 +81,10 @@ float* getChannelData(float _channelData[], string _bar, const int& _biasVoltage
     _channelData[14] = 750; // high amp cut in mV
   }
   else if (_bar=="single"){
+    cout << "ASFÉLKADJF" << endl;
     _channelData[8] = 20.;  //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
-    _channelData[9] = 20.;  //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
-    _channelData[13] = 400.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    _channelData[13] = 20.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
+    _channelData[9] = 400.;  //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
     _channelData[14] = 400.; // high amp cut in mV (can be loose, dynamic selection on MIP peak below)
   }
 
@@ -297,6 +298,14 @@ float* getChannelData(float _channelData[], string _bar, const int& _biasVoltage
       _channelData[22] = 18.;  // half-size of beam spot selection around the center in mm
     }
 
+    // *V. Angle = 20 || Angle = 14
+    if (_angleScan == 9414){
+      _channelData[17] = 6.5;   // hodoscope X coordinate of crystal center in mm
+      _channelData[18] = 15;  // half-size of beam spot selection around the center in mm
+      _channelData[21] = 26.75;  // hodoscope Y coordinate of crystal center in mm
+      _channelData[22] = 1.5;  // half-size of beam spot selection around the center in mm
+    }
+
   }
 
   
@@ -321,12 +330,101 @@ int returnNumberOfBinsAboveAmpThreshold(TProfile* _tp0, double _threshold = 0.35
   int _binsAboveThreshold = 0 ;
 
   for(int iBin=1; iBin < _tp0->GetNbinsX(); iBin++){
-    if ( _tp0->GetBinContent(iBin) > _threshold ) 
+    if ( _tp0->GetBinContent(iBin) > _threshold && _tp0->GetBinContent(iBin-1) > _threshold) 
       _binsAboveThreshold++;
   }
 
   return _binsAboveThreshold;
 
+}
+
+
+double GetEffSigma( TH1* hist )
+{
+
+  TAxis *xaxis = hist->GetXaxis();
+  int nb = xaxis->GetNbins();
+  if(nb < 10) {
+    std::cout << "effsigma: Not a valid histo. nbins = " << nb << std::endl;
+    return 0.;
+  }
+  
+  double bwid = xaxis->GetBinWidth(1);
+  if(bwid == 0) {
+    std::cout << "effsigma: Not a valid histo. bwid = " << bwid << std::endl;
+    return 0.;
+  }
+  double xmax = xaxis->GetXmax();
+  double xmin = xaxis->GetXmin();
+  double ave = hist->GetMean();
+  double rms = hist->GetRMS();
+
+  double total=0.;
+  for(int i=0; i<nb+2; i++) {
+    total+=hist->GetBinContent(i);
+  }
+  //   if(total < 100.) {
+  //     std::cout << "effsigma: Too few entries " << total << std::endl;
+  //     return 0.;
+  //   }
+  int ierr=0;
+  int ismin=999;
+  
+  double rlim=0.683*total;
+  int nrms=rms/(bwid);    // Set scan size to +/- rms
+  if ( nrms > nb/10 ) nrms=nb/10; // Could be tuned...
+
+  double widmin=9999999.;
+  for( int iscan = -nrms; iscan < nrms+1; iscan++ ) { // Scan window centre
+    int ibm    = (ave-xmin)/bwid+1+iscan;
+    double x   = (ibm-0.5)*bwid+xmin;
+    double xj  = x;
+    double xk  = x;
+    int jbm    = ibm;
+    int kbm    = ibm;
+    double bin = hist->GetBinContent(ibm);
+    total      = bin;
+    for ( int j = 1; j < nb; j++ ){
+      if ( jbm < nb )
+	{
+	  jbm++;
+	  xj += bwid;
+	  bin = hist->GetBinContent(jbm);
+	  total += bin;
+	  if ( total > rlim ) break;
+	}
+      else ierr=1;
+      
+      if( kbm > 0 )
+	{
+	  kbm--;
+	  xk -= bwid;
+	  bin = hist->GetBinContent(kbm);
+	  total += bin;
+	  if ( total > rlim ) break;
+	}
+      else ierr=1;
+    }
+    
+    double dxf=(total-rlim)*bwid/bin;//accounting for excess
+    double wid=(xj-xk+bwid-dxf)*0.5;
+    if(wid < widmin)
+      {
+	//std::cout << "rms: " << rms << " nRms: " << nrms << " --> min width: " << wid << " , iscan: " << iscan << std::endl;
+	widmin=wid;
+	ismin=iscan;
+      }   
+  }
+  
+  if(ismin == nrms || ismin == -nrms) ierr=3;
+  if(ierr != 0)
+    {
+      std::cout << "effsigma: Error of type " << ierr << std::endl;
+      return -1;
+    }
+  
+  return widmin;
+  
 }
 
 bool checkTrackingSynchronization(const char* _fileName)
@@ -442,6 +540,7 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, const int
   else if (firstRun==7881) angleScan = 30;
   else if (firstRun==8173) angleScan = 20;
   else if (firstRun==8335) angleScan = 14;
+  else                     angleScan = firstRun;
 
   float* channelData = getChannelData( helper_channelData, bar, biasVoltage, angleScan);
 
@@ -761,7 +860,9 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, const int
     time_peak[iCh] = fitTimePeak->GetParameter(1);
     time_sigma[iCh] = fitTimePeak->GetParameter(2);
     std::cout << "time_peak[" << iCh << "] = " << time_peak[iCh] << " :: sigma_time_peak = " << time_sigma[iCh] << std::endl;            
-    
+    double quantileTimePeak = GetEffSigma( h_time[iCh] );
+    std::cout << "(Quantile) time_peak[" << iCh << "] = " << quantileTimePeak <<  std::endl;            
+
     TLine* lowcut = new TLine(std::max(time_peak[iCh]-time_sigma[iCh]*nSigmaTimeCut,lowerTimeCut),0,std::max(time_peak[iCh]-time_sigma[iCh]*nSigmaTimeCut,lowerTimeCut),h_time[iCh]->GetMaximum());
     TLine* higcut = new TLine(std::min(time_peak[iCh]+time_sigma[iCh]*nSigmaTimeCut,upperTimeCut),0,std::min(time_peak[iCh]+time_sigma[iCh]*nSigmaTimeCut,upperTimeCut),h_time[iCh]->GetMaximum());
     
@@ -1696,6 +1797,18 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, const int
   txtOutputFitInfo << Form("Angle: %d, #sigma^{avg}_{t} = %.1f #pm %.1f ps", angleScan,  sigmaAvgCorr*1000, sigmaAvgCorr_err*1000) << " (" << timeAlgo.c_str() << ")"<< std::endl;
   txtOutputFitInfo << Form("Angle: %d, #sigma^{avg+pos}_{t} = %.1f #pm %.1f ps", angleScan,  sigmaAvgCorrPos*1000, sigmaAvgCorrPos_err*1000) << " (" << timeAlgo.c_str() << ")"<< std::endl;
   txtOutputFitInfo << Form("Angle: %d, #sigma^{wei}_{t} = %.1f #pm %.1f ps", angleScan,  sigmaWeiCorr*1000, sigmaWeiCorr_err*1000) << " (" << timeAlgo.c_str() << ")"<< std::endl;
+  
+  double quantileWei    = GetEffSigma( h_deltat_avg_ampCorr );
+  double quantileAvg    = GetEffSigma( h_deltat_wei_ampCorr );
+  double quantileAvgPos = GetEffSigma( h_deltat_avg_ampCorr_posCorr );
+
+  cout << Form("Angle: %d, #sigma^{avg}_{t} = %.1f #pm %.1f ps", angleScan,  sigmaAvgCorr*1000, sigmaAvgCorr_err*1000) << " (" << timeAlgo.c_str() << ")"<< std::endl;
+  cout << Form("Angle: %d, #sigma^{avg+pos}_{t} = %.1f #pm %.1f ps", angleScan,  sigmaAvgCorrPos*1000, sigmaAvgCorrPos_err*1000) << " (" << timeAlgo.c_str() << ")"<< std::endl;
+  cout << Form("Angle: %d, #sigma^{wei}_{t} = %.1f #pm %.1f ps", angleScan,  sigmaWeiCorr*1000, sigmaWeiCorr_err*1000) << " (" << timeAlgo.c_str() << ")"<< std::endl;
+
+  std::cout << Form("[QUANTILE] Angle: %d, #sigma^{avg}_{t} = %.1f ps", angleScan,  quantileAvg*1000) <<  std::endl;            
+  std::cout << Form("[QUANTILE] Angle: %d, #sigma^{wei}_{t} = %.1f ps", angleScan,  quantileWei*1000) <<  std::endl;            
+  std::cout << Form("[QUANTILE] Angle: %d, #sigma^{avg+pos}_{t} = %.1f ps", angleScan,  quantileAvgPos*1000) <<  std::endl;            
 
   // print canvasses
   printCanvas(c_timeRes_vs_XY, outputDir, timeAlgo);    
