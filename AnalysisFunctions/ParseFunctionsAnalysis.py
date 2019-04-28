@@ -1,3 +1,5 @@
+import sys 
+sys.path.append('/home/daq/JARVIS/BackEndProcesses/')
 import AllModules as am
 import ParseFunctions as pf
 
