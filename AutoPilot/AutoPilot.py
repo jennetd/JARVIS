@@ -14,7 +14,7 @@ import GetTemp as gt
 #######################################################################################
 
 NumSpillsPerRun = 1
-RP = True
+RP = False #### Doesn't really matter
 ETLTemp = True
 
 #################################Parsing arguments######################################
@@ -238,10 +238,10 @@ while (AutoPilotStatus == 1):
 			TimingDAQNoTracksKeySightScope = 'Not started'
 			LabviewRecoKeySightScope = 'Not started'
 		
-		 ######If the scope is included It's gonna update this field to "Not Started" in scope listener script
+		######If the scope is included It's gonna update this field to "Not Started" in scope listener script
+		# Get Raspberry Pi Value list, Make sure raspberry pi rsync is on, If it is not then the readRPFile function takes care of that.
 
-		# Get Raspberry Pi Value list, Make sure raspberry pi rsync is on
-		if RP: BoxTemp, x_stage, y_stage, BoxVoltage, BarCurrent, z_rotation, BoxHum, BoxCurrent, BarVoltage  = ReadRPFile(RunNumber)
+		BoxTemp, x_stage, y_stage, BoxVoltage, BarCurrent, z_rotation, BoxHum, BoxCurrent, BarVoltage  = ReadRPFile(RunNumber)
 
 		if ETLTemp:
 			# Get ETL environment data

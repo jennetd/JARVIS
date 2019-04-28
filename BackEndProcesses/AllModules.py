@@ -156,10 +156,12 @@ QueryFieldsDict = {
 }
 
 def wait_until(nseconds):
-    while True:
+    niterations=0
+    while niterations < 400: ##max out after a bit more than a minute
+        niterations=niterations+1
         currentSeconds = datetime.now().time().second
         if abs(currentSeconds - nseconds)>0:
-            time.sleep(0.1)
+            time.sleep(0.2)
         else:
             break
     return
