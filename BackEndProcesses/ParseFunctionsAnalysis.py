@@ -16,6 +16,11 @@ def DumpConfiguration(RunNumber, DigitizerKey, Debug):
 	TableName = Table[DigitizerKey]
 	ColumnNamesList = []
 	ColumnEntriesList = []
+	SensorNameList = []
+	NumberofChannelsList = []
+	DigitizerChannelList = []
+	SensorChannelList = []
+	ChannelForSensorList = []
 
 	GlobalConfigIDList, RecordID = pf.ParsingQuery(1, ["Run number"], [RunNumber], "Configuration", False, key)
 	GlobalConfigID = GlobalConfigIDList[0][0]
@@ -44,22 +49,45 @@ def DumpConfiguration(RunNumber, DigitizerKey, Debug):
 		if Debug: print DigiResponseDict, DigiCMD
 
 		for ColumnNames,ColumnEntries in DigiResponseDict["fields"].items():
-			
-			if ColumnNames == 'Configuration number':
-			CMD = am.CurlBaseCommandSensor + '/' + ID
+			#print ColumnNames, ColumnEntries
+			if 'Ch ' in ColumnNames:
+				DigitizerChannelList.append(ColumnNames.split("Ch ")[1])
+				SensorChannelList.append(ColumnEntries)
 
-			if ColumnNames == '':
-			response = am.requests.get(CMD, headers=headers)
-			ResponseDict = am.ast.literal_eval(response.text)
-			for ColumnNames,ColumnEntries in ResponseDict["fields"].items():
-				if ColumnNames == 'Name':
-					SensorNameList = SensorNameList.append(ColumnEntries)
-				if ColumnNames == 'Number of channels':
-					NumberOfChannels = NumberofChannelsList.append(ColumnEntries)
-			print ColumnNames, ColumnEntries
+			if 'Sensor' in ColumnNames:
+				ChannelForSensorList.append(ColumnNames.split(' Ch')[1])
+				ID = ColumnEntries[0]
+				SensorCMD = am.CurlBaseCommandSensor + '/' + ID
+				response = am.requests.get(SensorCMD, headers=headers)
+				ResponseDict = am.ast.literal_eval(response.text)
+				
+				for ColumnNames,ColumnEntries in ResponseDict["fields"].items():
+					if ColumnNames == 'Name':
+						SensorNameList.append(ColumnEntries)
+					if ColumnNames == 'Number of channels':
+						NumberofChannelsList.append(ColumnEntries)
+
+		DigitizerChannelListInt = map(int,DigitizerChannelList)
+		ChannelForSensorListInt = map(int,ChannelForSensorList)
+
+		zipped_pair1 = zip(ChannelForSensorListInt, SensorNameList)
+		zipped_pair2 = sorted(zipped_pair1, key=lambda x: x[0])
+
+		zipped_pair3 = zip(DigitizerChannelListInt, SensorChannelList)
+		zipped_pair4 = sorted(zipped_pair3, key=lambda x: x[0])
+
+		flatlist1 = zip(*zipped_pair2)
+		flatlist2 = zip(*zipped_pair4)
+
+		ziplist = zip(flatlist2[0], flatlist1[1], flatlist2[1])
+		
+		return ziplist
 
 	else:
 		print '%s was not present in this run' % Digitizer
 
 
-
+def GetRunNumbersFromConfig(ConfigNumber):
+	key = am.GetKey()
+	RunNumberList, RunNumberIDList = pf.ParsingQuery(2, ["Configuration", "TimingDAQKeySightScope"], [ConfigNumber, "Complete"], "Run number", False, key)
+	return RunNumberList

@@ -20,16 +20,16 @@ def start_ots(RunNumber, Delay=False):
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     MESSAGE = "OtherRuns0,Start, %d" % (RunNumber)#(GetRunNumber()+1)
     sock.sendto(MESSAGE, (am.ip_address, am.use_socket))
-    data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes                                                                                                                                                                              
-    print "Start: received message:", data
+    #data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes                                                                                                                                                                              
+    print "Start: received message"
     return 
     
 def stop_ots(Delay=True):
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     MESSAGE = "OtherRuns0,Stop"
     sock.sendto(MESSAGE, (am.ip_address, am.use_socket))
-    data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes                                                                                                                                                                              
-    print "Stop: received message:", data
+    #data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes                                                                                                                                                                              
+    print "Stop: received message"
     if Delay: time.sleep(5)
 
 def RPComm(RunNumber, message):

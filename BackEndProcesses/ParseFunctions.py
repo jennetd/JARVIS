@@ -100,7 +100,7 @@ def ORFunc(AttributeNameList, AttributeStatusList):
 def ParsingQuery(NumberOfConditions, ConditionAttributeNames, ConditionAttributeStatus, QueryAttributeName, Debug, MyKey):
     Output = [] 
     FieldID = []
-    FilterByFormula = None
+    FilterByFormula = ''
     headers = {'Authorization': 'Bearer %s' % MyKey, }
     for i in range (0, NumberOfConditions): 
         if i > 0: FilterByFormula = FilterByFormula + ','
@@ -108,11 +108,28 @@ def ParsingQuery(NumberOfConditions, ConditionAttributeNames, ConditionAttribute
     if NumberOfConditions > 1: FilterByFormula = 'AND(' + FilterByFormula + ')'
     response = am.requests.get(am.CurlBaseCommand  + '?filterByFormula=' + FilterByFormula, headers=headers)
     ResponseDict = am.ast.literal_eval(response.text)
-    if Debug: return ResponseDict, FilterByFormula
+    if Debug: print FilterByFormula
 
     for i in ResponseDict["records"]: Output.append(i['fields'][QueryAttributeName])   
     for i in ResponseDict["records"]: FieldID.append(i['id'])   
     return Output, FieldID
+
+def ParsingQuery2(NumberOfConditions, ConditionAttributeNames, ConditionAttributeStatus, QueryAttributeName, Debug, MyKey):
+    Output = [] 
+    FieldID = []
+    FilterByFormula = ''
+    headers = {'Authorization': 'Bearer %s' % MyKey, }
+    for i in range (0, NumberOfConditions): 
+        if i > 0: FilterByFormula = FilterByFormula + ','
+        FilterByFormula = FilterByFormula + EqualToFunc(Curly(ConditionAttributeNames[i]), DoubleQuotes(ConditionAttributeStatus[i])) 
+    if NumberOfConditions > 1: FilterByFormula = 'AND(' + FilterByFormula + ')'
+    response = am.requests.get(am.CurlBaseCommandConfig  + '?filterByFormula=' + FilterByFormula, headers=headers)
+    ResponseDict = am.ast.literal_eval(response.text)
+    if Debug: return ResponseDict, FilterByFormula
+
+    for i in ResponseDict["records"]: Output.append(i['fields'][QueryAttributeName])   
+    for i in ResponseDict["records"]: FieldID.append(i['id'])   
+    return Output[0]
 
 def GetDigiFromConfig(ConfigurationNumber, Debug, MyKey):
     Output = [] 
