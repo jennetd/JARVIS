@@ -89,7 +89,38 @@ def DumpConfiguration(RunNumber, DigitizerKey, Debug):
 		print '%s was not present in this run' % Digitizer
 
 
-def GetRunNumbersFromConfig(ConfigNumber):
+def GetRunNumbersFromConfig(ConfigNumber, DigitizerKey): # DigitizerKey = 0 for VME, 1 for DT5742, 3 for KeySightScope
+	##### This function gives you the list of run numbers which have
+	################ 1) A given configuration 
+	################ 2) Complete reco
+	################ 3) A specific Digitizer
+	
 	key = am.GetKey()
-	RunNumberList, RunNumberIDList = pf.ParsingQuery(2, ["Configuration", "TimingDAQKeySightScope"], [ConfigNumber, "Complete"], "Run number", False, key)
+	Digitizer = am.DigitizerDict[DigitizerKey]	
+	RunNumberList, RunNumberIDList = pf.ParsingQuery(2, ["Configuration", "TimingDAQ" + Digitizer], [ConfigNumber, "Complete"], "Run number", False, key)
+	return RunNumberList
+
+def GetRunNumbersForConditions(QueryItem, QueryItemBoundsList, DigitizerKey, ConfigNumber = -1):
+
+	#### This function gives you the list of the run numbers which have 
+	#################### 1) Complete reco
+	#################### 2) The value of a specific QueryItem between the lower and upper bound
+	#################### 3) A specific config number 
+	#################### 4) A specific digitizer
+
+	ModifiedRunList = []
+	key = am.GetKey()
+	Digitizer = am.DigitizerDict[DigitizerKey]
+	if ConfigNumber != -1:
+		OutputDict = pf.ParsingQuery3(2, ["Configuration", "TimingDAQ" + Digitizer], [ConfigNumber, "Complete"], ["Run number", QueryItem], False, key)
+	else:
+		OutputDict = pf.ParsingQuery3(1, ["TimingDAQKeySightScope"], ["Complete"], ["Run number", QueryItem], False, key)		
+	RunNumberList = OutputDict[0]
+	QueryItemListFloat = map(float,OutputDict[1])
+	print 
+	for item in QueryItemListFloat:
+		print item
+		if item >= QueryItemBoundsList[0] and item <= QueryItemBoundsList[1]:
+			ModifiedRunList.append(RunNumberList[QueryItemListFloat.index(item)])
+			print ModifiedRunList
 	return RunNumberList

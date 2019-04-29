@@ -131,6 +131,23 @@ def ParsingQuery2(NumberOfConditions, ConditionAttributeNames, ConditionAttribut
     for i in ResponseDict["records"]: FieldID.append(i['id'])   
     return Output[0]
 
+def ParsingQuery3(NumberOfConditions, ConditionAttributeNameList, ConditionAttributeStatusList, QueryAttributeNameList, Debug, MyKey):
+    OutputDict = {x: [] for x in range(len(QueryAttributeNameList))}
+    FieldID = []
+    FilterByFormula = ''
+    headers = {'Authorization': 'Bearer %s' % MyKey, }
+    for i in range (0, NumberOfConditions): 
+        if i > 0: FilterByFormula = FilterByFormula + ','
+        FilterByFormula = FilterByFormula + EqualToFunc(Curly(ConditionAttributeNameList[i]), DoubleQuotes(ConditionAttributeStatusList[i])) 
+    if NumberOfConditions > 1: FilterByFormula = 'AND(' + FilterByFormula + ')'
+    response = am.requests.get(am.CurlBaseCommand  + '?filterByFormula=' + FilterByFormula, headers=headers)
+    ResponseDict = am.ast.literal_eval(response.text)
+    if Debug: print FilterByFormula
+    for key,value in OutputDict.items():
+        for i in ResponseDict["records"]:
+            value.append(i['fields'][QueryAttributeNameList[key]])
+    return OutputDict
+
 def GetDigiFromConfig(ConfigurationNumber, Debug, MyKey):
     Output = [] 
     FieldID = []
