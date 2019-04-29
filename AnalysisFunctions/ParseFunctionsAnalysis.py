@@ -24,6 +24,10 @@ def DumpConfiguration(RunNumber, DigitizerKey, Debug):
 	DigitizerChannelList = []
 	SensorChannelList = []
 	ChannelForSensorList = []
+	ChannelForSensorListHV = []
+	SensorNameListHV = []
+	HVList = []
+	HVChannelList = []
 
 	GlobalConfigIDList, RecordID = pf.ParsingQuery(1, ["Run number"], [RunNumber], "Configuration", False, key)
 	GlobalConfigID = GlobalConfigIDList[0][0]
@@ -78,9 +82,23 @@ def DumpConfiguration(RunNumber, DigitizerKey, Debug):
 			response = am.requests.get(HVCMD, headers=headers)
 			HVResponseDict = am.ast.literal_eval(response.text)
 			
+			if 'Sensor' in ColumnNames:
+				ChannelForSensorListHV.append(ColumnNames.split(' HV')[1])
+				ID = ColumnEntries[0]
+				SensorCMD = am.CurlBaseCommandSensor + '/' + ID
+				response = am.requests.get(SensorCMD, headers=headers)
+				ResponseDict = am.ast.literal_eval(response.text)
+
+				for ColumnNames,ColumnEntries in ResponseDict["fields"].items():
+					if ColumnNames == 'Name':
+						SensorNameListHV.append(ColumnEntries)
+
+			if 'HV' in ColumnNames:
+				HVChannelList.append(ColumnNames.split("HV")[1])
+				HVList.append(ColumnEntries)
+
 		else:
 			print 'No HV Configuration'
-
 
 		DigitizerChannelListInt = map(int,DigitizerChannelList)
 		ChannelForSensorListInt = map(int,ChannelForSensorList)
