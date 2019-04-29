@@ -114,6 +114,24 @@ def DumpConfiguration(RunNumber, DigitizerKey, Debug):
 
 		ziplist = zip(flatlist2[0], flatlist1[1], flatlist2[1])
 		
+
+		##### FOR HV 
+
+		ChannelForSensorListHVInt = map(int,ChannelForSensorListHV)
+		HVChannelListInt = map(int, HVChannelList)
+		
+		zipped_pair5 = zip(ChannelForSensorListHVInt, SensorNameListHV)
+		zipped_pair6 = sorted(zipped_pair1, key=lambda x: x[0])
+
+		zipped_pair7 = zip(HVChannelListInt, HVList)
+		zipped_pair8 = sorted(zipped_pair3, key=lambda x: x[0])
+
+		flatlist3 = zip(*zipped_pair6)
+		flatlist4 = zip(*zipped_pair8)
+
+		ziplist = zip(flatlist2[0], flatlist1[1], flatlist2[1])
+
+
 		return ziplist
 
 	else:
