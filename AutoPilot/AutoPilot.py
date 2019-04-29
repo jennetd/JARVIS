@@ -14,7 +14,7 @@ import GetTemp as gt
 #######################################################################################
 
 NumSpillsPerRun = 1
-RP = False #### It needs to be true if you want to get files from Raspberry Pi, otherwise it would give default values. 
+RP = True #### It needs to be true if you want to get files from Raspberry Pi, otherwise it would give default values. 
 ETLTemp = True
 
 #################################Parsing arguments######################################

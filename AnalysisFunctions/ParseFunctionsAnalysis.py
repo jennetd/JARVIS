@@ -9,6 +9,7 @@ Table = {
                     2 : 'TekScope',
                     3 : 'tbl4xS3mzqGDTuXAC',
                     4 : 'Sampic',
+                    5 : 'tblTDofgt0WC7DrwD'
         }
 
 key = am.GetKey()
@@ -36,6 +37,7 @@ def DumpConfiguration(RunNumber, DigitizerKey, Debug):
 
 
 	QueryName = 'Configuration' + Digitizer
+	HVName = 'ConfigurationCAENHV'
 	for ColumnNames,ColumnEntries in  ResponseDict["fields"].items():
 		ColumnNamesList.append(ColumnNames)
 		ColumnEntriesList.append(ColumnEntries)
@@ -69,6 +71,17 @@ def DumpConfiguration(RunNumber, DigitizerKey, Debug):
 					if ColumnNames == 'Number of channels':
 						NumberofChannelsList.append(ColumnEntries)
 
+		if HVName in ColumnNamesList:
+			index = ColumnNamesList.index(HVName)
+			ConfigHVID = ColumnEntriesList[index][0]
+			HVCMD = am.CurlBaseCommandWithoutTable + '/' + Table[5] + '/' + ConfigHVID
+			response = am.requests.get(HVCMD, headers=headers)
+			HVResponseDict = am.ast.literal_eval(response.text)
+			
+		else:
+			print 'No HV Configuration'
+
+
 		DigitizerChannelListInt = map(int,DigitizerChannelList)
 		ChannelForSensorListInt = map(int,ChannelForSensorList)
 
@@ -94,7 +107,7 @@ def GetRunNumbersFromConfig(ConfigNumber, DigitizerKey): # DigitizerKey = 0 for 
 	################ 1) A given configuration 
 	################ 2) Complete reco
 	################ 3) A specific Digitizer
-	
+
 	key = am.GetKey()
 	Digitizer = am.DigitizerDict[DigitizerKey]	
 	RunNumberList, RunNumberIDList = pf.ParsingQuery(2, ["Configuration", "TimingDAQ" + Digitizer], [ConfigNumber, "Complete"], "Run number", False, key)
