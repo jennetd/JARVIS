@@ -99,6 +99,11 @@ float* getChannelData(float _channelData[], string _bar, const int& _biasVoltage
   if ( _bar=="box1" || _bar=="box2" || _bar=="box3" ){
     // *I. Angle = 90
     if (_angleScan == 90 ){
+      _channelData[17] = 13.; // hodoscope X coordinate of crystal center in mm
+      _channelData[18] = 15.; // half-size of beam spot selection around the center in mm
+    }
+    // *I. Angle = 90
+    if (_angleScan == 89 ){
       _channelData[17] = 9.; // hodoscope X coordinate of crystal center in mm
       _channelData[18] = 16.5; // half-size of beam spot selection around the center in mm
     }
@@ -127,6 +132,11 @@ float* getChannelData(float _channelData[], string _bar, const int& _biasVoltage
       _channelData[17] = 15.5; // hodoscope X coordinate of crystal center in mm
       _channelData[18] = 13.5; // half-size of beam spot selection around the center in mm
     }
+    // *VI. Angle = 30
+    if (_angleScan == 29 ){
+      _channelData[17] = 17.5 ; // hodoscope X coordinate of crystal center in mm
+      _channelData[18] = 11.5; // half-size of beam spot selection around the center in mm
+    }
     // *VII. Angle = 20
     if (_angleScan == 20 ){
       _channelData[17] = 12.; // hodoscope X coordinate of crystal center in mm
@@ -140,7 +150,7 @@ float* getChannelData(float _channelData[], string _bar, const int& _biasVoltage
   }
   // ** B. Y-Positioning for Box
   // *I. Angle = 90
-  if (_angleScan == 90 ){
+  if (_angleScan == 89 ){
     if ( _bar=="box1"){
       _channelData[21] = 28.25; // hodoscope Y coordinate of crystal center in mm
       _channelData[22] = 1.5;   // half-size of beam spot selection around the center in mm
@@ -151,6 +161,21 @@ float* getChannelData(float _channelData[], string _bar, const int& _biasVoltage
     }
     else if ( _bar=="box3"){
       _channelData[21] = 21.25;  // hodoscope Y coordinate of crystal center in mm
+      _channelData[22] = 1.5;  // half-size of beam spot selection around the center in mm
+    }
+  }
+  // *I. Angle = 90
+  if (_angleScan == 90 ){
+    if ( _bar=="box1"){
+      _channelData[21] = 28.; // hodoscope Y coordinate of crystal center in mm
+      _channelData[22] = 1.25;   // half-size of beam spot selection around the center in mm
+    }
+    else if ( _bar=="box2"){
+      _channelData[21] = 25.5; // hodoscope Y coordinate of crystal center in mm
+      _channelData[22] = 1.5;  // half-size of beam spot selection around the center in mm
+    }
+    else if ( _bar=="box3"){
+      _channelData[21] = 22.0;  // hodoscope Y coordinate of crystal center in mm
       _channelData[22] = 1.5;  // half-size of beam spot selection around the center in mm
     }
   }
@@ -219,6 +244,22 @@ float* getChannelData(float _channelData[], string _bar, const int& _biasVoltage
 
   // *VI. Angle = 30
   if (_angleScan == 30 ){
+    if ( _bar=="box1"){
+      _channelData[21] = 28.;   // hodoscope Y coordinate of crystal center in mm
+      _channelData[22] = 1.5;   // half-size of beam spot selection around the center in mm
+    }
+    else if ( _bar=="box2"){
+      _channelData[21] = 24.75; // hodoscope Y coordinate of crystal center in mm
+      _channelData[22] = 1.5;   // half-size of beam spot selection around the center in mm
+    }
+    else if ( _bar=="box3"){
+      _channelData[21] = 21.25; // hodoscope Y coordinate of crystal center in mm
+      _channelData[22] = 1.5;   // half-size of beam spot selection around the center in mm
+    }
+  }
+
+  // *VI. Angle = 30
+  if (_angleScan == 29 ){
     if ( _bar=="box1"){
       _channelData[21] = 28.;   // hodoscope Y coordinate of crystal center in mm
       _channelData[22] = 1.5;   // half-size of beam spot selection around the center in mm
@@ -532,15 +573,28 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, const int
   const int nInputs = 23;
   float helper_channelData[nInputs];
   int angleScan = -99;
-  if (firstRun==7639)      angleScan = 90;
-  else if (firstRun==7404) angleScan = 60;
-  else if (firstRun==8482) angleScan = 53;
-  else if (firstRun==7682) angleScan = 45;
-  else if (firstRun==8560) angleScan = 37;
-  else if (firstRun==7881) angleScan = 30;
-  else if (firstRun==8173) angleScan = 20;
-  else if (firstRun==8335) angleScan = 14;
-  else                     angleScan = firstRun;
+  if (biasVoltage==72){
+	  if (firstRun==7498 || firstRun==6872)      angleScan = 90;
+	  else if (firstRun==7639 || firstRun==7850)      angleScan = 89;
+	  else if (firstRun==7404) angleScan = 60;
+	  else if (firstRun==8482 || firstRun ==8461) angleScan = 53;
+	  else if (firstRun==7682) angleScan = 45;
+	  else if (firstRun==8560) angleScan = 37;
+	  else if (firstRun==7881 || firstRun==8029) angleScan = 30;
+	  else if (firstRun==8173) angleScan = 20;
+	  else if (firstRun==8335) angleScan = 14;
+	  else                     angleScan = firstRun;
+   }
+   else if (biasVoltage==69){
+	  if (firstRun==7518)      angleScan = 90;
+	  else if (firstRun==7555) angleScan = 60;
+	  else if (firstRun==7802) angleScan = 45;
+	  else if (firstRun==8113) angleScan = 30;
+	  else if (firstRun==8064) angleScan = 29;
+	  else if (firstRun==8262) angleScan = 20;
+	  else if (firstRun==8299) angleScan = 14;
+	  else                     angleScan = firstRun;
+   }
 
   float* channelData = getChannelData( helper_channelData, bar, biasVoltage, angleScan);
 
