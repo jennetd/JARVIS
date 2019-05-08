@@ -64,7 +64,11 @@ float* getChannelData(float _channelData[], string _bar, const int& _biasVoltage
   // ** B. Channel Amplitude limits
   if ( _bar=="box1" || _bar=="box2" || _bar=="box3" ){
     if (_biasVoltage==72){
-      if (_angleScan==14 || _angleScan==20){
+      if (_angleScan==20){
+	_channelData[8] = 200.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
+	_channelData[13] = 200.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
+      }
+      else if (_angleScan==14){
 	_channelData[8] = 300.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
 	_channelData[13] = 300.; //  low amp cut in mV (can be loose, dynamic selection on MIP peak below)
       }
@@ -167,8 +171,8 @@ float* getChannelData(float _channelData[], string _bar, const int& _biasVoltage
   // *I. Angle = 90
   if (_angleScan == 90 ){
     if ( _bar=="box1"){
-      _channelData[21] = 28.; // hodoscope Y coordinate of crystal center in mm
-      _channelData[22] = 1.25;   // half-size of beam spot selection around the center in mm
+      _channelData[21] = 29.; // hodoscope Y coordinate of crystal center in mm
+      _channelData[22] = 1.;   // half-size of beam spot selection around the center in mm
     }
     else if ( _bar=="box2"){
       _channelData[21] = 25.5; // hodoscope Y coordinate of crystal center in mm
@@ -580,7 +584,8 @@ void analyze_FNAL(string bar, const int& firstRun, const int& lastRun, const int
 	  else if (firstRun==8482 || firstRun ==8461) angleScan = 53;
 	  else if (firstRun==7682) angleScan = 45;
 	  else if (firstRun==8560) angleScan = 37;
-	  else if (firstRun==7881 || firstRun==8029) angleScan = 30;
+	  else if (firstRun==7881) angleScan = 30;
+	  else if (firstRun==8029) angleScan = 29;
 	  else if (firstRun==8173) angleScan = 20;
 	  else if (firstRun==8335) angleScan = 14;
 	  else                     angleScan = firstRun;
