@@ -75,31 +75,6 @@ def DumpConfiguration(RunNumber, DigitizerKey, Debug):
 					if ColumnNames == 'Number of channels':
 						NumberofChannelsList.append(ColumnEntries)
 
-		if HVName in ColumnNamesList:
-			index = ColumnNamesList.index(HVName)
-			ConfigHVID = ColumnEntriesList[index][0]
-			HVCMD = am.CurlBaseCommandWithoutTable + '/' + Table[5] + '/' + ConfigHVID
-			response = am.requests.get(HVCMD, headers=headers)
-			HVResponseDict = am.ast.literal_eval(response.text)
-			
-			if 'Sensor' in ColumnNames:
-				ChannelForSensorListHV.append(ColumnNames.split(' HV')[1])
-				ID = ColumnEntries[0]
-				SensorCMD = am.CurlBaseCommandSensor + '/' + ID
-				response = am.requests.get(SensorCMD, headers=headers)
-				ResponseDict = am.ast.literal_eval(response.text)
-
-				for ColumnNames,ColumnEntries in ResponseDict["fields"].items():
-					if ColumnNames == 'Name':
-						SensorNameListHV.append(ColumnEntries)
-
-			if 'HV' in ColumnNames:
-				HVChannelList.append(ColumnNames.split("HV")[1])
-				HVList.append(ColumnEntries)
-
-		else:
-			print 'No HV Configuration'
-
 		DigitizerChannelListInt = map(int,DigitizerChannelList)
 		ChannelForSensorListInt = map(int,ChannelForSensorList)
 
@@ -114,29 +89,43 @@ def DumpConfiguration(RunNumber, DigitizerKey, Debug):
 
 		ziplist = zip(flatlist2[0], flatlist1[1], flatlist2[1])
 		
-
-		##### FOR HV 
-
-		ChannelForSensorListHVInt = map(int,ChannelForSensorListHV)
-		HVChannelListInt = map(int, HVChannelList)
-		
-		zipped_pair5 = zip(ChannelForSensorListHVInt, SensorNameListHV)
-		zipped_pair6 = sorted(zipped_pair1, key=lambda x: x[0])
-
-		zipped_pair7 = zip(HVChannelListInt, HVList)
-		zipped_pair8 = sorted(zipped_pair3, key=lambda x: x[0])
-
-		flatlist3 = zip(*zipped_pair6)
-		flatlist4 = zip(*zipped_pair8)
-
-		ziplist = zip(flatlist2[0], flatlist1[1], flatlist2[1])
-
-
-		return ziplist
+		#return ziplist
 
 	else:
 		print '%s was not present in this run' % Digitizer
 
+
+	##### FOR HV 
+	if HVName in ColumnNamesList:
+		index = ColumnNamesList.index(HVName)
+		ConfigHVID = ColumnEntriesList[index][0]
+		HVCMD = am.CurlBaseCommandWithoutTable + '/' + Table[5] + '/' + ConfigHVID
+		response = am.requests.get(HVCMD, headers=headers)
+		HVResponseDict = am.ast.literal_eval(response.text)
+		
+		if 'Sensor' in ColumnNames:
+			ChannelForSensorListHV.append(ColumnNames.split(' HV')[1])
+			ID = ColumnEntries[0]
+			SensorCMD = am.CurlBaseCommandSensor + '/' + ID
+			response = am.requests.get(SensorCMD, headers=headers)
+			ResponseDict = am.ast.literal_eval(response.text)
+
+			for ColumnNames,ColumnEntries in ResponseDict["fields"].items():
+				print ColumnNames, ColumnEntries
+				if ColumnNames == 'Name':
+					SensorNameListHV.append(ColumnEntries)
+
+		if 'HV' in ColumnNames:
+			print ColumnNames, ColumnEntries
+			HVChannelList.append(ColumnNames.split("HV")[1])
+			HVList.append(ColumnEntries)
+	
+		ChannelForSensorListHVInt = map(int,ChannelForSensorListHV)
+		HVChannelListInt = map(int, HVChannelList)
+		print ChannelForSensorListHV, HVChannelList, HVList, SensorNameList
+
+	else:
+		print 'No HV Configuration'
 
 def GetRunNumbersFromConfig(ConfigNumber, DigitizerKey): # DigitizerKey = 0 for VME, 1 for DT5742, 3 for KeySightScope
 	##### This function gives you the list of run numbers which have

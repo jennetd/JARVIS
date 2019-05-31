@@ -14,8 +14,8 @@ import GetTemp as gt
 #######################################################################################
 
 NumSpillsPerRun = 1
-RP = True #### It needs to be true if you want to get files from Raspberry Pi, otherwise it would give default values. 
-ETLTemp = True
+RP = False #### It needs to be true if you want to get files from Raspberry Pi, otherwise it would give default values. 
+ETLTemp = False
 
 #################################Parsing arguments######################################
 
@@ -108,6 +108,15 @@ else:
 	LabviewRecoSampic = 'N/A'
 	IncludesSampic = False
 
+if DigitizerDict[5] in DigitizerList:
+	TimingDAQTOFHIR = 'Not started'
+	TimingDAQNoTracksTOFHIR = 'Not started'
+	IncludesTOFHIR = True
+else:
+	TimingDAQTOFHIR = 'N/A'
+	TimingDAQNoTracksTOFHIR = 'N/A'
+	IncludesTOFHIR = False
+
 # Get Sensor ID and Configuration ID list
 if pf.QueryGreenSignal(True):
 	ConfigID = pf.GetFieldIDOtherTable('Config', 'Configuration number', str(Configuration), False, key)
@@ -136,6 +145,8 @@ if IncludesSampic:
 	print "SAMPIC readout Included"
 if IncludesVME:
 	print "VME readout Included" 
+if IncludesTOFHIR:
+	print "TOFHIR readout Included" 
 if (IncludesDT5742):
 	print "DT5742 DRS Desktop Digitizer readout Included"
 if (IncludesTekScope):
@@ -174,7 +185,7 @@ while (AutoPilotStatus == 1):
 	if IsScope:
 		currentScopeState = ScopeState()
 		if currentScopeState == 'busy':
-			print "Warning: Scope is still acquiring events, but autopilot is ready to start a new run. Likely someone killed a run prematurely. Tracking for scope in previous run is screwed up." 
+			print "[WARNING] : Scope is still acquiring events, but autopilot is ready to start a new run. Likely someone killed a run prematurely. Tracking for scope in previous run is screwed up." 
 
 		if currentScopeState == 'ready': 
 			print("\n Sending start command to scope.\n")
@@ -252,7 +263,7 @@ while (AutoPilotStatus == 1):
 			pf.NewRunRecord4(RunNumber, StartTime, str(Duration), DigiListThisRun, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, LabviewRecoVME, LabviewRecoDT5742, LabviewRecoKeySightScope, LabviewRecoSampic, LabviewRecoTekScope, BoxTemp, x_stage, y_stage, BoxVoltage, BarCurrent, z_rotation, BoxHum, BoxCurrent, BarVoltage, str(Temp13ETL), str(Temp14ETL), str(Temp15ETL), str(Temp16ETL), str(Temp17ETL), str(Temp18ETL), str(Temp19ETL), str(Temp20ETL), str(LowVoltage1ETL), str(Current1ETL), str(LowVoltage2ETL), str(Current2ETL), str(LowVoltage3ETL), str(Current3ETL), ConfigID, False, key)
 		
 		else:
-			pf.NewRunRecord2(RunNumber, StartTime, str(Duration), DigiListThisRun, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, LabviewRecoVME, LabviewRecoDT5742, LabviewRecoKeySightScope, LabviewRecoSampic, LabviewRecoTekScope, BoxTemp, x_stage, y_stage, BoxVoltage, BarCurrent, z_rotation, BoxHum, BoxCurrent, BarVoltage, ConfigID, False, key)
+			pf.NewRunRecord2(RunNumber, StartTime, str(Duration), DigiListThisRun, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQTOFHIR, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, TimingDAQNoTracksTOFHIR, LabviewRecoVME, LabviewRecoDT5742, LabviewRecoKeySightScope, LabviewRecoSampic, LabviewRecoTekScope, BoxTemp, x_stage, y_stage, BoxVoltage, BarCurrent, z_rotation, BoxHum, BoxCurrent, BarVoltage, ConfigID, False, key)
 
 		#pf.NewRunRecord(RunNumber, StartTime, str(Duration), DigiListThisRun, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, LabviewRecoVME, LabviewRecoDT5742, LabviewRecoKeySightScope, LabviewRecoSampic, LabviewRecoTekScope, ConfigID, False, key)
 

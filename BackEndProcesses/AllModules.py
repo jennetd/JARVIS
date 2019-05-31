@@ -50,6 +50,8 @@ EnvSetupPath = '/home/daq/setup.sh' ############### Remember to change ProcessEx
 #EnvSetupPath2 = '/home/daq/otsdaq/setup_ots.sh' ############### Remember to change ProcessExec accordingly
 TimingDAQDir = '/home/daq/CMS-MTD/TimingDAQ/'
 
+TOFHIRRecoDir =  ''
+
 ############## For PCCITFNAL01 ############
 #BaseTestbeamDir = '/data2/2019_04_April_CMSTiming/'
 #BaseTrackDirLocal = '%sTracks/' % BaseTestbeamDir
@@ -61,6 +63,10 @@ ScopeControlDir = '%sKeySightScope/ETL_Agilent_MSO-X-92004A/' % BaseTestbeamDir
 ScopeStateFileName = '%sAcquisition/RunLog.txt' % ScopeControlDir
 ScopeCommFileName = '%sAcquisition/ScopeStatus.txt' % ScopeControlDir
 ConfigFileBasePath = '%sconfig/FNAL_TestBeam_1904/' % TimingDAQDir
+
+TOFHIRConfigFileBasePath = '%sconfig/FNAL_TestBeam_1904/' % TOFHIRRecoDir
+
+
 
 ############# OTSDAQ Information ################
 ip_address = "192.168.133.46"
@@ -113,11 +119,18 @@ OneStageRecoDigitizers = {
                                             'RawTimingDAQLocalPath'  : '%sVME/RawData/'  % (BaseTestbeamDir),
                                             'RecoTimingDAQLocalPath' : '%sVME/RecoData/' % (BaseTestbeamDir),
                                             },
+
                          'DT5742'     :  {  'ConfigFileBasePath'     : '%sDT5742_' % (ConfigFileBasePath),
                                             'DatToROOTExec'          : 'DT5742Dat2Root',
                                             'RawTimingDAQLocalPath'  : '%sDT5742/RawData/'  % (BaseTestbeamDir),
                                             'RecoTimingDAQLocalPath' : '%sDT5742/RecoData/' % (BaseTestbeamDir),
-                                            }
+                                            },
+
+                         'TOFHIR'     :  {  'ConfigFileBasePath'     : '%sTOFHIR_' % (TOFHIRConfigFileBasePath), ### Set this
+                                            'DatToROOTExec'          : 'TOFHIRDat2Root', ### Set this
+                                            'RawTimingDAQLocalPath'  : '%sTOFHIR/RawData/'  % (BaseTestbeamDir),
+                                            'RecoTimingDAQLocalPath' : '%sTOFHIR/RecoData/' % (BaseTestbeamDir),
+                                            }    
                         }
 
 
@@ -127,6 +140,7 @@ DigitizerDict = {
                     2 : 'TekScope',
                     3 : 'KeySightScope',
                     4 : 'Sampic',
+                    5 : 'TOFHIR'
                 }
 
 ProcessDict = {
