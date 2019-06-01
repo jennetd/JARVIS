@@ -95,7 +95,7 @@ def TimingDAQRuns(RunNumber, DoTracking, Digitizer, MyKey, Debug):
         OR2 = pf.ORFunc([am.ProcessDict[0].keys()[0],am.ProcessDict[0].keys()[0]],[am.StatusDict[0], am.StatusDict[7]])                                                                                                                                                              
         OR3 = pf.ORFunc([ProcessName, ProcessName],[am.StatusDict[3], am.StatusDict[5]])                                                                                                                                                                                                  
 
-        if Digitizer == am.DigitizerDict[0] or Digitizer == am.DigitizerDict[1]:
+        if Digitizer == am.DigitizerDict[0] or Digitizer == am.DigitizerDict[1] or Digitizer == am.DigitizerDict[5]:
             if DoTracking: 
                 FilterByFormula = 'AND(' + OR3 + ',' + OR2 + ')'
             else:

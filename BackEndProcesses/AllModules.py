@@ -49,8 +49,8 @@ LocalSSH = 'daq@timingdaq02.dhcp.fnal.gov'
 EnvSetupPath = '/home/daq/setup.sh' ############### Remember to change ProcessExec accordingly
 #EnvSetupPath2 = '/home/daq/otsdaq/setup_ots.sh' ############### Remember to change ProcessExec accordingly
 TimingDAQDir = '/home/daq/CMS-MTD/TimingDAQ/'
-
-TOFHIRRecoDir =  ''
+TOFHIRRecoDir = '/home/daq/sw_daq_tofhir_v1/build/'
+TOFHIRConfigDir = '/home/daq/2019_04_April_CMSTiming/TOFHIR/ConfigArchive/'
 
 ############## For PCCITFNAL01 ############
 #BaseTestbeamDir = '/data2/2019_04_April_CMSTiming/'
@@ -63,8 +63,7 @@ ScopeControlDir = '%sKeySightScope/ETL_Agilent_MSO-X-92004A/' % BaseTestbeamDir
 ScopeStateFileName = '%sAcquisition/RunLog.txt' % ScopeControlDir
 ScopeCommFileName = '%sAcquisition/ScopeStatus.txt' % ScopeControlDir
 ConfigFileBasePath = '%sconfig/FNAL_TestBeam_1904/' % TimingDAQDir
-
-TOFHIRConfigFileBasePath = '%sconfig/FNAL_TestBeam_1904/' % TOFHIRRecoDir
+TOFHIRConfigFileBasePath = '/home/daq/2019_04_April_CMSTiming/TOFHIR/ConfigArchive/'
 
 
 
@@ -126,10 +125,11 @@ OneStageRecoDigitizers = {
                                             'RecoTimingDAQLocalPath' : '%sDT5742/RecoData/' % (BaseTestbeamDir),
                                             },
 
-                         'TOFHIR'     :  {  'ConfigFileBasePath'     : '%sTOFHIR_' % (TOFHIRConfigFileBasePath), ### Set this
-                                            'DatToROOTExec'          : 'TOFHIRDat2Root', ### Set this
+                         'TOFHIR'     :  {  'ConfigFileBasePath'     : '%sConfig_v' % (TOFHIRConfigFileBasePath), ### Set this
+                                            'DatToROOTExec'          : 'convert_raw_to_trigger', ### Set this
                                             'RawTimingDAQLocalPath'  : '%sTOFHIR/RawData/'  % (BaseTestbeamDir),
                                             'RecoTimingDAQLocalPath' : '%sTOFHIR/RecoData/' % (BaseTestbeamDir),
+                                            'RawTimingDAQFileNameFormat' : 'run', #reco --> run<RunNumber>.root 
                                             }    
                         }
 
@@ -223,6 +223,22 @@ def ReadRPFile(RunNumber):
             fp.close()
     else:
             return "N/A","N/A", "N/A","N/A","N/A","N/A","N/A","N/A","N/A"
+
+def BTLLoggingFile():                                                             
+    FilePath = "/home/daq/2019_04_April_CMSTiming/TOFHIR/DAQSettings/UserInputSettings.txt" 
+    ValueList = []  
+    if os.path.exists(FilePath):                                                                                                                                                    
+        with open(FilePath) as fp:  
+            line = fp.readline()
+            while line:
+                Value = line.strip().split("= ")[1]
+                ValueList.append(Value)
+                line = fp.readline()
+            return ValueList[0], ValueList[1]
+            fp.close()
+    else:
+            return "N/A","N/A"
+
 
 def ProcessLog(ProcessName, RunNumber, ProcessOutput):
     ProcessLogBasePath = "%sProcessLog/%s/" % (BaseTestbeamDir, ProcessName)

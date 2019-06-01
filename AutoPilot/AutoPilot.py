@@ -15,6 +15,7 @@ import GetTemp as gt
 
 NumSpillsPerRun = 1
 RP = False #### It needs to be true if you want to get files from Raspberry Pi, otherwise it would give default values. 
+BTLLogging = True
 ETLTemp = False
 
 #################################Parsing arguments######################################
@@ -48,7 +49,10 @@ else:
 	Tracking = 'N/A'
 
 if DigitizerDict[0] in DigitizerList:
-	TimingDAQVME = 'Not started'
+	if IsTelescope:
+		TimingDAQVME = 'Not started'
+	else:
+		TimingDAQVME = 'N/A'
 	TimingDAQNoTracksVME = 'Not started'
 	LabviewRecoVME = 'Not started'
 	IncludesVME = True
@@ -59,7 +63,10 @@ else:
 	IncludesVME = False
 
 if DigitizerDict[1] in DigitizerList:
-	TimingDAQDT5742 = 'Not started'
+	if IsTelescope:
+		TimingDAQDT5742 = 'Not started'
+	else:
+		TimingDAQDT5742 = 'N/A'
 	TimingDAQNoTracksDT5742 = 'Not started'
 	LabviewRecoDT5742 = 'Not started'
 	IncludesDT5742 = True
@@ -84,7 +91,10 @@ else:
 
 if DigitizerDict[3] in DigitizerList:
 	ConversionKeySightScope = 'Not started'
-	TimingDAQKeySightScope = 'Not started'
+	if IsTelescope:
+		TimingDAQKeySightScope = 'Not started'
+	else:
+		TimingDAQKeySightScope = 'N/A'
 	TimingDAQNoTracksKeySightScope = 'Not started'
 	LabviewRecoKeySightScope = 'Not started'
 	IncludesKeySightScope = True
@@ -109,7 +119,10 @@ else:
 	IncludesSampic = False
 
 if DigitizerDict[5] in DigitizerList:
-	TimingDAQTOFHIR = 'Not started'
+	if IsTelescope:
+		TimingDAQTOFHIR = 'Not started'
+	else:
+		TimingDAQTOFHIR = 'N/A'
 	TimingDAQNoTracksTOFHIR = 'Not started'
 	IncludesTOFHIR = True
 else:
@@ -208,7 +221,23 @@ while (AutoPilotStatus == 1):
 	print ""
 	if RP: tp.RPComm(RunNumber, "start") 
 
+        #Start the run here
 	if not Debug: tp.start_ots(RunNumber,False)
+
+
+        ###############################################################
+        #Archive the Config for the TOFHIR if it's a new configuration
+        ###############################################################
+        if (not os.path.exists(BaseTestbeamDir+"/TOFHIR/Config/config.ini")):
+                print ("TOFHIR Config directory at " + BaseTestbeamDir+"/TOFHIR/Config/ has not been properly mounted. Please mount it.")
+                sys.exit(0)
+        if (not os.path.exists(BaseTestbeamDir+"/TOFHIR/ConfigArchive/Config_v" + str(Configuration))):
+                print ("Current Configuration is v" + Configuration + ". TOFHIR Config directory for this configuration has not been archived. Archiving it now.")
+                os.system("cp -rv "+BaseTestbeamDir+"/TOFHIR/Config/ "+BaseTestbeamDir+"/TOFHIR/ConfigArchive/Config_v"+str(Configuration))
+        else :
+                print ("Current Configuration is v" + Configuration + ". TOFHIR Config directory for this configuration is already archived")
+
+
 
 	## Minimum run duration
 	time.sleep(60*(NumSpillsPerRun-1))
@@ -253,6 +282,7 @@ while (AutoPilotStatus == 1):
 		# Get Raspberry Pi Value list, Make sure raspberry pi rsync is on, If it is not then the readRPFile function takes care of that.
 
 		BoxTemp, x_stage, y_stage, BoxVoltage, BarCurrent, z_rotation, BoxHum, BoxCurrent, BarVoltage  = ReadRPFile(RunNumber)
+		OverVoltageBTL, VTHBTL  = BTLLoggingFile()
 
 		if ETLTemp:
 			# Get ETL environment data
@@ -263,7 +293,9 @@ while (AutoPilotStatus == 1):
 			pf.NewRunRecord4(RunNumber, StartTime, str(Duration), DigiListThisRun, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, LabviewRecoVME, LabviewRecoDT5742, LabviewRecoKeySightScope, LabviewRecoSampic, LabviewRecoTekScope, BoxTemp, x_stage, y_stage, BoxVoltage, BarCurrent, z_rotation, BoxHum, BoxCurrent, BarVoltage, str(Temp13ETL), str(Temp14ETL), str(Temp15ETL), str(Temp16ETL), str(Temp17ETL), str(Temp18ETL), str(Temp19ETL), str(Temp20ETL), str(LowVoltage1ETL), str(Current1ETL), str(LowVoltage2ETL), str(Current2ETL), str(LowVoltage3ETL), str(Current3ETL), ConfigID, False, key)
 		
 		else:
-			pf.NewRunRecord2(RunNumber, StartTime, str(Duration), DigiListThisRun, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQTOFHIR, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, TimingDAQNoTracksTOFHIR, LabviewRecoVME, LabviewRecoDT5742, LabviewRecoKeySightScope, LabviewRecoSampic, LabviewRecoTekScope, BoxTemp, x_stage, y_stage, BoxVoltage, BarCurrent, z_rotation, BoxHum, BoxCurrent, BarVoltage, ConfigID, False, key)
+			print 'Updating the run table'
+			#print RunNumber, StartTime, str(Duration), DigiListThisRun, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQTOFHIR, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, TimingDAQNoTracksTOFHIR, LabviewRecoVME, LabviewRecoDT5742, LabviewRecoKeySightScope, LabviewRecoSampic, LabviewRecoTekScope, BoxTemp, x_stage, y_stage, BoxVoltage, BarCurrent, z_rotation, BoxHum, BoxCurrent, BarVoltage, ConfigID, key
+			pf.NewRunRecord2(RunNumber, StartTime, str(Duration), DigiListThisRun, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQTOFHIR, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, TimingDAQNoTracksTOFHIR, LabviewRecoVME, LabviewRecoDT5742, LabviewRecoKeySightScope, LabviewRecoSampic, LabviewRecoTekScope, BoxTemp, x_stage, y_stage, BoxVoltage, BarCurrent, z_rotation, BoxHum, BoxCurrent, BarVoltage, OverVoltageBTL, VTHBTL, ConfigID, True, key)
 
 		#pf.NewRunRecord(RunNumber, StartTime, str(Duration), DigiListThisRun, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, LabviewRecoVME, LabviewRecoDT5742, LabviewRecoKeySightScope, LabviewRecoSampic, LabviewRecoTekScope, ConfigID, False, key)
 

@@ -127,7 +127,7 @@ def TimingDAQCMDs(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer, M
         return None,None,None,None   
 
 
-def TimingDAQCMDsBTL(RunNumber, SaveWaveformBool, Version1, Version2, DoTracking, Digitizer, MyKey, Debug):
+def TimingDAQCMDsBTLApril(RunNumber, SaveWaveformBool, Version1, Version2, DoTracking, Digitizer, MyKey, Debug):
     DoTracking = DoTracking 
     MyKey = MyKey
     Digitizer = Digitizer
@@ -209,3 +209,91 @@ def TimingDAQCMDsBTL(RunNumber, SaveWaveformBool, Version1, Version2, DoTracking
     else:
         return None,None,None,None,None
 
+def TimingDAQCMDsBTL(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer, MyKey, Debug):
+    DoTracking = DoTracking 
+    MyKey = MyKey
+    Digitizer = Digitizer
+    RunNumber = RunNumber
+
+    RunList, FieldIDList = pr.TimingDAQRuns(RunNumber, DoTracking, Digitizer, MyKey, False)
+    DatToRootCMDList = []
+    ResultFileLocationList = []
+    RunsNotPresent = []
+
+    if RunList != None:
+        
+        for run in RunList: 
+
+            RecoLocalPath = None
+            RunNotPresent = False
+            RawLocalPath = None
+            Index = RunList.index(run)
+            GlobalConfig = pf.GetConfigNumberFromConfig(run, False, MyKey)
+
+            if Digitizer == am.DigitizerDict[0] or Digitizer == am.DigitizerDict[1] or Digitizer == am.DigitizerDict[5]:
+                RecoBaseLocalPath = am.OneStageRecoDigitizers[Digitizer]['RecoTimingDAQLocalPath']
+                RawBaseLocalPath = am.OneStageRecoDigitizers[Digitizer]['RawTimingDAQLocalPath']
+                if Digitizer == am.DigitizerDict[5]:
+                    ConfigFilePath = am.OneStageRecoDigitizers[Digitizer]['ConfigFileBasePath'] +  str(GlobalConfig) + '/config.ini'
+                else:
+                    ConfigFilePath = am.OneStageRecoDigitizers[Digitizer]['ConfigFileBasePath'] + '%s.config' % Version
+                DatToROOTExec = am.OneStageRecoDigitizers[Digitizer]['DatToROOTExec']
+                ResultTrackFileNameAfterRunNumber = am.ResultTrackFileNameAfterRunNumberSlow
+            else:
+                ConfigFilePath = am.TwoStageRecoDigitizers[Digitizer]['ConfigFileBasePath'] + '%s.config' % Version
+                RecoBaseLocalPath = am.TwoStageRecoDigitizers[Digitizer]['RecoTimingDAQLocalPath']
+                RawBaseLocalPath = am.TwoStageRecoDigitizers[Digitizer]['RawTimingDAQLocalPath']
+                DatToROOTExec = am.TwoStageRecoDigitizers[Digitizer]['DatToROOTExec']
+                ResultTrackFileNameAfterRunNumber = am.ResultTrackFileNameAfterRunNumberFast
+
+            if not DoTracking: 
+                RecoBaseLocalPath = RecoBaseLocalPath + 'RecoWithoutTracks/'
+            else:
+                RecoBaseLocalPath = RecoBaseLocalPath + 'RecoWithTracks/'
+
+            if Digitizer != am.DigitizerDict[5]: RecoBaseLocalPath = RecoBaseLocalPath + Version + '/' #### For everything except TOFHIR
+
+            if not am.os.path.exists(RecoBaseLocalPath): am.os.system('mkdir -p %s' % RecoBaseLocalPath)
+            if Digitizer == am.DigitizerDict[0] or Digitizer == am.DigitizerDict[1]:
+                ListRawRunNumber = [(x.split("_Run")[1].split(".dat")[0].split("_")[0]) for x in am.glob.glob(RawBaseLocalPath + '*_Run*')]
+                ListRawFilePath = [x for x in am.glob.glob(RawBaseLocalPath + '*_Run*')] 
+                if str(run) in ListRawRunNumber: 
+                    RawLocalPath = ListRawFilePath[ListRawRunNumber.index(str(run))]
+                    RecoLocalPath = RecoBaseLocalPath + '/' + RawLocalPath.split(".dat")[0].split("%s" % RawBaseLocalPath)[1] + '.root'                                            
+                else:
+                    RunNotPresent = True
+                    RunsNotPresent.append(run) 
+
+            elif Digitizer == am.DigitizerDict[5]:
+                RawLocalPath = RawBaseLocalPath + am.OneStageRecoDigitizers[Digitizer]['RawTimingDAQFileNameFormat'] + str(run)                                      
+                RecoLocalPath = RecoBaseLocalPath + '/' + am.OneStageRecoDigitizers[Digitizer]['RawTimingDAQFileNameFormat']+ str(run) + '.root' 
+
+            else:
+                RawLocalPath = RawBaseLocalPath + am.TwoStageRecoDigitizers[Digitizer]['RawTimingDAQFileNameFormat'] + str(run) + '.root'                                      
+                RecoLocalPath = RecoBaseLocalPath + '/' + am.TwoStageRecoDigitizers[Digitizer]['RawTimingDAQFileNameFormat']+ str(run) + '_converted.root' 
+
+            if not RunNotPresent:
+
+                ResultFileLocationList.append(RecoLocalPath)
+                if Digitizer == am.DigitizerDict[5]:
+                    DatToRootCMD = './' + DatToROOTExec + ' --config ' + ConfigFilePath + ' -i ' + RawLocalPath + ' -o ' + RecoLocalPath + ' --writeRoot --channelIDs 0,1,14,15'
+                else:
+                    DatToRootCMD = './' + DatToROOTExec + ' --config_file=' + ConfigFilePath + ' --input_file=' + RawLocalPath + ' --output_file=' + RecoLocalPath
+                if SaveWaveformBool and Digitizer != am.DigitizerDict[5]: DatToRootCMD = DatToRootCMD + ' --save_meas'
+            
+                if DoTracking and Digitizer != am.DigitizerDict[5]: 
+                    TrackFilePathLocal = am.BaseTrackDirLocal + am.ResultTrackFileNameBeforeRunNumber + str(run) + ResultTrackFileNameAfterRunNumber
+                    DatToRootCMD = DatToRootCMD + ' --pixel_input_file=' + TrackFilePathLocal   
+
+                DatToRootCMDList.append(DatToRootCMD)
+
+        #Remove the runs which were not present
+        for run in RunsNotPresent:
+            print 'Run %d not present in the raw files' % run
+            del FieldIDList[RunList.index(run)]
+            RunList.remove(run)
+
+        return DatToRootCMDList, ResultFileLocationList, RunList, FieldIDList
+
+    else:
+        return None,None,None,None 
