@@ -51,7 +51,7 @@ EnvSetupPath = '/home/daq/setup.sh' ############### Remember to change ProcessEx
 TimingDAQDir = '/home/daq/CMS-MTD/TimingDAQ/'
 TOFHIRRecoDir = '/home/daq/sw_daq_tofhir_v1/build/'
 TOFHIRConfigDir = '/home/daq/2019_04_April_CMSTiming/TOFHIR/ConfigArchive/'
-
+TOFHIRRecoDir2 = '/home/daq/sw_daq_tofhir_v1/DAQReco/'
 ############## For PCCITFNAL01 ############
 #BaseTestbeamDir = '/data2/2019_04_April_CMSTiming/'
 #BaseTrackDirLocal = '%sTracks/' % BaseTestbeamDir
@@ -127,8 +127,11 @@ OneStageRecoDigitizers = {
 
                          'TOFHIR'     :  {  'ConfigFileBasePath'     : '%sConfig_v' % (TOFHIRConfigFileBasePath), ### Set this
                                             'DatToROOTExec'          : 'convert_raw_to_trigger', ### Set this
+                                            'DatToROOTExec1'         : 'convert_raw_to_singles',
+                                            'DatToROOTExec2'         : 'ConvertTOFPETSinglesToEvents', #With Tracks
                                             'RawTimingDAQLocalPath'  : '%sTOFHIR/RawData/'  % (BaseTestbeamDir),
-                                            'RecoTimingDAQLocalPath' : '%sTOFHIR/RecoData/' % (BaseTestbeamDir),
+                                            'RecoTimingDAQLocalPath' : '%sTOFHIR/RecoData/v1/' % (BaseTestbeamDir),
+                                            'TimingDAQLocalPath' : '%sTOFHIR/RecoData/v1/' % (BaseTestbeamDir), # Path for both raw and reco of tofhir timingdaqwithtracks
                                             'RawTimingDAQFileNameFormat' : 'run', #reco --> run<RunNumber>.root 
                                             }    
                         }

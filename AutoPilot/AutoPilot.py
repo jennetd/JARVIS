@@ -232,10 +232,10 @@ while (AutoPilotStatus == 1):
                 print ("TOFHIR Config directory at " + BaseTestbeamDir+"/TOFHIR/Config/ has not been properly mounted. Please mount it.")
                 sys.exit(0)
         if (not os.path.exists(BaseTestbeamDir+"/TOFHIR/ConfigArchive/Config_v" + str(Configuration))):
-                print ("Current Configuration is v" + Configuration + ". TOFHIR Config directory for this configuration has not been archived. Archiving it now.")
+                print ("Current Configuration is v" + str(Configuration) + ". TOFHIR Config directory for this configuration has not been archived. Archiving it now.")
                 os.system("cp -rv "+BaseTestbeamDir+"/TOFHIR/Config/ "+BaseTestbeamDir+"/TOFHIR/ConfigArchive/Config_v"+str(Configuration))
         else :
-                print ("Current Configuration is v" + Configuration + ". TOFHIR Config directory for this configuration is already archived")
+                print ("Current Configuration is v" + str(Configuration) + ". TOFHIR Config directory for this configuration is already archived")
 
 
 

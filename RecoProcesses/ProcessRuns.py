@@ -93,11 +93,15 @@ def TimingDAQRuns(RunNumber, DoTracking, Digitizer, MyKey, Debug):
     if RunNumber == -1:            
         OR1 = pf.ORFunc([am.ProcessDict[1].keys()[0] + Digitizer, am.ProcessDict[1].keys()[0] + Digitizer],[am.StatusDict[0], am.StatusDict[7]])                                                                 
         OR2 = pf.ORFunc([am.ProcessDict[0].keys()[0],am.ProcessDict[0].keys()[0]],[am.StatusDict[0], am.StatusDict[7]])                                                                                                                                                              
-        OR3 = pf.ORFunc([ProcessName, ProcessName],[am.StatusDict[3], am.StatusDict[5]])                                                                                                                                                                                                  
-
+        OR3 = pf.ORFunc([ProcessName, ProcessName],[am.StatusDict[3], am.StatusDict[5]])
+        OR4 = pf.ORFunc([am.ProcessDict[3].keys()[0] + Digitizer],[am.StatusDict[0]])                                                                                                                                                                                                  
+        AND1 = pf.ANDFunc([am.ProcessDict[0].keys()[0], ProcessName],[am.StatusDict[0], am.StatusDict[3]])
         if Digitizer == am.DigitizerDict[0] or Digitizer == am.DigitizerDict[1] or Digitizer == am.DigitizerDict[5]:
-            if DoTracking: 
+            if DoTracking and not Digitizer == am.DigitizerDict[5]: 
                 FilterByFormula = 'AND(' + OR3 + ',' + OR2 + ')'
+            elif DoTracking and Digitizer == am.DigitizerDict[5]:
+                #FilterByFormula = 'AND(' + OR4 + ',' + OR3 + ',' + OR2 + ')'
+                FilterByFormula = AND1
             else:
                 FilterByFormula = OR3 
         else:
@@ -108,19 +112,16 @@ def TimingDAQRuns(RunNumber, DoTracking, Digitizer, MyKey, Debug):
         headers = {'Authorization': 'Bearer %s' % MyKey, }                                                                                                                                                                                                                                
         if pf.QueryGreenSignal(True): response = am.requests.get(am.CurlBaseCommand  + '?filterByFormula=' + FilterByFormula, headers=headers)                                                                                                                                                                               
         ResponseDict = am.ast.literal_eval(response.text) 
-
         if Debug: return ResponseDict, FilterByFormula                                                                                                                                                                                                                                    
-        
-        for i in ResponseDict["records"]:                                                                                                                                                                                                                                               
+
+        for i in ResponseDict["records"]:                                                                                                                                                                                                                                   
             RunList.append(i['fields'][am.QueryFieldsDict[0]])                                                                                                                                                                                                                                        
-            FieldIDList.append(i['id'])                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+            FieldIDList.append(i['id'])
     else:
         RunList.append(RunNumber)
         FieldIDList.append(pf.GetFieldID(am.QueryFieldsDict[0], RunNumber, False, MyKey))
 
     return RunList, FieldIDList                                                                                                                                                                                                                  
-
-
 
 
 
