@@ -100,8 +100,8 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 						if not line and session.poll() != None:
 							break
 				elif PID == 1:
-					am.time.sleep(60)
 					if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[1], False, MyKey)
+					am.time.sleep(60)
 					session = am.subprocess.Popen('source %s; %s' % (am.EnvSetupPath,str(CMD)),stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT, shell=True)
 					while True:
 						line = session.stdout.readline()

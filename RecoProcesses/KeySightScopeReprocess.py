@@ -1,17 +1,17 @@
 from ProcessExec import *
 import ProcessRuns as pr
 
-ExecutionOrder = 1 #This is Ascending Run number order, Refer to the dictionary in all modules
+ExecutionOrder = 0 #This is Ascending Run number order, Refer to the dictionary in all modules
 PID = 2 #2 means Timngdaq, Refer to the dictionary in all modules
 GetRunListEachTime = False #Could be true also for this case.
 
 #Give the range of run numbers to process
-StartRunNumber = 8051
-StopRunNumber = 8051
+StartRunNumber = 16052
+StopRunNumber = 16086
 
 ############ Doesn't matter for tracking ###########
 SaveWaveForms = True
-ConfigVersion = "v1"
+ConfigVersion = "v3"
 DigitizerKey = 3 #key=0 for VME, Refer Allmodules
 
 ########### Get Key ###########

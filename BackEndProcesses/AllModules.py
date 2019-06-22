@@ -48,7 +48,8 @@ BaseTrackDirLocal = '%sTracks/' % BaseTestbeamDir
 LocalSSH = 'daq@timingdaq02.dhcp.fnal.gov'
 EnvSetupPath = '/home/daq/setup.sh' ############### Remember to change ProcessExec accordingly
 #EnvSetupPath2 = '/home/daq/otsdaq/setup_ots.sh' ############### Remember to change ProcessExec accordingly
-TimingDAQDir = '/home/daq/CMS-MTD/TimingDAQ/'
+#TimingDAQDir = '/home/daq/CMS-MTD/TimingDAQ/'
+TimingDAQDir = '/home/daq/CMS-MTD/TimingDAQ_fast_reco/'
 TOFHIRRecoDir = '/home/daq/sw_daq_tofhir_v1/build/'
 TOFHIRConfigDir = '/home/daq/2019_04_April_CMSTiming/TOFHIR/ConfigArchive/'
 TOFHIRRecoDir2 = '/home/daq/sw_daq_tofhir_v1/DAQReco/'
@@ -208,6 +209,7 @@ def WaitForScopeFinishAcquisition():
         ScopeStateHandle = open(ScopeStateFileName, "r")
         ScopeState = str(ScopeStateHandle.read().strip())
         if ScopeState=="writing" or ScopeState=="ready": break
+        #if ScopeState=="ready": break
         time.sleep(0.5)
     ScopeStateHandle.close()
     return

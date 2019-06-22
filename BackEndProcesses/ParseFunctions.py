@@ -272,7 +272,7 @@ def NewRunRecord2(RunNumber, StartTime, Duration, DigitizerList, Tracking, Conve
         'Authorization': 'Bearer %s' % MyKey, 
         'Content-Type': 'application/json',
     }
-
+    data = ""
     if len(DigitizerList) == 1:
         Digitizer1 = DigitizerList[0]
         data = '{"fields":{"Run number": %d,"Start time": "%s", "Duration": "%s", "Digitizer": ["%s"], "Tracking": ["%s"], "ConversionSampic": ["%s"], "ConversionTekScope": ["%s"], "ConversionKeySightScope": ["%s"], "TimingDAQVME": ["%s"], "TimingDAQSampic": ["%s"], "TimingDAQTekScope": ["%s"], "TimingDAQKeySightScope": ["%s"], "TimingDAQDT5742": ["%s"], "TimingDAQTOFHIR": ["%s"], "TimingDAQNoTracksVME": ["%s"], "TimingDAQNoTracksSampic": ["%s"], "TimingDAQNoTracksTekScope": ["%s"], "TimingDAQNoTracksKeySightScope": ["%s"], "TimingDAQNoTracksDT5742": ["%s"], "TimingDAQNoTracksTOFHIR": ["%s"], "LabviewRecoVME": ["%s"], "LabviewRecoDT5742": ["%s"], "LabviewRecoKeySightScope": ["%s"], "LabviewRecoSampic": ["%s"], "LabviewRecoTekScope": ["%s"], "Configuration": ["%s"],"BoxTempOlmo": "%s","x_stageOlmo": "%s","y_stageOlmo": "%s","BoxVoltageOlmo": "%s","BarCurrentOlmo": "%s","z_rotationOlmo": "%s","BoxHumOlmo": "%s","BoxCurrentOlmo": "%s", "BarVoltageOlmo": "%s","OverVoltageBTL": "%s", "VTHBTL": "%s"}}' % (RunNumber, StartTime, Duration, Digitizer1, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQTOFHIR, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, TimingDAQNoTracksTOFHIR, LabviewRecoVME, LabviewRecoDT5742, LabviewRecoKeySightScope, LabviewRecoSampic, LabviewRecoTekScope, ConfigID[0], BoxTemp, x_stage, y_stage, BoxVoltage, BarCurrent, z_rotation, BoxHum, BoxCurrent, BarVoltage, OverVoltageBTL, VTHBTL)
@@ -303,9 +303,12 @@ def NewRunRecord2(RunNumber, StartTime, Duration, DigitizerList, Tracking, Conve
     #data = '{"fields":{"Run number": %d,"Start time": "%s", "Duration": "%s", "Digitizer": ["%s","%s"], "Tracking": ["%s"], "ConversionSampic": ["%s"], "ConversionTekScope": ["%s"], "ConversionKeySightScope": ["%s"], "TimingDAQVME": ["%s"], "TimingDAQSampic": ["%s"], "TimingDAQTekScope": ["%s"], "TimingDAQKeySightScope": ["%s"], "TimingDAQDT5742": ["%s"],"TimingDAQNoTracksVME": ["%s"], "TimingDAQNoTracksSampic": ["%s"], "TimingDAQNoTracksTekScope": ["%s"], "TimingDAQNoTracksKeySightScope": ["%s"], "TimingDAQNoTracksDT5742": ["%s"],"Sensor": ["%s"],"Configuration": ["%s"]}}' % (RunNumber, StartTime, Duration, Digitizer1, Digitizer2, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, SensorID[0], ConfigID[0])
     #data = '{"fields":{"Run number": %d,"Start time": "%s", "Duration": "%s", "Digitizer": %s, "Tracking": ["%s"], "ConversionSampic": ["%s"], "ConversionTekScope": ["%s"], "ConversionKeySightScope": ["%s"], "TimingDAQVME": ["%s"], "TimingDAQSampic": ["%s"], "TimingDAQTekScope": ["%s"], "TimingDAQKeySightScope": ["%s"], "TimingDAQDT5742": ["%s"],"TimingDAQNoTracksVME": ["%s"], "TimingDAQNoTracksSampic": ["%s"], "TimingDAQNoTracksTekScope": ["%s"], "TimingDAQNoTracksKeySightScope": ["%s"], "TimingDAQNoTracksDT5742": ["%s"],"Sensor": ["%s"],"Configuration": ["%s"]}}' % (RunNumber, StartTime, Duration, DigitizerList, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, SensorID[0], ConfigID[0])
     #data = '{"fields":{"Run number": %d, "Digitizer": ["%s","%s"]}}' % (RunNumber, Digitizer1, Digitizer2)
-    response = am.requests.post(am.CurlBaseCommand, headers=headers, data=data)
-    ResponseDict = am.ast.literal_eval(response.text)
-    if Debug: return ResponseDict, data
+    if data != "":
+        response = am.requests.post(am.CurlBaseCommand, headers=headers, data=data)
+        ResponseDict = am.ast.literal_eval(response.text)
+        if Debug: return ResponseDict, data
+    else:
+        print 'Nothing to log in the run table'
 
 def NewRunRecord4(RunNumber, StartTime, Duration, DigitizerList, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, LabviewRecoVME, LabviewRecoDT5742, LabviewRecoKeySightScope, LabviewRecoSampic, LabviewRecoTekScope, BoxTemp, x_stage, y_stage, BoxVoltage, BarCurrent, z_rotation, BoxHum, BoxCurrent, BarVoltage, Temp13ETL, Temp14ETL, Temp15ETL, Temp16ETL, Temp17ETL, Temp18ETL, Temp19ETL, Temp20ETL, LowVoltage1ETL, Current1ETL, LowVoltage2ETL, Current2ETL, LowVoltage3ETL, Current3ETL, ConfigID, Debug, MyKey):
     #NewRunRecord(RunNumber, DigitizerList, Debug)
@@ -347,6 +350,29 @@ def NewRunRecord4(RunNumber, StartTime, Duration, DigitizerList, Tracking, Conve
     response = am.requests.post(am.CurlBaseCommand, headers=headers, data=data)
     ResponseDict = am.ast.literal_eval(response.text)
     if Debug: return ResponseDict, data
+
+def NewRunRecord5(RunNumber, MyKey, ConfigID):
+    #NewRunRecord(RunNumber, DigitizerList, Debug)
+    headers = {
+        'Authorization': 'Bearer %s' % MyKey, 
+        'Content-Type': 'application/json',
+    }
+    Digitizer = "KeySightScope"
+    
+    Tracking = "Not started"
+    ConversionKeySightScope = "Not started"
+    TimingDAQKeySightScope = "Not started"
+    TimingDAQNoTracksKeySightScope =  "Not started"
+    Notes = "Without Autopilot"
+    data = '{"fields":{"Run number": %d, "Digitizer": ["%s"], "Tracking": ["%s"], "ConversionKeySightScope": ["%s"], "TimingDAQKeySightScope": ["%s"], "TimingDAQNoTracksKeySightScope": ["%s"], "Configuration": ["%s"], "Notes": "%s"}}' % (RunNumber, Digitizer, Tracking, ConversionKeySightScope, TimingDAQKeySightScope, TimingDAQNoTracksKeySightScope, ConfigID[0], Notes)
+    
+    #Example template of a query response :  {'records': [{'createdTime': '2015-02-12T03:40:42.000Z', 'fields': {'Conversion': ['Complete'], 'Time Resolution 1': 30, 'TimingDAQ': ['Failed'], 'Notes': 'Make test beam great again\n', 'HV 1': ['recJRiQqSHzTNZqal'], 'Run number': 4, 'Tracking': ['Processing'], 'Configuration': ['rectY95k7m19likjW'], 'Sensor': ['recNwdccBdzS7iBa5']}, 'id': 'recNsKOMDvYKrJzXd'}]}
+    #data = '{"fields":{"Run number": %d,"Start time": "%s", "Duration": "%s", "Digitizer": ["%s","%s"], "Tracking": ["%s"], "ConversionSampic": ["%s"], "ConversionTekScope": ["%s"], "ConversionKeySightScope": ["%s"], "TimingDAQVME": ["%s"], "TimingDAQSampic": ["%s"], "TimingDAQTekScope": ["%s"], "TimingDAQKeySightScope": ["%s"], "TimingDAQDT5742": ["%s"],"TimingDAQNoTracksVME": ["%s"], "TimingDAQNoTracksSampic": ["%s"], "TimingDAQNoTracksTekScope": ["%s"], "TimingDAQNoTracksKeySightScope": ["%s"], "TimingDAQNoTracksDT5742": ["%s"],"Sensor": ["%s"],"Configuration": ["%s"]}}' % (RunNumber, StartTime, Duration, Digitizer1, Digitizer2, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, SensorID[0], ConfigID[0])
+    #data = '{"fields":{"Run number": %d,"Start time": "%s", "Duration": "%s", "Digitizer": %s, "Tracking": ["%s"], "ConversionSampic": ["%s"], "ConversionTekScope": ["%s"], "ConversionKeySightScope": ["%s"], "TimingDAQVME": ["%s"], "TimingDAQSampic": ["%s"], "TimingDAQTekScope": ["%s"], "TimingDAQKeySightScope": ["%s"], "TimingDAQDT5742": ["%s"],"TimingDAQNoTracksVME": ["%s"], "TimingDAQNoTracksSampic": ["%s"], "TimingDAQNoTracksTekScope": ["%s"], "TimingDAQNoTracksKeySightScope": ["%s"], "TimingDAQNoTracksDT5742": ["%s"],"Sensor": ["%s"],"Configuration": ["%s"]}}' % (RunNumber, StartTime, Duration, DigitizerList, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, SensorID[0], ConfigID[0])
+    #data = '{"fields":{"Run number": %d, "Digitizer": ["%s","%s"]}}' % (RunNumber, Digitizer1, Digitizer2)
+    response = am.requests.post(am.CurlBaseCommand, headers=headers, data=data)
+    ResponseDict = am.ast.literal_eval(response.text)
+    return ResponseDict, data
 
 
 def NewRunRecord3(RunNumber, BoxTemp, x_stage, y_stage, BoxVoltage, BarCurrent, z_rotation, BoxHum, BoxCurrent, BarVoltage, Debug, MyKey):

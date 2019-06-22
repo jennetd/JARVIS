@@ -178,7 +178,7 @@ if RP: tp.RPGlobalComm("GlobalStart")
 while (AutoPilotStatus == 1):
 
 	if iteration % 20 == 0:
-		StartSeconds,StopSeconds = GetStartAndStopSeconds(30, 15)
+		StartSeconds,StopSeconds = GetStartAndStopSeconds(35, 22)
 		print StartSeconds, StopSeconds
 
 	## Refresh this
@@ -191,10 +191,10 @@ while (AutoPilotStatus == 1):
 	print "Next Run %i " % (RunNumber)
 	print ""
 	############ Wait for safe time to start run ##########
+	wait_until(StartSeconds)
 
-
+        
 	ScopeIncludedThisRun = False
-
 	if IsScope:
 		currentScopeState = ScopeState()
 		if currentScopeState == 'busy':
@@ -210,7 +210,6 @@ while (AutoPilotStatus == 1):
 		else:
 			print("Scope still busy. Excluding scope from the next run\n")
 
-	wait_until(StartSeconds)
 	tp.UpdateRunNumber(RunNumber+1) ##must be called after scope start.
 	tp.SendRunFile()
 	print "Is Scope ",IsScope
@@ -221,23 +220,20 @@ while (AutoPilotStatus == 1):
 	print ""
 	if RP: tp.RPComm(RunNumber, "start") 
 
-        #Start the run here
+	#Start the run here
 	if not Debug: tp.start_ots(RunNumber,False)
-
-
+	if DigitizerDict[5] in DigitizerList:
         ###############################################################
         #Archive the Config for the TOFHIR if it's a new configuration
         ###############################################################
-        if (not os.path.exists(BaseTestbeamDir+"/TOFHIR/Config/config.ini")):
-                print ("TOFHIR Config directory at " + BaseTestbeamDir+"/TOFHIR/Config/ has not been properly mounted. Please mount it.")
-                sys.exit(0)
-        if (not os.path.exists(BaseTestbeamDir+"/TOFHIR/ConfigArchive/Config_v" + str(Configuration))):
-                print ("Current Configuration is v" + str(Configuration) + ". TOFHIR Config directory for this configuration has not been archived. Archiving it now.")
-                os.system("cp -rv "+BaseTestbeamDir+"/TOFHIR/Config/ "+BaseTestbeamDir+"/TOFHIR/ConfigArchive/Config_v"+str(Configuration))
-        else :
-                print ("Current Configuration is v" + str(Configuration) + ". TOFHIR Config directory for this configuration is already archived")
-
-
+		if (not os.path.exists(BaseTestbeamDir+"/TOFHIR/Config/config.ini")):
+			print ("TOFHIR Config directory at " + BaseTestbeamDir+"/TOFHIR/Config/ has not been properly mounted. Please mount it.")
+			sys.exit(0)
+		if (not os.path.exists(BaseTestbeamDir+"/TOFHIR/ConfigArchive/Config_v" + str(Configuration))):
+			print ("Current Configuration is v" + str(Configuration) + ". TOFHIR Config directory for this configuration has not been archived. Archiving it now.")
+			os.system("cp -rv "+BaseTestbeamDir+"/TOFHIR/Config/ "+BaseTestbeamDir+"/TOFHIR/ConfigArchive/Config_v"+str(Configuration))
+		else :
+			print ("Current Configuration is v" + str(Configuration) + ". TOFHIR Config directory for this configuration is already archived")
 
 	## Minimum run duration
 	time.sleep(60*(NumSpillsPerRun-1))
@@ -282,7 +278,12 @@ while (AutoPilotStatus == 1):
 		# Get Raspberry Pi Value list, Make sure raspberry pi rsync is on, If it is not then the readRPFile function takes care of that.
 
 		BoxTemp, x_stage, y_stage, BoxVoltage, BarCurrent, z_rotation, BoxHum, BoxCurrent, BarVoltage  = ReadRPFile(RunNumber)
-		OverVoltageBTL, VTHBTL  = BTLLoggingFile()
+		
+		if DigitizerDict[5] in DigitizerList:
+			OverVoltageBTL, VTHBTL  = BTLLoggingFile()
+		else:
+			OverVoltageBTL = "N/A"
+			VTHBTL = "N/A"
 
 		if ETLTemp:
 			# Get ETL environment data
