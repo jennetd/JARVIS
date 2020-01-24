@@ -18,11 +18,11 @@ import argparse
 
 ################### Run Table Information #################
 MyKey = '' #Read MyKey from key file in RecoProcesses
-RunTableName = 'tblC4GsJFKjvXgG4e'
-SensorTableName = 'tblAUIj7OVFteuAEL'
-ConfigTableName = 'tblPKdZ7mOWfPr3K0'
+RunTableName = 'tbl20xQITVm9edsq0'
+SensorTableName = 'tbl0QzH626I7vrm0x'
+ConfigTableName = 'tblfG4n6AZZT6oP6M'
 
-BaseID = 'appd8tCrKgKiaAfre'
+BaseID = 'appD4k0qYrNWrx1N0'
 CurlBaseCommandWithoutTable = 'https://api.airtable.com/v0/%s' % (BaseID)
 CurlBaseCommand = 'https://api.airtable.com/v0/%s/%s' % (BaseID, RunTableName)
 CurlBaseCommandSensor = 'https://api.airtable.com/v0/%s/%s' % (BaseID, SensorTableName)
