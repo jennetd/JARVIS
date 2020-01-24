@@ -27,7 +27,7 @@ CurlBaseCommandWithoutTable = 'https://api.airtable.com/v0/%s' % (BaseID)
 CurlBaseCommand = 'https://api.airtable.com/v0/%s/%s' % (BaseID, RunTableName)
 CurlBaseCommandSensor = 'https://api.airtable.com/v0/%s/%s' % (BaseID, SensorTableName)
 CurlBaseCommandConfig = 'https://api.airtable.com/v0/%s/%s' % (BaseID, ConfigTableName)
-QueryFilePath ="/home/daq/JARVIS/QueryLog.txt" # Don't care about this
+QueryFilePath ="../QueryLog.txt" # Don't care about this
 
 #############################################################
 ################## Hard Code these paths ####################
@@ -43,13 +43,13 @@ ResultTrackFileNameAfterRunNumberSlow = '_CMSTiming_SlowTriggerStream_converted.
 ResultTrackFileNameAfterRunNumberFast = '_CMSTiming_FastTriggerStream_converted.root'
 
 ############## For timingdaq02 ############
-BaseTestbeamDir = '/home/daq/2019_04_April_CMSTiming/' 
+BaseTestbeamDir = '/home/daq/2020_02_CMSTiming/' 
 BaseTrackDirLocal = '%sTracks/' % BaseTestbeamDir
 LocalSSH = 'daq@timingdaq02.dhcp.fnal.gov'
 EnvSetupPath = '/home/daq/setup.sh' ############### Remember to change ProcessExec accordingly
 #EnvSetupPath2 = '/home/daq/otsdaq/setup_ots.sh' ############### Remember to change ProcessExec accordingly
 #TimingDAQDir = '/home/daq/CMS-MTD/TimingDAQ/'
-TimingDAQDir = '/home/daq/CMS-MTD/TimingDAQ_fast_reco/'
+TimingDAQDir = '/home/daq/CMS-MTD/TimingDAQ_20190619/'
 TOFHIRRecoDir = '/home/daq/sw_daq_tofhir_v1/build/'
 TOFHIRConfigDir = '/home/daq/2019_04_April_CMSTiming/TOFHIR/ConfigArchive/'
 TOFHIRRecoDir2 = '/home/daq/sw_daq_tofhir_v1/DAQReco/'
@@ -72,11 +72,11 @@ TOFHIRConfigFileBasePath = '/home/daq/2019_04_April_CMSTiming/TOFHIR/ConfigArchi
 ip_address = "192.168.133.46"
 use_socket = 17000
 runFileName ="/data-08/TestBeam/Users/RunNumber/OtherRuns0NextRunNumber.txt"
-localRunFileName = "/home/daq/JARVIS/AutoPilot/otsdaq_runNumber.txt"
-TClockFilePath = "/home/daq/JARVIS/AutoPilot/TClock"
+localRunFileName = "../AutoPilot/otsdaq_runNumber.txt"
+TClockFilePath = "../AutoPilot/TClock"
 
 ########## Key File Path starting from Recoprocesses in Javis
-keyFilePath = "/home/daq/JARVIS/RecoProcesses/key"
+keyFilePath = "../RecoProcesses/key"
 
 ############### Conversion Commands for different digitizer ###########
 TwoStageRecoDigitizers = {

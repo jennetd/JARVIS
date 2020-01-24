@@ -1,5 +1,5 @@
 import sys 
-sys.path.append('/home/daq/JARVIS/BackEndProcesses/')
+sys.path.append('../BackEndProcesses/')
 import ParseFunctions as pf
 import TCP_com as tp  #in-built 5s delay in all of them
 from AllModules import *

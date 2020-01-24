@@ -10,14 +10,14 @@ Run AutoPilot:
 4) Make sure the otsdaq webpage says that it is in configured state. If not follow the otsdaq configuring procedures.
 5) Make sure the otsdaq is correctly configured for all the digitizers in the otsdaq webpage configuration.
 6) Now to run the autopilot, assuming you are already on timingdaq02:
-		Go to /home/daq/JARVIS/AutoPilot
+		Go to JARVIS/AutoPilot
 		source ~/setup.sh
 		./runAutoPilot.sh <Global Configuration number> 	example: ./runAutoPilot.sh 1
 
 
 Stop AutoPilot:
 
-1) Go to /home/daq/JARVIS/AutoPilot on timingdaq02. 
+1) Go to JARVIS/AutoPilot on timingdaq02. 
 2) Run ./StopAutoPilot.sh
 
 
@@ -32,7 +32,7 @@ Listener Starting Procedures:
 
 * For KeySightScope:
 	1) ssh -XY daq@timingdaq02.dhcp.fnal.gov
-	2) Go to /home/daq/JARVIS/BackEndProcesses/
+	2) Go to JARVIS/BackEndProcesses/
 	3) Open readScopeStatus.py and adjust the scope acquisition parameters.
 	4) Through remote desktop make sure the scope is ready for acquisition
 	5) To setup the environment for the listener, do
@@ -54,7 +54,7 @@ OTSDAQ Configuration Procedures:
 Run Auto-Processing: 
 
 1) On timingdaq02 : Open 3 terminal windows for VME, DT5742 and KeySight reconstruction respectively (if you are using all three).
-2) Go to /home/daq/JARVIS/RecoProcesses/ on all three windows
+2) Go to JARVIS/RecoProcesses/ on all three windows
 3) Make sure the following TimingDAQ processing scripts have correct config version hard coded. 
 	StartDT5742Processing.py for DT5742
 	StartVMEProcessing.py for VME
@@ -70,7 +70,7 @@ If the script fails for some reason, use VMEReco.sh with just one configuration
 
 For Reprocessing single run, or a range of runs:
 
-1) On timingdaq02 : Go to /home/daq/JARVIS/RecoProcesses
+1) On timingdaq02 : Go to JARVIS/RecoProcesses
 2) Run the Reprocess scripts for the respective digitizers after hardcoding the range of runs, and the version (if doing timingdaq) correctly.
 3) If you want the entries for the scope root files: make sure to source root first before running the keysighscope reprocess script.
 

@@ -60,7 +60,7 @@ while True:
 
 		    if not UsingAutoPilot:
 		    	print "Updating the run table from the scope listener script"
-		    	Command = "python /home/daq/JARVIS/AutoPilot/RunTableWithoutAutopilot.py %s %d" % (runNumber, Configuration)
+		    	Command = "python ../AutoPilot/RunTableWithoutAutopilot.py %s %d" % (runNumber, Configuration)
 		    	print Command
 		    	os.system(Command)
 		    	print "\n Updated the run table"
@@ -87,7 +87,7 @@ while True:
 
 		    if not UsingAutoPilot:
 		    	print "Updating the run table from the scope listener script"
-		    	Command = "python /home/daq/JARVIS/AutoPilot/RunTableWithoutAutopilot.py %s %d" % (runNumber, Configuration)
+		    	Command = "python ../AutoPilot/RunTableWithoutAutopilot.py %s %d" % (runNumber, Configuration)
 		    	print Command
 		    	os.system(Command)
 		    	print "\n Updated the run table"
