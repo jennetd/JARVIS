@@ -127,6 +127,19 @@ def TimingDAQCMDs(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer, M
         return None,None,None,None   
 
 
+def WatchCondorCMDs(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer, MyKey, False):
+    RunList, FieldIDList = pr.WatchCondorRuns(RunNumber, DoTracking, Digitizer, MyKey, False)
+    WatchCMDList = []
+    ResultFileLocationList = []
+    RecoBaseLocalPath = am.TwoStageRecoDigitizers[Digitizer]['RecoTimingDAQLocalPath']+'RecoWithTracks/'+ Version + '/'
+    for run in RunList:
+        RecoLocalPath = RecoBaseLocalPath + '/' + am.TwoStageRecoDigitizers[Digitizer]['RawTimingDAQFileNameFormat']+ str(run) + '_converted.root' 
+        RecoEOSpath = RecoLocalPath.replace(am.BaseTestbeamDir,am.eosBaseDir)
+        ResultFileLocationList.append(RecoEOSpath)
+        WatchCMDList.append("test")
+
+    return WatchCMDList, ResultFileLocationList, RunList, FieldIDList
+
 def TimingDAQCMDsBTLApril(RunNumber, SaveWaveformBool, Version1, Version2, DoTracking, Digitizer, MyKey, Debug):
     DoTracking = DoTracking 
     MyKey = MyKey

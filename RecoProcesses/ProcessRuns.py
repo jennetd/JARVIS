@@ -121,10 +121,34 @@ def TimingDAQRuns(RunNumber, DoTracking, Digitizer, MyKey, Debug):
         RunList.append(RunNumber)
         FieldIDList.append(pf.GetFieldID(am.QueryFieldsDict[0], RunNumber, False, MyKey))
 
+    # print RunList
     return RunList, FieldIDList                                                                                                                                                                                                                  
 
 
+def WatchCondorRuns(RunNumber, DoTracking, Digitizer, MyKey, False):
+    RunNumber = RunNumber
+    DoTracking = DoTracking
+    Digitizer = Digitizer                                                                                                                                                                                                                                           
+    RunList = []                                                                                                                                                                                                                                                                         
+    FieldIDList = []                                                                                                                                                                                                                                                                     
+    DigitizerList = []   
+    MyKey = MyKey                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+    ProcessName = am.ProcessDict[5].keys()[0] + Digitizer
 
+    # condition = pf.ORFunc([am.ProcessDict[2].keys()[0]],[am.StatusDict[8]])
+    Condition = pf.EqualToFunc(pf.Curly(am.ProcessDict[2].keys()[0]+ Digitizer), pf.DoubleQuotes(am.StatusDict[8]))
+
+    # print am.CurlBaseCommand  + '?filterByFormula=' + Condition
+    headers = {'Authorization': 'Bearer %s' % MyKey, }                                                                                                                                                                                                                                
+    if pf.QueryGreenSignal(True): response = am.requests.get(am.CurlBaseCommand  + '?filterByFormula=' + Condition, headers=headers)                                                                                                                                                                               
+    ResponseDict = am.ast.literal_eval(response.text) 
+    # print ResponseDict
+    for i in ResponseDict["records"]:                                                                                                                                                                                                                                   
+        RunList.append(i['fields'][am.QueryFieldsDict[0]])                                                                                                                                                                                                                                        
+        FieldIDList.append(i['id'])
+
+    # print RunList
+    return RunList, FieldIDList    
 
 def TimingDAQRunsMoreQueries():
 

@@ -18,11 +18,11 @@ import argparse
 
 ################### Run Table Information #################
 MyKey = '' #Read MyKey from key file in RecoProcesses
-RunTableName = 'tbl20xQITVm9edsq0'
-SensorTableName = 'tbl0QzH626I7vrm0x'
-ConfigTableName = 'tblfG4n6AZZT6oP6M'
+RunTableName = 'tbl9oxfx83BHIXsTf'
+SensorTableName = 'tbl7ez6VheXFZbmtM'
+ConfigTableName = 'tblm44MVP7erA8Pz1'
 
-BaseID = 'appD4k0qYrNWrx1N0'
+BaseID = 'appKskpfdz2uVh1gf'
 CurlBaseCommandWithoutTable = 'https://api.airtable.com/v0/%s' % (BaseID)
 CurlBaseCommand = 'https://api.airtable.com/v0/%s/%s' % (BaseID, RunTableName)
 CurlBaseCommandSensor = 'https://api.airtable.com/v0/%s/%s' % (BaseID, SensorTableName)
@@ -43,16 +43,18 @@ ResultTrackFileNameAfterRunNumberSlow = '_CMSTiming_SlowTriggerStream_converted.
 ResultTrackFileNameAfterRunNumberFast = '_CMSTiming_FastTriggerStream_converted.root'
 
 ############## For timingdaq02 ############
-BaseTestbeamDir = '/home/daq/2020_02_CMSTiming/' 
+BaseTestbeamDir = '/uscms/home/rheller/nobackup/2020_02_CMSTiming/' 
+eosBaseDir = 'root://cmseos.fnal.gov//store/group/cmstestbeam/2020_02_CMSTiming/'
 BaseTrackDirLocal = '%sTracks/' % BaseTestbeamDir
 LocalSSH = 'daq@timingdaq02.dhcp.fnal.gov'
-EnvSetupPath = '/home/daq/setup.sh' ############### Remember to change ProcessExec accordingly
-#EnvSetupPath2 = '/home/daq/otsdaq/setup_ots.sh' ############### Remember to change ProcessExec accordingly
-#TimingDAQDir = '/home/daq/CMS-MTD/TimingDAQ/'
-TimingDAQDir = '/home/daq/CMS-MTD/TimingDAQ_20190619/'
-TOFHIRRecoDir = '/home/daq/sw_daq_tofhir_v1/build/'
-TOFHIRConfigDir = '/home/daq/2019_04_April_CMSTiming/TOFHIR/ConfigArchive/'
-TOFHIRRecoDir2 = '/home/daq/sw_daq_tofhir_v1/DAQReco/'
+EnvSetupPath = '/uscms/home/rheller/nobackup/setup.sh' ############### Remember to change ProcessExec accordingly
+#EnvSetupPath2 = '/uscms/home/rheller/nobackup/otsdaq/setup_ots.sh' ############### Remember to change ProcessExec accordingly
+#TimingDAQDir = '/uscms/home/rheller/nobackup/CMS-MTD/TimingDAQ/'
+TimingDAQDir = '/uscms/home/rheller/work/TestBeamReco/TimingDAQ/'
+CondorDir = '%sCondor/'%BaseTestbeamDir
+TOFHIRRecoDir = '/uscms/home/rheller/nobackup/sw_daq_tofhir_v1/build/'
+TOFHIRConfigDir = '/uscms/home/rheller/nobackup/2019_04_April_CMSTiming/TOFHIR/ConfigArchive/'
+TOFHIRRecoDir2 = '/uscms/home/rheller/nobackup/sw_daq_tofhir_v1/DAQReco/'
 ############## For PCCITFNAL01 ############
 #BaseTestbeamDir = '/data2/2019_04_April_CMSTiming/'
 #BaseTrackDirLocal = '%sTracks/' % BaseTestbeamDir
@@ -153,6 +155,7 @@ ProcessDict = {
                     2 : {'TimingDAQ' : {'SizeCut' : 20000}},
                     3 : {'TimingDAQNoTracks' : {'SizeCut' : 20000}},
                     4 : {'LabviewReco' : {'SizeCut' : 20000}},
+                    5 : {'WatchCondor' : {'SizeCut' : 20000}}
                 }
 StatusDict = {
                     0 : 'Complete',
@@ -163,6 +166,7 @@ StatusDict = {
                     5 : 'Retry',
                     6 : 'Redo',
                     7 : 'N/A',
+                    8 : 'Condor'
 }
 
 QueryFieldsDict = {

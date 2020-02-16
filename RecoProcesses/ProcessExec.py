@@ -2,7 +2,8 @@ import sys
 sys.path.append('../BackEndProcesses/')
 import AllModules as am
 import ProcessCMDs as pc
-import ParseFunctions as pf                                                                                                                                                                                                  
+import ParseFunctions as pf
+import condorUtils as cu                                                                                                                                                                                                  
 
 def exists_remote(host, path):                                                                                                                                                                                                                                                                                                
 	status = subprocess.call(['ssh', host, 'test -f {0}'.format(pipes.quote(path))])                                                                                                                                                                                                                                          
@@ -33,7 +34,7 @@ def FileSizeBool(FilePath, SizeCut):
 		return am.os.stat(FilePath).st_size < SizeCut
 	else: return True
 
-def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, RunNumber = -1, DigitizerKey = -1 , MyKey = None, GetRunListEachTime = True):
+def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, RunNumber = -1, DigitizerKey = -1 , MyKey = None, GetRunListEachTime = True, condor = False):
 	
 	if not DigitizerKey == -1: Digitizer = am.DigitizerDict[DigitizerKey]
 	SaveWaveformBool = SaveWaveformBool
@@ -61,6 +62,13 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 			DoTracking = False	
 			CMDList, ResultFileLocationList, RunList, FieldIDList = pc.TimingDAQCMDs(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer, MyKey, False)
 			SizeCut = am.ProcessDict[PID][am.ProcessDict[PID].keys()[0]]['SizeCut']
+
+		elif PID == 5:
+			ProcessName = am.ProcessDict[2].keys()[0] + Digitizer	
+			DoTracking = True
+			CMDList, ResultFileLocationList, RunList, FieldIDList = pc.WatchCondorCMDs(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer, MyKey, False)
+			SizeCut = am.ProcessDict[2][am.ProcessDict[2].keys()[0]]['SizeCut']		
+			print ResultFileLocationList, RunList
 
 		RunListInt = map(int,RunList)
 		if OrderOfExecution == 1: 
@@ -90,7 +98,7 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 				
 				print '\n###############################'
 				print 'Starting process %s for run %d\n' % (ProcessName, run)
-                                
+								
 				if PID == 0:
 					if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[1], False, MyKey)
 					session = am.subprocess.Popen(["ssh", am.RulinuxSSH, str(CMD)],stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT)
@@ -109,29 +117,69 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 						if not line and session.poll() != None:
 							break
 				elif PID == 2 or PID == 3:
-					if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[1], False, MyKey)
 					######## For TimingDAQ02 
-					session = am.subprocess.Popen('cd %s; source %s; %s;cd -' % (am.TimingDAQDir, am.EnvSetupPath, str(CMD)),stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT, shell=True)                                                                                                                                                                                   			
-					######## For Caltech CMS Timing computer uncomment this and comment out the above line 
-					#session = am.subprocess.Popen('cd %s; %s;cd -' % (am.TimingDAQDir, str(CMD)),stdout=am.subprocess.PIPE, shell=True)                                                                                                                                                                                   			
-					while True:
+					# print CMD
+					if not condor: 
+						if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[1], False, MyKey)
+						session = am.subprocess.Popen('cd %s; source %s; %s;cd -' % (am.TimingDAQDir, am.EnvSetupPath, str(CMD)),stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT, shell=True)                                                                                                                                                                                   			
+						######## For Caltech CMS Timing computer uncomment this and comment out the above line 
+						#session = am.subprocess.Popen('cd %s; %s;cd -' % (am.TimingDAQDir, str(CMD)),stdout=am.subprocess.PIPE, shell=True)  
+						while True:
+							print "in loop"
+							line = session.stdout.readline()
+							am.ProcessLog(ProcessName, run, line)
+							if not line and session.poll() != None:
+								break
+								
+						if DigitizerKey == 5:
+							print 'Sleeping for 60 sec'
+							am.time.sleep(60)
+							print 'Done sleeping'
+						
+						if FileSizeBool(ResultFileLocation,SizeCut) or not am.os.path.exists(ResultFileLocation): BadProcessExec = True                                                                                                                                                                                                                                                     
+						if BadProcessExec:                                                                                                                                                                                                                               
+							if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[2], False, MyKey)  
+							print 'Bad %s execution for run %d. Either the CMD format is wrong or somwthing else was wrong while execution. Please check the ProcessLog to know more.\n' % (ProcessName, run)
+						else:
+							if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[0], False, MyKey)
+							if PID == 2 and DigitizerKey == 3:
+								import GetEntries as ge
+								EntriesWithTrack, EntriesWithTrackAndHit, EntriesWithHit, EntriesWithTrackWithoutNplanes = ge.RunEntries(ResultFileLocation)
+								if pf.QueryGreenSignal(True): 
+									pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithTrackScope", int(EntriesWithTrack), False, MyKey)
+									am.time.sleep(0.5)
+								if pf.QueryGreenSignal(True): 
+									pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithTrackAndHitScope", int(EntriesWithTrackAndHit), False, MyKey)
+									am.time.sleep(0.5)
+								if pf.QueryGreenSignal(True): 
+									pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithHitScope", int(EntriesWithHit), False, MyKey)
+								if pf.QueryGreenSignal(True): 
+									pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithTrackWithoutNplanesScope", int(EntriesWithTrackWithoutNplanes), False, MyKey)
+
+						print 'Finished process %s for run %d' % (ProcessName, run)		
+						print '###############################\n'
+
+					elif condor:
+						if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[8], False, MyKey)
+						## generate condor jdl and executable
+						cu.prepareDirs() 
+						jdlname = cu.prepareJDL(PID,DigitizerKey,run,CMD)
+						cu.prepareExecutable(PID,DigitizerKey,run,CMD)
+						## cd and submit to condor
+						session = am.subprocess.Popen('cd %s; condor_submit %s; cd -' % (am.CondorDir,jdlname),stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT, shell=True)                                                                                                                                                                                   			
+
+						## wait for submission
 						line = session.stdout.readline()
 						am.ProcessLog(ProcessName, run, line)
 						if not line and session.poll() != None:
 							break
-                                
-                                if DigitizerKey == 5:
-                                        print 'Sleeping for 60 sec'
-                                        am.time.sleep(60)
-                                        print 'Done sleeping'
-                                
-				if FileSizeBool(ResultFileLocation,SizeCut) or not am.os.path.exists(ResultFileLocation): BadProcessExec = True                                                                                                                                                                                                                                                     
-				if BadProcessExec:                                                                                                                                                                                                                               
-					if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[2], False, MyKey)  
-					print 'Bad %s execution for run %d. Either the CMD format is wrong or somwthing else was wrong while execution. Please check the ProcessLog to know more.\n' % (ProcessName, run)
-				else:
-					if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[0], False, MyKey)
-					if PID == 2 and DigitizerKey == 3:
+						
+
+				elif PID == 5:
+					## checking on condor processes
+					if cu.CheckExistsEOS(ResultFileLocation,SizeCut):
+						if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[0], False, MyKey)
+						am.time.sleep(0.5)
 						import GetEntries as ge
 						EntriesWithTrack, EntriesWithTrackAndHit, EntriesWithHit, EntriesWithTrackWithoutNplanes = ge.RunEntries(ResultFileLocation)
 						if pf.QueryGreenSignal(True): 
@@ -142,11 +190,13 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 							am.time.sleep(0.5)
 						if pf.QueryGreenSignal(True): 
 							pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithHitScope", int(EntriesWithHit), False, MyKey)
+							am.time.sleep(0.5)
 						if pf.QueryGreenSignal(True): 
 							pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithTrackWithoutNplanesScope", int(EntriesWithTrackWithoutNplanes), False, MyKey)
+							am.time.sleep(0.5)
+						## add to list of processes to check on
+						## loop over list of runs to check on, grep condor logs to tell when complete, then proceed with checks.
 
-				print 'Finished process %s for run %d' % (ProcessName, run)		
-				print '###############################\n'
 			
 			if RunNumber != -1:
 				break
@@ -219,12 +269,12 @@ def ProcessExecBTLForTOFHIRTracks(OrderOfExecution, PID, SaveWaveformBool = None
 				
 				print '\n###############################'
 				print 'Starting process %s for run %d\n' % (ProcessName, run)
-                                
-                                if DigitizerKey == 5:
-                                        print 'Sleeping for 1 sec'
-                                        am.time.sleep(1)
-                                        print 'Done sleeping'
-                                
+								
+				if DigitizerKey == 5:
+						print 'Sleeping for 1 sec'
+						am.time.sleep(1)
+						print 'Done sleeping'
+								
 				if PID == 0:
 					if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[1], False, MyKey)
 					session = am.subprocess.Popen(["ssh", am.RulinuxSSH, str(CMD)],stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT)
@@ -352,12 +402,12 @@ def ProcessExecBTL(OrderOfExecution, PID, SaveWaveformBool = None, Version = Non
 				
 				print '\n###############################'
 				print 'Starting process %s for run %d\n' % (ProcessName, run)
-                                
-                                if DigitizerKey == 5:
-                                        print 'Sleeping for 60 sec'
-                                        am.time.sleep(60)
-                                        print 'Done sleeping'
-                                
+								
+				if DigitizerKey == 5:
+						print 'Sleeping for 60 sec'
+						am.time.sleep(60)
+						print 'Done sleeping'
+				
 				if PID == 0:
 					if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[1], False, MyKey)
 					session = am.subprocess.Popen(["ssh", am.RulinuxSSH, str(CMD)],stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT)
@@ -481,7 +531,7 @@ def ProcessExecApril(OrderOfExecution, PID, SaveWaveformBool = None, Version1 = 
 				
 				print '\n###############################'
 				print 'Starting process %s for run %d\n' % (ProcessName, run)
-                                
+								
 				if PID == 2 or PID == 3:
 					if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[1], False, MyKey)
 					######## For TimingDAQ02 
