@@ -2,6 +2,26 @@ import os
 import AllModules as am
 
 
+def xrdcpRaw(run,Digitizer):
+
+	mountDir = am.TwoStageRecoDigitizers[Digitizer]['RawConversionLocalPath']
+	destination = am.eosBaseDir+Digitizer+"/RawData/"
+	success=True
+	for i in range(1,5):
+		cmd = ["xrdcp", "-fs", mountDir+"Wavenewscope_CH%i_%i.bin" %(i,run),destination]
+		print cmd
+		session = am.subprocess.Popen(cmd,stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT)
+		while True:
+			line = session.stdout.readline()
+			# am.ProcessLog(ProcessName, run, line)
+			if not line and session.poll() != None:
+				break
+	
+	for i in range(1,5):
+		success = success and CheckExistsEOS(destination+"Wavenewscope_CH%i_%i.bin" %(i,run),2000)
+
+	return success
+
 def prepareDirs():
 	if not os.path.exists(am.CondorDir):
 		os.makedirs(am.CondorDir)
@@ -28,10 +48,25 @@ def CheckExistsEOS(ResultFileLocation,sizecut):
 		return True
 	else: return False
 
+def CheckExistsLogs(PID,digitizer_key,run,CMD):
+	if PID==1: 
+		procname = "Conversion"
+	if PID==2: 
+		procname = "TimingDAQ"
+	
+	logname =  am.CondorDir+"logs/%s_%i_%i.stdout"%(procname,digitizer_key,run) 
+	if os.path.exists(logname): return True
+	else: return False
+
 def prepareJDL(PID,digitizer_key,run,CMD):
+
+	if PID==1: 
+		procname = "Conversion"
 
 	if PID==2: 
 		procname = "TimingDAQ"
+	logname = am.CondorDir+"logs/%s_%i_%i.stdout"%(procname,digitizer_key,run) ### must delete log, since WatchCondor looks for this file to see if job is done. This way, retry can be used.
+	if os.path.exists(logname): os.remove(logname)
 	# 	inputfile = CMD.split("--input_file=\n")[1].split()[0].replace(am.BaseTestbeamDir,am.eosBaseDir)
 	# 	tracksfile = CMD.split("--pixel_input_file=")[1].split()[0].replace(am.BaseTestbeamDir,am.eosBaseDir)
 	# 	config = CMD.split("--config_file=")[1].split()[0].replace(am.TimingDAQDir,am.eosBaseDir+"condor/")
@@ -58,6 +93,13 @@ def prepareJDL(PID,digitizer_key,run,CMD):
 	return jdlfile
 
 def prepareExecutable(PID,digitizer_key,run,CMD):
+	if PID==1: 
+		procname = "Conversion"
+		inputfiles = []
+		for i in range(1,5):
+			inputfiles.append(am.eosBaseDir+am.DigitizerDict[digitizer_key]+"/RawData/Wavenewscope_CH%i_%i.bin"%(i,run))
+		# outputfile = am.eosBaseDir+digitizer+"RecoData/ConversionRECO/run_scope%i.root"%run
+
 	if PID==2: 
 		procname = "TimingDAQ"
 		inputfile = CMD.split("--input_file=")[1].split()[0].replace(am.BaseTestbeamDir,am.eosBaseDir)
@@ -69,27 +111,41 @@ def prepareExecutable(PID,digitizer_key,run,CMD):
 	f = open(exec_file,"w+")
 	f.write("#!/bin/bash\n")
 	f.write("source /cvmfs/cms.cern.ch/cmsset_default.sh\n")
-	f.write("cd /cvmfs/cms.cern.ch/slc6_amd64_gcc530/cms/cmssw/CMSSW_9_0_2/src/\n")
+	f.write("cd /cvmfs/cms.cern.ch/slc6_amd64_gcc530/cms/cmssw/CMSSW_8_0_20/src/\n")
 	f.write("eval `scramv1 runtime -sh`\n")
 	f.write("cd -\n")
 
-	f.write("xrdcp root://cmseos.fnal.gov//store/group/cmstestbeam/2020_02_CMSTiming/condor/NetScopeStandaloneDat2Root .\n")
-	f.write("chmod 755 NetScopeStandaloneDat2Root\n")
 
-	f.write("xrdcp -s %s .\n" % inputfile)
-	f.write("xrdcp -s %s .\n" % tracksfile)
-	f.write("xrdcp -s %s .\n" % config)
+	if PID==1:
+		f.write("xrdcp root://cmseos.fnal.gov//store/group/cmstestbeam/2020_02_CMSTiming/condor/conversion_bin_fast.py .\n")
+		f.write("chmod 755 conversion_bin_fast.py\n")
+		for inputfile in inputfiles:
+			f.write("xrdcp -s %s .\n"%inputfile)
+		f.write("ls\n")	
+		f.write("python conversion_bin_fast.py --Run %i\n"%run)
+		# f.write("xrdcp -fs %s %s\n" % (os.path.basename(outputfile), outputfile)) ## done in script
+		f.write("rm *.dat\n")		
+		f.write("rm *.root\n")		
+		f.write("rm *.py\n")		
 
-	f.write("ls\n")
-	f.write("./NetScopeStandaloneDat2Root --input_file=%s --pixel_input_file=%s  --config=%s --output_file=out_%s --save_meas --N_evts=100\n" % (os.path.basename(inputfile),os.path.basename(tracksfile),os.path.basename(config),os.path.basename(outputfile)))
+	if PID==2:
+		f.write("xrdcp root://cmseos.fnal.gov//store/group/cmstestbeam/2020_02_CMSTiming/condor/NetScopeStandaloneDat2Root .\n")
+		f.write("chmod 755 NetScopeStandaloneDat2Root\n")
 
-	f.write("ls\n")
-	f.write("xrdcp -fs out_%s %s\n" % (os.path.basename(outputfile), outputfile))
+		f.write("xrdcp -s %s .\n" % inputfile)
+		f.write("xrdcp -s %s .\n" % tracksfile)
+		f.write("xrdcp -s %s .\n" % config)
 
-	f.write("rm *.root\n")
-	f.write("rm NetScopeStandaloneDat2Root\n")
-	f.write("rm %s\n"%os.path.basename(config))
-	# f.write("rm *\n") seems dangerous
+		f.write("ls\n")
+		f.write("./NetScopeStandaloneDat2Root --input_file=%s --pixel_input_file=%s  --config=%s --output_file=out_%s --save_meas --N_evts=100\n" % (os.path.basename(inputfile),os.path.basename(tracksfile),os.path.basename(config),os.path.basename(outputfile)))
+
+		f.write("ls\n")
+		f.write("xrdcp -fs out_%s %s\n" % (os.path.basename(outputfile), outputfile))
+
+		f.write("rm *.root\n")
+		f.write("rm NetScopeStandaloneDat2Root\n")
+		f.write("rm *.config\n")
+
 
 	f.write("echo '##### HOST DETAILS #####\n'")
 	f.write("echo 'I ran on'\n")

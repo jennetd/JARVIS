@@ -50,7 +50,7 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 			SizeCut = am.ProcessDict[PID][am.ProcessDict[PID].keys()[0]]['SizeCut']
 		elif PID == 1:
 			ProcessName = am.ProcessDict[PID].keys()[0] + Digitizer
-			CMDList, ResultFileLocationList, RunList, FieldIDList = pc.ConversionCMDs(RunNumber, Digitizer, MyKey, False)
+			CMDList, ResultFileLocationList, RunList, FieldIDList = pc.ConversionCMDs(RunNumber, Digitizer, MyKey, False, condor)
 			SizeCut = am.ProcessDict[PID][am.ProcessDict[PID].keys()[0]]['SizeCut']
 		elif PID == 2:
 			ProcessName = am.ProcessDict[PID].keys()[0] + Digitizer	
@@ -64,10 +64,17 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 			SizeCut = am.ProcessDict[PID][am.ProcessDict[PID].keys()[0]]['SizeCut']
 
 		elif PID == 5:
-			ProcessName = am.ProcessDict[2].keys()[0] + Digitizer	
+			ProcessName = am.ProcessDict[PID].keys()[0] + Digitizer	
 			DoTracking = True
 			CMDList, ResultFileLocationList, RunList, FieldIDList = pc.WatchCondorCMDs(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer, MyKey, False)
 			SizeCut = am.ProcessDict[2][am.ProcessDict[2].keys()[0]]['SizeCut']		
+			print ResultFileLocationList, RunList
+
+		elif PID == 6:
+			ProcessName = am.ProcessDict[PID].keys()[0] + Digitizer	
+			DoTracking = True
+			CMDList, ResultFileLocationList, RunList, FieldIDList = pc.xrdcpRawCMDs(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer, MyKey, False)
+			SizeCut = am.ProcessDict[PID][am.ProcessDict[PID].keys()[0]]['SizeCut']		
 			print ResultFileLocationList, RunList
 
 		RunListInt = map(int,RunList)
@@ -82,7 +89,7 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 				RunListInt = RunListInt[:1] #Just do the first run of the list
 
 			for run in RunListInt: 
-			
+				ProcessName = am.ProcessDict[PID].keys()[0] + Digitizer	
 				index = RunList.index(run)      
 				CMD = CMDList[index]  
 				if RunNumber != -1: 
@@ -108,14 +115,30 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 						if not line and session.poll() != None:
 							break
 				elif PID == 1:
-					if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[1], False, MyKey)
-					am.time.sleep(60)
-					session = am.subprocess.Popen('source %s; %s' % (am.EnvSetupPath,str(CMD)),stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT, shell=True)
-					while True:
+					if not condor:
+						if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[1], False, MyKey)
+						am.time.sleep(60)
+						session = am.subprocess.Popen('source %s; %s' % (am.EnvSetupPath,str(CMD)),stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT, shell=True)
+						while True:
+							line = session.stdout.readline()
+							am.ProcessLog(ProcessName, run, line)
+							if not line and session.poll() != None:
+								break
+					else:
+						if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[8], False, MyKey)
+						cu.prepareDirs() 
+						jdlname = cu.prepareJDL(PID,DigitizerKey,run,CMD)
+						cu.prepareExecutable(PID,DigitizerKey,run,CMD)
+						## cd and submit to condor
+						print CMD
+						session = am.subprocess.Popen('cd %s; condor_submit %s; cd -' % (am.CondorDir,jdlname),stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT, shell=True)                                                                                                                                                                                   			
+
+						## wait for submission
 						line = session.stdout.readline()
 						am.ProcessLog(ProcessName, run, line)
 						if not line and session.poll() != None:
 							break
+
 				elif PID == 2 or PID == 3:
 					######## For TimingDAQ02 
 					# print CMD
@@ -177,30 +200,52 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 
 				elif PID == 5:
 					## checking on condor processes
-					if cu.CheckExistsEOS(ResultFileLocation,SizeCut):
-						if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[0], False, MyKey)
-						am.time.sleep(0.5)
-						import GetEntries as ge
-						EntriesWithTrack, EntriesWithTrackAndHit, EntriesWithHit, EntriesWithTrackWithoutNplanes = ge.RunEntries(ResultFileLocation)
-						if pf.QueryGreenSignal(True): 
-							pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithTrackScope", int(EntriesWithTrack), False, MyKey)
-							am.time.sleep(0.5)
-						if pf.QueryGreenSignal(True): 
-							pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithTrackAndHitScope", int(EntriesWithTrackAndHit), False, MyKey)
-							am.time.sleep(0.5)
-						if pf.QueryGreenSignal(True): 
-							pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithHitScope", int(EntriesWithHit), False, MyKey)
-							am.time.sleep(0.5)
-						if pf.QueryGreenSignal(True): 
-							pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithTrackWithoutNplanesScope", int(EntriesWithTrackWithoutNplanes), False, MyKey)
-							am.time.sleep(0.5)
+					## need to check if a job is completed but file not there -> failed.
+					this_proc_key = 2
+					if "Conversion" in CMD: 
+						this_proc_key=1
+
+					ProcessName = am.ProcessDict[this_proc_key].keys()[0] + Digitizer
+					
+					if cu.CheckExistsLogs(this_proc_key,DigitizerKey,run,CMD):
+						if cu.CheckExistsEOS(ResultFileLocation,SizeCut):
+							if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[0], False, MyKey)
+						else:
+							if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[2], False, MyKey)
+
+						am.time.sleep(1)
+						if this_proc_key==2:
+							import GetEntries as ge
+							EntriesWithTrack, EntriesWithTrackAndHit, EntriesWithHit, EntriesWithTrackWithoutNplanes = ge.RunEntries(ResultFileLocation)
+							if pf.QueryGreenSignal(True): 
+								pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithTrackScope", int(EntriesWithTrack), False, MyKey)
+								am.time.sleep(0.5)
+							if pf.QueryGreenSignal(True): 
+								pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithTrackAndHitScope", int(EntriesWithTrackAndHit), False, MyKey)
+								am.time.sleep(0.5)
+							if pf.QueryGreenSignal(True): 
+								pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithHitScope", int(EntriesWithHit), False, MyKey)
+								am.time.sleep(0.5)
+							if pf.QueryGreenSignal(True): 
+								pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithTrackWithoutNplanesScope", int(EntriesWithTrackWithoutNplanes), False, MyKey)
+								am.time.sleep(0.5)
 						## add to list of processes to check on
 						## loop over list of runs to check on, grep condor logs to tell when complete, then proceed with checks.
-
-			
+					am.time.sleep(1)
+				elif PID == 6:
+					## copy raw scope files
+					if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[1], False, MyKey)
+					am.time.sleep(60) ## allow scope to save at least first channel
+					cpstatus = cu.xrdcpRaw(run,Digitizer)
+					am.time.sleep(0.5)
+					if cpstatus and pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[0], False, MyKey) 
+					elif not cpstatus and pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[2], False, MyKey)
+					am.time.sleep(0.5) 
+				
 			if RunNumber != -1:
 				break
-			am.time.sleep(1)	
+			
+			am.time.sleep(4)	
 		
 		else:
 			print '\n######################'

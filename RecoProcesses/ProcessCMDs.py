@@ -27,12 +27,27 @@ def TrackingCMDs(RunNumber, MyKey, Debug):
     else:
         return None,None,None,None   
 
-def ConversionCMDs(RunNumber, Digitizer, MyKey, Debug):
+def xrdcpRawCMDs(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer, MyKey, False):
+    RunList, FieldIDList = pr.xrdcpRawRuns(RunNumber, Digitizer, MyKey, False)
+    cpCMDList = []
+    ResultFileLocationList = []
+
+    # am.TwoStageRecoDigitizers[Digitizer]['RawTimingDAQLocalPath']
+    if RunList != None:
+        for run in RunList:
+        #     cmd = "xrdcp -fs %s %s" %(outputFile,eosPath)
+            cpCMDList.append("holder")
+            ResultFileLocationList.append("holder")
+        return cpCMDList, ResultFileLocationList, RunList, FieldIDList
+    else:
+        return None,None,None,None 
+
+def ConversionCMDs(RunNumber, Digitizer, MyKey, Debug, condor):
     MyKey = MyKey
     RunNumber = RunNumber
     Digitizer = Digitizer
 
-    RunList, FieldIDList = pr.ConversionRuns(RunNumber, Digitizer, MyKey, False)
+    RunList, FieldIDList = pr.ConversionRuns(RunNumber, Digitizer, MyKey, False,condor)
     ConversionCMDList = []
     ResultFileLocationList = []
 
@@ -128,16 +143,25 @@ def TimingDAQCMDs(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer, M
 
 
 def WatchCondorCMDs(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer, MyKey, False):
-    RunList, FieldIDList = pr.WatchCondorRuns(RunNumber, DoTracking, Digitizer, MyKey, False)
+    RunList, FieldIDList,ProcessList = pr.WatchCondorRuns(RunNumber, DoTracking, Digitizer, MyKey, False)
     WatchCMDList = []
     ResultFileLocationList = []
     RecoBaseLocalPath = am.TwoStageRecoDigitizers[Digitizer]['RecoTimingDAQLocalPath']+'RecoWithTracks/'+ Version + '/'
-    for run in RunList:
-        RecoLocalPath = RecoBaseLocalPath + '/' + am.TwoStageRecoDigitizers[Digitizer]['RawTimingDAQFileNameFormat']+ str(run) + '_converted.root' 
-        RecoEOSpath = RecoLocalPath.replace(am.BaseTestbeamDir,am.eosBaseDir)
-        ResultFileLocationList.append(RecoEOSpath)
-        WatchCMDList.append("test")
+    ConvertedBaseLocalPath = am.TwoStageRecoDigitizers[Digitizer]['RawTimingDAQLocalPath']
 
+    for i,run in enumerate(RunList):
+        if(ProcessList[i]==2):
+            RecoLocalPath = RecoBaseLocalPath + am.TwoStageRecoDigitizers[Digitizer]['RawTimingDAQFileNameFormat']+ str(run) + '_converted.root' 
+            RecoEOSpath = RecoLocalPath.replace(am.BaseTestbeamDir,am.eosBaseDir)
+            WatchCMDList.append("TimingDAQ")
+        if(ProcessList[i]==1):
+            RecoLocalPath = ConvertedBaseLocalPath + am.TwoStageRecoDigitizers[Digitizer]['RawTimingDAQFileNameFormat'] + str(run) + '.root'         
+            RecoEOSpath = RecoLocalPath.replace(am.BaseTestbeamDir,am.eosBaseDir)
+            WatchCMDList.append("Conversion")
+       
+        ResultFileLocationList.append(RecoEOSpath)
+    # print "end of WatchCondorCMDs"
+    # print WatchCMDList,RunList,ResultFileLocationList
     return WatchCMDList, ResultFileLocationList, RunList, FieldIDList
 
 def TimingDAQCMDsBTLApril(RunNumber, SaveWaveformBool, Version1, Version2, DoTracking, Digitizer, MyKey, Debug):

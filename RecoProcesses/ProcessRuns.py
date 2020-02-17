@@ -28,15 +28,21 @@ def TrackingRuns(RunNumber, MyKey, Debug):
 
     return RunList, FieldIDList 
 
-def ConversionRuns(RunNumber, Digitizer, MyKey, Debug):
+def ConversionRuns(RunNumber, Digitizer, MyKey, Debug, condor):
     RunList = []                                                                                                                                                                                                                                                                         
     FieldIDList = []   
     MyKey = MyKey
     if RunNumber == -1:                                                                                                                                                                                                                                                                  
 
         ProcessName = am.ProcessDict[1].keys()[0] + Digitizer
-        FilterByFormula = pf.ORFunc([ProcessName, ProcessName],[am.StatusDict[3], am.StatusDict[5]])                                                                 
-
+        if not condor: 
+            FilterByFormula = pf.ORFunc([ProcessName, ProcessName],[am.StatusDict[3], am.StatusDict[5]])                                                                 
+        else:   
+            OR1 = pf.ORFunc([am.ProcessDict[6].keys()[0] + Digitizer],[am.StatusDict[0]]) ## xrd raw files is complete
+            OR2 = pf.ORFunc([ProcessName, ProcessName],[am.StatusDict[3], am.StatusDict[5]]) ## conversion not started or on retry
+            FilterByFormula = 'AND(' + OR1 + ',' + OR2 + ')'
+            # OR1 = pf.EqualToFunc(pf.Curly(am.ProcessDict[6].keys()[0]+ Digitizer), pf.DoubleQuotes(am.StatusDict[3]))
+            
         headers = {'Authorization': 'Bearer %s' % MyKey, }                                                                                                                                                                                                                                
         if pf.QueryGreenSignal(True): response = am.requests.get(am.CurlBaseCommand  + '?filterByFormula=' + FilterByFormula, headers=headers)                                                                                                                                                                                
         ResponseDict = am.ast.literal_eval(response.text)                                                                                                                                                                                                                                       
@@ -131,13 +137,29 @@ def WatchCondorRuns(RunNumber, DoTracking, Digitizer, MyKey, False):
     Digitizer = Digitizer                                                                                                                                                                                                                                           
     RunList = []                                                                                                                                                                                                                                                                         
     FieldIDList = []                                                                                                                                                                                                                                                                     
-    DigitizerList = []   
+    ProcessList=[]  
     MyKey = MyKey                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
-    ProcessName = am.ProcessDict[5].keys()[0] + Digitizer
+    # ProcessName = am.ProcessDict[5].keys()[0] + Digitizer
 
     # condition = pf.ORFunc([am.ProcessDict[2].keys()[0]],[am.StatusDict[8]])
+   
+    ### Get TimingDAQ condor runs
     Condition = pf.EqualToFunc(pf.Curly(am.ProcessDict[2].keys()[0]+ Digitizer), pf.DoubleQuotes(am.StatusDict[8]))
 
+    # print am.CurlBaseCommand  + '?filterByFormula=' + Condition
+    headers = {'Authorization': 'Bearer %s' % MyKey, }                                                                                                                                                                                                                                
+    if pf.QueryGreenSignal(True): response = am.requests.get(am.CurlBaseCommand  + '?filterByFormula=' + Condition, headers=headers)                                                                                                                                                                               
+    ResponseDict = am.ast.literal_eval(response.text) 
+  #  print ResponseDict
+    for i in ResponseDict["records"]:                                                                                                                                                                                                                                   
+        RunList.append(i['fields'][am.QueryFieldsDict[0]])                                                                                                                                                                                                                                        
+        FieldIDList.append(i['id'])
+        ProcessList.append(2)
+
+    am.time.sleep(1)
+
+    ### Get Conversion condor runs
+    Condition = pf.EqualToFunc(pf.Curly(am.ProcessDict[1].keys()[0]+ Digitizer), pf.DoubleQuotes(am.StatusDict[8]))
     # print am.CurlBaseCommand  + '?filterByFormula=' + Condition
     headers = {'Authorization': 'Bearer %s' % MyKey, }                                                                                                                                                                                                                                
     if pf.QueryGreenSignal(True): response = am.requests.get(am.CurlBaseCommand  + '?filterByFormula=' + Condition, headers=headers)                                                                                                                                                                               
@@ -146,9 +168,32 @@ def WatchCondorRuns(RunNumber, DoTracking, Digitizer, MyKey, False):
     for i in ResponseDict["records"]:                                                                                                                                                                                                                                   
         RunList.append(i['fields'][am.QueryFieldsDict[0]])                                                                                                                                                                                                                                        
         FieldIDList.append(i['id'])
+        ProcessList.append(1)
 
-    # print RunList
-    return RunList, FieldIDList    
+    # print RunList,ProcessList,FieldIDList
+    return RunList, FieldIDList, ProcessList    
+
+def xrdcpRawRuns(RunNumber, Digitizer, MyKey, False):
+    RunNumber = RunNumber
+    Digitizer = Digitizer                                                                                                                                                                                                                                           
+    RunList = []                                                                                                                                                                                                                                                                         
+    FieldIDList = []                                                                                                                                                                                                                                                                     
+    DigitizerList = []   
+    MyKey = MyKey     
+    # Condition = pf.EqualToFunc(pf.Curly(am.ProcessDict[6].keys()[0]+ Digitizer), pf.DoubleQuotes(am.StatusDict[3]))
+    ProcessName = am.ProcessDict[6].keys()[0]+ Digitizer
+    FilterByFormula = pf.ORFunc([ProcessName, ProcessName],[am.StatusDict[3], am.StatusDict[5]])  
+    headers = {'Authorization': 'Bearer %s' % MyKey, }                                                                                                                                                                                                                                
+    if pf.QueryGreenSignal(True): response = am.requests.get(am.CurlBaseCommand  + '?filterByFormula=' + FilterByFormula, headers=headers)                                                                                                                                                                               
+    ResponseDict = am.ast.literal_eval(response.text) 
+    # print ResponseDict
+    for i in ResponseDict["records"]:                                                                                                                                                                                                                                   
+        RunList.append(i['fields'][am.QueryFieldsDict[0]])                                                                                                                                                                                                                                        
+        FieldIDList.append(i['id'])
+
+    print RunList
+    return RunList, FieldIDList        
+
 
 def TimingDAQRunsMoreQueries():
 

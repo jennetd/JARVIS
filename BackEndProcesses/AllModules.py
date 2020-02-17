@@ -155,7 +155,8 @@ ProcessDict = {
                     2 : {'TimingDAQ' : {'SizeCut' : 20000}},
                     3 : {'TimingDAQNoTracks' : {'SizeCut' : 20000}},
                     4 : {'LabviewReco' : {'SizeCut' : 20000}},
-                    5 : {'WatchCondor' : {'SizeCut' : 20000}}
+                    5 : {'WatchCondor' : {'SizeCut' : 20000}},
+                    6 : {'xrdcpRaw' : {'SizeCut' : 20000}}
                 }
 StatusDict = {
                     0 : 'Complete',
