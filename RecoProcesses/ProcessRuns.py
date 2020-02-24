@@ -82,7 +82,7 @@ def LabviewRuns(RunNumber, Digitizer, MyKey, Debug):
 
     return RunList, FieldIDList                                                                                                                                                                                                               
 
-def TimingDAQRuns(RunNumber, DoTracking, Digitizer, MyKey, Debug):  
+def TimingDAQRuns(RunNumber, DoTracking, Digitizer, MyKey, Debug, condor=False):  
     RunNumber = RunNumber
     DoTracking = DoTracking
     Digitizer = Digitizer                                                                                                                                                                                                                                           
@@ -91,7 +91,7 @@ def TimingDAQRuns(RunNumber, DoTracking, Digitizer, MyKey, Debug):
     DigitizerList = []   
     MyKey = MyKey                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
 
-    if DoTracking:
+    if DoTracking: 
         ProcessName = am.ProcessDict[2].keys()[0] + Digitizer
     else:
         ProcessName = am.ProcessDict[3].keys()[0] + Digitizer
@@ -101,6 +101,7 @@ def TimingDAQRuns(RunNumber, DoTracking, Digitizer, MyKey, Debug):
         OR2 = pf.ORFunc([am.ProcessDict[0].keys()[0],am.ProcessDict[0].keys()[0]],[am.StatusDict[0], am.StatusDict[7]])                                                                                                                                                              
         OR3 = pf.ORFunc([ProcessName, ProcessName],[am.StatusDict[3], am.StatusDict[5]])
         OR4 = pf.ORFunc([am.ProcessDict[3].keys()[0] + Digitizer],[am.StatusDict[0]])                                                                                                                                                                                                  
+        xrdcpDone = pf.ORFunc([am.ProcessDict[6].keys()[0] + Digitizer],[am.StatusDict[0]])                                                                                                                                                                                                  
         AND1 = pf.ANDFunc([am.ProcessDict[0].keys()[0], ProcessName],[am.StatusDict[0], am.StatusDict[3]])
         if Digitizer == am.DigitizerDict[0] or Digitizer == am.DigitizerDict[1] or Digitizer == am.DigitizerDict[5]:
             if DoTracking and not Digitizer == am.DigitizerDict[5]: 
@@ -113,6 +114,7 @@ def TimingDAQRuns(RunNumber, DoTracking, Digitizer, MyKey, Debug):
         else:
             FilterByFormula = 'AND(' + OR1 + ',' + OR3   
             if DoTracking: FilterByFormula = FilterByFormula + ',' + OR2 
+            if condor:  FilterByFormula = FilterByFormula + ',' + xrdcpDone 
             FilterByFormula = FilterByFormula + ')'
 
         headers = {'Authorization': 'Bearer %s' % MyKey, }                                                                                                                                                                                                                                

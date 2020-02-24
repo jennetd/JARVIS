@@ -15,6 +15,8 @@ def xrdcpTracks(run):
 		if not line and session.poll() != None:
 			break
 
+
+
 def xrdcpRaw(run,Digitizer):
 	## hacked for conversion
 	#mountDir = am.TwoStageRecoDigitizers[Digitizer]['RawConversionLocalPath']
@@ -45,6 +47,39 @@ def xrdcpRaw(run,Digitizer):
 	
 	#for i in range(1,5):
 		#success = success and CheckExistsEOS(destination+"Wavenewscope_CH%i_%i.bin" %(i,run),2000)
+
+	return success
+
+
+def xrdcpRaw2(run,Digitizer):
+	mountDir = am.TwoStageRecoDigitizers[Digitizer]['RawConversionLocalPath']
+	LocalDir = "/home/daq/2020_02_cmstiming_ETL/KeySightScope/RawData/"#am.TwoStageRecoDigitizers[Digitizer]['RawConversionLocalPath']
+	destination = am.eosBaseDir+Digitizer+"/RawData"
+	for i in range(1,5):
+		raw_filename =  mountDir+"Wavenewscope_CH%i_%i.bin" %(i,run)
+		while not os.path.exists(raw_filename):
+			time.sleep(3)
+
+		cmd = ["cp",raw_filename,LocalDir]
+		print cmd
+		session = am.subprocess.Popen(cmd,stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT)
+		while True:
+			line = session.stdout.readline()
+			# am.ProcessLog(ProcessName, run, line)
+			if not line and session.poll() != None:
+				break
+	
+		cmd = ["xrdcp", "-f",LocalDir+"Wavenewscope_CH%i_%i.bin" %(i,run),destination]
+		print cmd
+		session2 = am.subprocess.Popen(cmd,stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT)
+		while True:
+			line = session2.stdout.readline()
+			# am.ProcessLog(ProcessName, run, line)
+			if not line and session2.poll() != None:
+				break
+	
+	# for i in range(1,5):
+	# 	success = success and CheckExistsEOS(destination+"Wavenewscope_CH%i_%i.bin" %(i,run),2000)
 
 	return success
 
@@ -165,10 +200,11 @@ def prepareExecutable(PID,digitizer_key,run,CMD):
 		f.write("xrdcp -s %s .\n" % config)
 
 		f.write("ls\n")
-		f.write("./NetScopeStandaloneDat2Root --input_file=%s --pixel_input_file=%s  --config=%s --output_file=out_%s --save_meas --N_evts=100\n" % (os.path.basename(inputfile),os.path.basename(tracksfile),os.path.basename(config),os.path.basename(outputfile)))
+		f.write("./NetScopeStandaloneDat2Root --input_file=%s --pixel_input_file=%s  --config=%s --output_file=out_%s --save_meas\n" % (os.path.basename(inputfile),os.path.basename(tracksfile),os.path.basename(config),os.path.basename(outputfile)))
 
 		f.write("ls\n")
 		f.write("xrdcp -fs out_%s %s\n" % (os.path.basename(outputfile), outputfile))
+		# f.write("scp out_%s daq@ti\n" % (os.path.basename(outputfile)))
 
 		f.write("rm *.root\n")
 		f.write("rm NetScopeStandaloneDat2Root\n")

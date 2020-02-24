@@ -64,13 +64,13 @@ def ConversionCMDs(RunNumber, Digitizer, MyKey, Debug, condor):
 
 
 
-def TimingDAQCMDs(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer, MyKey, Debug):
+def TimingDAQCMDs(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer, MyKey, Debug, condor):
     DoTracking = DoTracking 
     MyKey = MyKey
     Digitizer = Digitizer
     RunNumber = RunNumber
 
-    RunList, FieldIDList = pr.TimingDAQRuns(RunNumber, DoTracking, Digitizer, MyKey, False)
+    RunList, FieldIDList = pr.TimingDAQRuns(RunNumber, DoTracking, Digitizer, MyKey, False, condor)
     DatToRootCMDList = []
     ResultFileLocationList = []
     RunsNotPresent = []

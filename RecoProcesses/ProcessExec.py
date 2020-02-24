@@ -56,7 +56,7 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 		elif PID == 2:
 			ProcessName = am.ProcessDict[PID].keys()[0] + Digitizer	
 			DoTracking = True
-			CMDList, ResultFileLocationList, RunList, FieldIDList = pc.TimingDAQCMDs(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer, MyKey, False)
+			CMDList, ResultFileLocationList, RunList, FieldIDList = pc.TimingDAQCMDs(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer, MyKey, False, condor)
 			SizeCut = am.ProcessDict[PID][am.ProcessDict[PID].keys()[0]]['SizeCut']
 		elif PID == 3:
 			ProcessName = am.ProcessDict[PID].keys()[0] + Digitizer
@@ -206,6 +206,8 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 						## cd and submit to condor
 						session = am.subprocess.Popen('cd %s; condor_submit %s; cd -' % (am.CondorDir,jdlname),stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT, shell=True)                                                                                                                                                                                   			
 
+						# print 'condor_submit %s; cd -' % (jdlname)
+						# print am.CondorDir
 						## wait for submission
 						line = session.stdout.readline()
 						am.ProcessLog(ProcessName, run, line)
@@ -256,7 +258,7 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 					if cpstatus and pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[0], False, MyKey) 
 					elif not cpstatus and pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[2], False, MyKey)
 					am.time.sleep(0.5) 
-					am.time.sleep(1.0)
+					am.time.sleep(2.0)
 				
 			if RunNumber != -1:
 				break
