@@ -46,6 +46,7 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 	
 		if PID == 0:
 			ProcessName = am.ProcessDict[PID].keys()[0]
+			print ProcessName
 			CMDList, ResultFileLocationList, RunList, FieldIDList = pc.TrackingCMDs(RunNumber, MyKey, False)
 			SizeCut = am.ProcessDict[PID][am.ProcessDict[PID].keys()[0]]['SizeCut']
 		elif PID == 1:
@@ -75,7 +76,7 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 			DoTracking = True
 			CMDList, ResultFileLocationList, RunList, FieldIDList = pc.xrdcpRawCMDs(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer, MyKey, False)
 			SizeCut = am.ProcessDict[PID][am.ProcessDict[PID].keys()[0]]['SizeCut']		
-			print ResultFileLocationList, RunList
+			#print ResultFileLocationList, RunList
 
 		RunListInt = map(int,RunList)
 		if OrderOfExecution == 1: 
@@ -89,7 +90,7 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 				RunListInt = RunListInt[:1] #Just do the first run of the list
 
 			for run in RunListInt: 
-				ProcessName = am.ProcessDict[PID].keys()[0] + Digitizer	
+				if PID!=0: ProcessName = am.ProcessDict[PID].keys()[0] + Digitizer	
 				index = RunList.index(run)      
 				CMD = CMDList[index]  
 				if RunNumber != -1: 
@@ -114,16 +115,31 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 						am.ProcessLog(ProcessName, run, line)
 						if not line and session.poll() != None:
 							break
+					print "Looking for file at ",ResultFileLocation
+					if FileSizeBool(ResultFileLocation,SizeCut) or not am.os.path.exists(ResultFileLocation): BadProcessExec = True                                                                                                                                                                                                                                                     
+					if BadProcessExec:                                                                                                                                                                                                                               
+						if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[2], False, MyKey)  
+						print 'Bad %s execution for run %d. Either the CMD format is wrong or somwthing else was wrong while execution. Please check the ProcessLog to know more.\n' % (ProcessName, run)
+					else:
+						if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[0], False, MyKey)
+				
+					cu.xrdcpTracks(run)
 				elif PID == 1:
 					if not condor:
 						if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[1], False, MyKey)
-						am.time.sleep(60)
+						am.time.sleep(15) #should not be necessary to wait too long anymore
 						session = am.subprocess.Popen('source %s; %s' % (am.EnvSetupPath,str(CMD)),stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT, shell=True)
 						while True:
 							line = session.stdout.readline()
 							am.ProcessLog(ProcessName, run, line)
 							if not line and session.poll() != None:
 								break
+						if FileSizeBool(ResultFileLocation,SizeCut) or not am.os.path.exists(ResultFileLocation): BadProcessExec = True                                                                                                                                                                                                                                                     
+						if BadProcessExec:                                                                                                                                                                                                                               
+							if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[2], False, MyKey)  
+							print 'Bad %s execution for run %d. Either the CMD format is wrong or somwthing else was wrong while execution. Please check the ProcessLog to know more.\n' % (ProcessName, run)
+						else:
+							if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[0], False, MyKey)
 					else:
 						if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[8], False, MyKey)
 						cu.prepareDirs() 
@@ -148,7 +164,6 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 						######## For Caltech CMS Timing computer uncomment this and comment out the above line 
 						#session = am.subprocess.Popen('cd %s; %s;cd -' % (am.TimingDAQDir, str(CMD)),stdout=am.subprocess.PIPE, shell=True)  
 						while True:
-							print "in loop"
 							line = session.stdout.readline()
 							am.ProcessLog(ProcessName, run, line)
 							if not line and session.poll() != None:
@@ -235,12 +250,13 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 				elif PID == 6:
 					## copy raw scope files
 					if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[1], False, MyKey)
-					am.time.sleep(60) ## allow scope to save at least first channel
+					#am.time.sleep(60) ## allow scope to save at least first channel
 					cpstatus = cu.xrdcpRaw(run,Digitizer)
 					am.time.sleep(0.5)
 					if cpstatus and pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[0], False, MyKey) 
 					elif not cpstatus and pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[2], False, MyKey)
 					am.time.sleep(0.5) 
+					am.time.sleep(1.0)
 				
 			if RunNumber != -1:
 				break

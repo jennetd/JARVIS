@@ -7,19 +7,19 @@ UsingAutoPilot = True
 Configuration = 122
 
 
-numEvents = 100000
-sampleRate = 5 #GSa/s
-horizontalWindow = 300 #ns
+numEvents = 110000
+sampleRate = 40 #GSa/s
+horizontalWindow = 40 #ns
 ### if sample rate or horizontal window is changed, TimingDAQ must be recompiled to account for new npoints.
 trigCh = "AUX" 
 trig = 0.15 #V
 
-vScale1 = 0.20  
-vScale2 = 1 
-vScale3 = 0.05 
-vScale4 = 0.1 
+vScale1 = 0.03  
+vScale2 = 0.03 
+vScale3 = 0.03 
+vScale4 = 0.050 
 
-timeoffset = -50 #ns
+timeoffset = -207 #ns
 
 ############### Remember to source the otsdaq environment
 ############### Assuming the directory structure in the KeySightScope repository is the same as on this computer

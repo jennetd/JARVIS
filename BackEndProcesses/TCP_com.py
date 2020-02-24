@@ -57,13 +57,13 @@ def UpdateRunNumber(nextRunNum):
     incrementRunFile.close()
 
 def GetRunFile():
-    CMD = 'scp otsdaq@ftbf-daq-08.fnal.gov:' + am.runFileName + ' ' + am.localRunFileName
+    CMD = 'scp cmstiming@ftbf-daq-06.fnal.gov:' + am.runFileName + ' ' + am.localRunFileName
     print CMD
     session = am.subprocess.Popen('%s' % CMD,stdout=am.PIPE, stderr=am.subprocess.PIPE, shell=True)       
     stdout = session.communicate()
     print stdout
 def SendRunFile():
-    CMD = 'scp ' + am.localRunFileName +' otsdaq@ftbf-daq-08.fnal.gov:' + am.runFileName
+    CMD = 'scp ' + am.localRunFileName +' cmstiming@ftbf-daq-06.fnal.gov:' + am.runFileName
     session = am.subprocess.Popen('%s' % CMD,stdout=am.PIPE, stderr=am.subprocess.PIPE, shell=True) 
     stdout = session.communicate()
     print stdout    

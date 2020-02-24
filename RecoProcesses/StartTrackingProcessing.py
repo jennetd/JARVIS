@@ -8,7 +8,7 @@ GetRunListEachTime = True
 ############ Doesn't matter for tracking ###########
 SaveWaveForms = False
 ConfigVersion = "v1"
-DigitizerKey = 0 #key=0 for VME, Refer Allmodules
+DigitizerKey = 3 #key=0 for VME, Refer Allmodules
 
 ########### Get Key ###########
 key = am.GetKey()

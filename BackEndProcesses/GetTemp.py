@@ -10,7 +10,7 @@ import glob
 from bisect import bisect_left
 
 
-labview_unsync_base_path = '/home/daq/2019_04_April_CMSTiming/LabviewData/LabviewUnsyncData/'
+labview_unsync_base_path = '/home/daq/LabviewData/LabviewUnsyncData/'
 
 def greatest_number_less_than_value(seq,value):
     if bisect_left(seq,value)>0:
@@ -47,14 +47,25 @@ def GetEnvMeas(timestamp):
             if abs(delta_time) > 100:
                 LabviewFlag = True
             else:
-                Resis13 = all_labview_array[1]
-                Resis14 = all_labview_array[2]
-                Resis15 = all_labview_array[3]
+                Resis13 = -1#all_labview_array[1]
+                Resis14 = -1#all_labview_array[2]
+                Resis15 = -1#all_labview_array[3]
+                # Resis16 = all_labview_array[19]
+                # Resis17 = all_labview_array[20]
+                # Resis18 = all_labview_array[21]
+                # Resis19 = all_labview_array[22]
+                # Resis20 = all_labview_array[23]
                 Resis16 = all_labview_array[4]
                 Resis17 = all_labview_array[5]
                 Resis18 = all_labview_array[6]
                 Resis19 = all_labview_array[7]
                 Resis20 = all_labview_array[8]
+                # Voltage1 = all_labview_array[13]
+                # Current1 = all_labview_array[14]
+                # Voltage2 = all_labview_array[15]
+                # Current2 = all_labview_array[16]
+                # Voltage3 = all_labview_array[17]
+                # Current3 = all_labview_array[18]
                 Voltage1 = all_labview_array[9]
                 Current1 = all_labview_array[10]
                 Voltage2 = all_labview_array[11]
@@ -68,6 +79,15 @@ def GetEnvMeas(timestamp):
                 LabviewFlag = True
             else:
                 index_labview_time = all_labview_array_time_list.index(float(labview_time))
+                
+                Resis13 = -1#all_labview_array[index_labview_time,1]
+                Resis14 = -1#all_labview_array[index_labview_time,2]
+                Resis15 = -1#all_labview_array[index_labview_time, 3]
+                # Resis16 = all_labview_array[index_labview_time, 19]
+                # Resis17 = all_labview_array[index_labview_time, 20]
+                # Resis18 = all_labview_array[index_labview_time, 21]
+                # Resis19 = all_labview_array[index_labview_time, 22]
+                # Resis20 = all_labview_array[index_labview_time, 23]
                 Resis13 = all_labview_array[index_labview_time,1]
                 Resis14 = all_labview_array[index_labview_time,2]
                 Resis15 = all_labview_array[index_labview_time, 3]
@@ -76,12 +96,18 @@ def GetEnvMeas(timestamp):
                 Resis18 = all_labview_array[index_labview_time, 6]
                 Resis19 = all_labview_array[index_labview_time, 7]
                 Resis20 = all_labview_array[index_labview_time, 8]
-                Voltage1 = all_labview_array[index_labview_time, 9]
-                Current1 = all_labview_array[index_labview_time, 10]
-                Voltage2 = all_labview_array[index_labview_time, 11]
-                Current2 = all_labview_array[index_labview_time, 12]
-                Voltage3 = all_labview_array[index_labview_time, 13]
-                Current3 = all_labview_array[index_labview_time, 14]
+                Voltage1 = -1
+                Current1 = -1
+                Voltage2 = -1
+                Current2 = -1
+                Voltage3 = -1
+                Current3 = -1
+                # Voltage1 = all_labview_array[index_labview_time, 13]
+                # Current1 = all_labview_array[index_labview_time, 14]
+                # Voltage2 = all_labview_array[index_labview_time, 15]
+                # Current2 = all_labview_array[index_labview_time, 16]
+                # Voltage3 = all_labview_array[index_labview_time, 17]
+                # Current3 = all_labview_array[index_labview_time, 18]
         
         if LabviewFlag:
             Resis13 = -1
@@ -165,7 +191,8 @@ def ConvertEnv(timestamp):
 	else:
 		Temp15 = -999
 	if Resis16 != -1 and Resis16 != 0:
-		Temp16 = round(Temp_calc_NTC(Resis16),2)
+		Temp16 = Resis16#round(Temp_calc_NTC(Resis16),2)
+        #Temp16 = Resis16
 	else:
 		Temp16 = -999
 	if Resis17 != -1 and Resis17 != 0:
@@ -173,7 +200,7 @@ def ConvertEnv(timestamp):
 	else:
 		Temp17 = -999 
 	if Resis18 != -1 and Resis18 != 0:
-		Temp18 = round(Temp_calc(Resis18),2)	
+		Temp18 = round(Temp_calc_NTC(Resis18),2)	
 	else:
 		Temp18 = -999
 	if Resis19 != -1 and Resis19 != 0:

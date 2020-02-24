@@ -4,6 +4,7 @@ import ParseFunctions as pf
 import TCP_com as tp  #in-built 5s delay in all of them
 from AllModules import *
 import GetTemp as gt
+from muxQuery import *
 
 ################################### Important #########################################
 ######## This parameter defines at what time it is safe to start a new run ############
@@ -17,7 +18,7 @@ NumSpillsPerRun = 1
 RP = False #### It needs to be true if you want to get files from Raspberry Pi, otherwise it would give default values. 
 BTLLogging = False
 ETLTemp = True
-ETROC=True
+ETROC=False
 
 ETROC_config_filename = "/home/daq/RaspberryPi/scriptsPC/config.txt"
 ETROC_baseline_filename = "/home/daq/RaspberryPi/scriptsPC/baseline.txt"
@@ -28,16 +29,19 @@ parser = argparse.ArgumentParser(description='Information for running the AutoPi
 parser.add_argument('-de', '--Debug', type=int, default = 0, required=False)
 parser.add_argument('-it', '--IsTelescope', type=int,default=1, help = 'Give 1 if using the telescope',required=False)
 parser.add_argument('-conf', '--Configuration', type=int, help = 'Make sure to add the configuration in the run table. Give COnfiguration S/N from the run table',required=False)
+parser.add_argument('-nruns', '--maxIterations', type=int, help = 'Number of runs to take',required=False)
 
 args = parser.parse_args()
 Debug = args.Debug
 IsTelescope = args.IsTelescope
 Configuration = args.Configuration
+maxRuns = int(args.maxIterations)
 Debug=False
 ########################### Only when Run table is used ############################
 ########### Get Key ###########
 key = GetKey()
 
+print "Stopping after %i runs." % maxRuns
 ############ Getting the digitizer list from the configuration table #############
 DigitizerList = pf.GetDigiFromConfig(Configuration, False, key)
 
@@ -181,10 +185,10 @@ ETROC_baseline = "N/A"
 # Get Start and stop seconds for the first iteration of the loop
 iteration = 0
 if RP: tp.RPGlobalComm("GlobalStart")
-while (AutoPilotStatus == 1):
+while (AutoPilotStatus == 1 and iteration < maxRuns):
 
 	if iteration % 20 == 0:
-		StartSeconds,StopSeconds = GetStartAndStopSeconds(35, 22)
+		StartSeconds,StopSeconds = GetStartAndStopSeconds(25, 15)
 		print StartSeconds, StopSeconds
 
 	## Refresh this
@@ -196,6 +200,10 @@ while (AutoPilotStatus == 1):
 	RunNumber = tp.GetRunNumber()
 	print "Next Run %i " % (RunNumber)
 	print ""
+	
+	print "Configuration multiplexer for configuration %i"%Configuration
+	ConfigureMux(Configuration)
+
 	if ETROC:
 		ETROC_baseline_file =  open(ETROC_baseline_filename, "r")
 		ETROC_baseline = str(ETROC_baseline_file.read().strip())
@@ -255,7 +263,7 @@ while (AutoPilotStatus == 1):
 	### Don't stop run until scope has acquired all events (OK if still writing events disk, though)
 
 	if IsScope and ScopeIncludedThisRun:
-		time.sleep(15)
+		time.sleep(25)
 		print "Waiting for scope to finish"
 		WaitForScopeFinishAcquisition()
 		print "Waiting for TClock stop time"

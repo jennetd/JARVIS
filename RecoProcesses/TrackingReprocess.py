@@ -6,8 +6,8 @@ PID = 0 #0 means Tracking, Refer to the dictionary in all modules
 GetRunListEachTime = False #Could be true also for this case.
 
 #Give the range of run numbers to process
-StartRunNumber = 8082
-StopRunNumber = 8088
+StartRunNumber = 27275
+StopRunNumber = 27363
 
 ############ Doesn't matter for tracking ###########
 SaveWaveForms = True

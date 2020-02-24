@@ -21,12 +21,14 @@ MyKey = '' #Read MyKey from key file in RecoProcesses
 RunTableName = 'tbl9oxfx83BHIXsTf'
 SensorTableName = 'tbl7ez6VheXFZbmtM'
 ConfigTableName = 'tblm44MVP7erA8Pz1'
+KeySightScopeConfigTableName = 'tblBRJQa2JYPEbJpD'
 
 BaseID = 'appKskpfdz2uVh1gf'
 CurlBaseCommandWithoutTable = 'https://api.airtable.com/v0/%s' % (BaseID)
 CurlBaseCommand = 'https://api.airtable.com/v0/%s/%s' % (BaseID, RunTableName)
 CurlBaseCommandSensor = 'https://api.airtable.com/v0/%s/%s' % (BaseID, SensorTableName)
 CurlBaseCommandConfig = 'https://api.airtable.com/v0/%s/%s' % (BaseID, ConfigTableName)
+CurlBaseCommandKeySight = 'https://api.airtable.com/v0/%s/%s' % (BaseID, KeySightScopeConfigTableName)
 QueryFilePath ="../QueryLog.txt" # Don't care about this
 
 #############################################################
@@ -34,23 +36,23 @@ QueryFilePath ="../QueryLog.txt" # Don't care about this
 #############################################################
 
 ############# Tracking Paths ##############
-HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScriptFastTrigger_NewGeo_19_04_08.sh'
+HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScriptFastTrigger_NewGeo_2020_02_05.sh'
 RulinuxSSH = 'otsdaq@rulinux04.dhcp.fnal.gov'
-BaseTrackDirRulinux = '/data/TestBeam/2019_04_April_CMSTiming/'
+BaseTrackDirRulinux = '/data/TestBeam/2020_02_February_cmstiming/'
 ResultTrackFileNameBeforeRunNumber = 'Run' ###########'Run%d_CMSTiming_converted.root'
 ResultTrackFileNameAfterRunNumber = '_CMSTiming_converted.root' 
 ResultTrackFileNameAfterRunNumberSlow = '_CMSTiming_SlowTriggerStream_converted.root'
 ResultTrackFileNameAfterRunNumberFast = '_CMSTiming_FastTriggerStream_converted.root'
 
 ############## For timingdaq02 ############
-BaseTestbeamDir = '/uscms/home/rheller/nobackup/2020_02_CMSTiming/' 
+BaseTestbeamDir = '/home/daq/2020_02_cmstiming_ETL/' 
 eosBaseDir = 'root://cmseos.fnal.gov//store/group/cmstestbeam/2020_02_CMSTiming/'
 BaseTrackDirLocal = '%sTracks/' % BaseTestbeamDir
 LocalSSH = 'daq@timingdaq02.dhcp.fnal.gov'
-EnvSetupPath = '/uscms/home/rheller/nobackup/setup.sh' ############### Remember to change ProcessExec accordingly
+EnvSetupPath = '/home/daq/setup.sh' ############### Remember to change ProcessExec accordingly
 #EnvSetupPath2 = '/uscms/home/rheller/nobackup/otsdaq/setup_ots.sh' ############### Remember to change ProcessExec accordingly
 #TimingDAQDir = '/uscms/home/rheller/nobackup/CMS-MTD/TimingDAQ/'
-TimingDAQDir = '/uscms/home/rheller/work/TestBeamReco/TimingDAQ/'
+TimingDAQDir = '%sTimingDAQ/'%BaseTestbeamDir
 CondorDir = '%sCondor/'%BaseTestbeamDir
 TOFHIRRecoDir = '/uscms/home/rheller/nobackup/sw_daq_tofhir_v1/build/'
 TOFHIRConfigDir = '/uscms/home/rheller/nobackup/2019_04_April_CMSTiming/TOFHIR/ConfigArchive/'
@@ -62,7 +64,8 @@ TOFHIRRecoDir2 = '/uscms/home/rheller/nobackup/sw_daq_tofhir_v1/DAQReco/'
 ##### Check ProcessExec for uncommenting the environment setup thingy
 
 ################ Scope Control from AutoPilot Paths ################
-ScopeControlDir = '%sKeySightScope/ETL_Agilent_MSO-X-92004A/' % BaseTestbeamDir
+ScopeControlDir = '/home/daq/ETL_Agilent_MSO-X-92004A/' 
+#ScopeControlDir = '%sKeySightScope/ETL_Agilent_MSO-X-92004A/' % BaseTestbeamDir
 ScopeStateFileName = '%sAcquisition/RunLog.txt' % ScopeControlDir
 ScopeCommFileName = '%sAcquisition/ScopeStatus.txt' % ScopeControlDir
 ConfigFileBasePath = '%sconfig/FNAL_TestBeam_1904/' % TimingDAQDir
@@ -71,9 +74,10 @@ TOFHIRConfigFileBasePath = '/home/daq/2019_04_April_CMSTiming/TOFHIR/ConfigArchi
 
 
 ############# OTSDAQ Information ################
-ip_address = "192.168.133.46"
+ip_address = "192.168.133.48"
 use_socket = 17000
-runFileName ="/data-08/TestBeam/Users/RunNumber/OtherRuns0NextRunNumber.txt"
+#runFileName ="/data-08/TestBeam/Users/RunNumber/OtherRuns0NextRunNumber.txt"
+runFileName ="/data/TestBeam/Users/RunNumber/OtherRuns0NextRunNumber.txt"
 localRunFileName = "../AutoPilot/otsdaq_runNumber.txt"
 TClockFilePath = "../AutoPilot/TClock"
 
@@ -96,7 +100,7 @@ TwoStageRecoDigitizers = {
                                             'ConfigFileBasePath'     : '%sKeySightScope_' % (ConfigFileBasePath),
                                             'DatToROOTExec'          : 'NetScopeStandaloneDat2Root',
                                             'ConversionCMD'          : 'python %sReconstruction/conversion_bin_fast.py --Run ' % (ScopeControlDir), 
-                                            'RawConversionLocalPath' : '%sKeySightScope/KeySightScopeMount/' % (BaseTestbeamDir),
+                                            'RawConversionLocalPath' : '/home/daq/ScopeMount/',
                                             'RawTimingDAQLocalPath'  : '%sKeySightScope/RecoData/ConversionRECO/'  % (BaseTestbeamDir),
                                             'RecoTimingDAQLocalPath' : '%sKeySightScope/RecoData/TimingDAQRECO/' % (BaseTestbeamDir),
                                             'RawTimingDAQFileNameFormat' : 'run_scope', ##### run_scope_converted<run>.root
@@ -206,7 +210,7 @@ def WaitForScopeStart():
         ScopeState = str(ScopeStateHandle.read().strip())
         if ScopeState=="0": break
         time.sleep(0.5)
-    ScopeStateHandle.close()
+        ScopeStateHandle.close()
     return
 
 def WaitForScopeFinishAcquisition():
@@ -215,8 +219,8 @@ def WaitForScopeFinishAcquisition():
         ScopeState = str(ScopeStateHandle.read().strip())
         if ScopeState=="writing" or ScopeState=="ready": break
         #if ScopeState=="ready": break
+        ScopeStateHandle.close()
         time.sleep(0.5)
-    ScopeStateHandle.close()
     return
 
 def ReadRPFile(RunNumber):                                                             

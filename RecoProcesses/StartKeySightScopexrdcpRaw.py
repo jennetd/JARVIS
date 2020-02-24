@@ -3,7 +3,7 @@ import ProcessRuns as pr
 
 ExecutionOrder = 0 #This is descending Run number order, Refer to the dictionary in all modules
 PID = 6 #6 means xrdcp raw, Refer to the dictionary in all modules
-GetRunListEachTime = False 
+GetRunListEachTime = True 
 
 ############ Doesn't matter for tracking ###########
 SaveWaveForms = True

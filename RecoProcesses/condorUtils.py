@@ -2,25 +2,52 @@ import os
 import AllModules as am
 
 
-def xrdcpRaw(run,Digitizer):
-
-	mountDir = am.TwoStageRecoDigitizers[Digitizer]['RawConversionLocalPath']
-	destination = am.eosBaseDir+Digitizer+"/RawData/"
+def xrdcpTracks(run): 
+	mountDir = am.BaseTrackDirLocal #am.TwoStageRecoDigitizers[Digitizer]['RawTimingDAQLocalPath']
+	destination = am.eosBaseDir+"Tracks"
 	success=True
+	cmd = ["xrdcp", "-fs", mountDir+"Run%i_CMSTiming_FastTriggerStream_converted.root" %run,destination]
+	print cmd
+	session = am.subprocess.Popen(cmd,stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT)
+	while True:
+		line = session.stdout.readline()
+		# am.ProcessLog(ProcessName, run, line)
+		if not line and session.poll() != None:
+			break
+
+def xrdcpRaw(run,Digitizer):
+	## hacked for conversion
+	#mountDir = am.TwoStageRecoDigitizers[Digitizer]['RawConversionLocalPath']
+	mountDir = am.TwoStageRecoDigitizers[Digitizer]['RawTimingDAQLocalPath']
+	destination = am.eosBaseDir+Digitizer+"/RecoData/ConversionRECO"
+	success=True
+	cmd = ["xrdcp", "-f", mountDir+"run_scope%i.root" %run,destination]
+	print cmd
+	session = am.subprocess.Popen(cmd,stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT)
+	while True:
+		line = session.stdout.readline()
+		# am.ProcessLog(ProcessName, run, line)
+		if not line and session.poll() != None:
+			break
+	#success = success and CheckExistsEOS(destination+"/run_scope%i.root"%run ,2000)
+	print "now copying raw"
+	mountDir = "/home/daq/2020_02_cmstiming_ETL/KeySightScope/RawData/"#am.TwoStageRecoDigitizers[Digitizer]['RawConversionLocalPath']
+	destination = am.eosBaseDir+Digitizer+"/RawData"
 	for i in range(1,5):
-		cmd = ["xrdcp", "-fs", mountDir+"Wavenewscope_CH%i_%i.bin" %(i,run),destination]
+		cmd = ["xrdcp", "-f", mountDir+"Wavenewscope_CH%i_%i.bin" %(i,run),destination]
 		print cmd
-		session = am.subprocess.Popen(cmd,stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT)
+		session2 = am.subprocess.Popen(cmd,stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT)
 		while True:
-			line = session.stdout.readline()
+			line = session2.stdout.readline()
 			# am.ProcessLog(ProcessName, run, line)
-			if not line and session.poll() != None:
+			if not line and session2.poll() != None:
 				break
 	
-	for i in range(1,5):
-		success = success and CheckExistsEOS(destination+"Wavenewscope_CH%i_%i.bin" %(i,run),2000)
+	#for i in range(1,5):
+		#success = success and CheckExistsEOS(destination+"Wavenewscope_CH%i_%i.bin" %(i,run),2000)
 
 	return success
+
 
 def prepareDirs():
 	if not os.path.exists(am.CondorDir):
@@ -41,6 +68,7 @@ def CheckExistsEOS(ResultFileLocation,sizecut):
 	else:
 		cmd = ["eos", "root://cmseos.fnal.gov", "find", "--size",ResultFileLocation]	
 
+	print cmd
 	session = am.subprocess.Popen(cmd,stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT)
 	line = session.stdout.readline()
 	if "size=" not in line: return False;
