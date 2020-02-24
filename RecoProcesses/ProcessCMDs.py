@@ -64,7 +64,7 @@ def ConversionCMDs(RunNumber, Digitizer, MyKey, Debug, condor):
 
 
 
-def TimingDAQCMDs(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer, MyKey, Debug, condor):
+def TimingDAQCMDs(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer, MyKey, Debug, condor=False):
     DoTracking = DoTracking 
     MyKey = MyKey
     Digitizer = Digitizer
