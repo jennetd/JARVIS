@@ -188,6 +188,7 @@ def prepareExecutable(PID,digitizer_key,run,CMD):
 		f.write("python conversion_bin_fast.py --Run %i\n"%run)
 		# f.write("xrdcp -fs %s %s\n" % (os.path.basename(outputfile), outputfile)) ## done in script
 		f.write("rm *.dat\n")		
+		f.write("rm *.bin\n")		
 		f.write("rm *.root\n")		
 		f.write("rm *.py\n")		
 

@@ -90,10 +90,11 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 				RunListInt = RunListInt[:1] #Just do the first run of the list
 
 			for run in RunListInt: 
+				# if run > 27363: continue 
 				if PID!=0: ProcessName = am.ProcessDict[PID].keys()[0] + Digitizer	
 				index = RunList.index(run)      
 				CMD = CMDList[index]  
-				if RunNumber != -1: 
+				if RunNumber != -1 and len(FieldIDList[index])>0: 
 					FieldID = FieldIDList[index][0]
 				else:
 					FieldID = FieldIDList[index]
@@ -204,6 +205,8 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 						jdlname = cu.prepareJDL(PID,DigitizerKey,run,CMD)
 						cu.prepareExecutable(PID,DigitizerKey,run,CMD)
 						## cd and submit to condor
+						print CMD
+						print run
 						session = am.subprocess.Popen('cd %s; condor_submit %s; cd -' % (am.CondorDir,jdlname),stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT, shell=True)                                                                                                                                                                                   			
 
 						# print 'condor_submit %s; cd -' % (jdlname)
@@ -227,25 +230,28 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 					if cu.CheckExistsLogs(this_proc_key,DigitizerKey,run,CMD):
 						if cu.CheckExistsEOS(ResultFileLocation,SizeCut):
 							if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[0], False, MyKey)
+						# else:
+						# 	if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[2], False, MyKey)
+
+							am.time.sleep(1)
+							if this_proc_key==2:
+								import GetEntries as ge
+								EntriesWithTrack, EntriesWithTrackAndHit, EntriesWithHit, EntriesWithTrackWithoutNplanes = ge.RunEntries(ResultFileLocation)
+								if pf.QueryGreenSignal(True): 
+									pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithTrackScope", int(EntriesWithTrack), False, MyKey)
+									am.time.sleep(0.5)
+								if pf.QueryGreenSignal(True): 
+									pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithTrackAndHitScope", int(EntriesWithTrackAndHit), False, MyKey)
+									am.time.sleep(0.5)
+								if pf.QueryGreenSignal(True): 
+									pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithHitScope", int(EntriesWithHit), False, MyKey)
+									am.time.sleep(0.5)
+								if pf.QueryGreenSignal(True): 
+									pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithTrackWithoutNplanesScope", int(EntriesWithTrackWithoutNplanes), False, MyKey)
+								am.time.sleep(0.5)
 						else:
 							if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[2], False, MyKey)
 
-						am.time.sleep(1)
-						if this_proc_key==2:
-							import GetEntries as ge
-							EntriesWithTrack, EntriesWithTrackAndHit, EntriesWithHit, EntriesWithTrackWithoutNplanes = ge.RunEntries(ResultFileLocation)
-							if pf.QueryGreenSignal(True): 
-								pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithTrackScope", int(EntriesWithTrack), False, MyKey)
-								am.time.sleep(0.5)
-							if pf.QueryGreenSignal(True): 
-								pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithTrackAndHitScope", int(EntriesWithTrackAndHit), False, MyKey)
-								am.time.sleep(0.5)
-							if pf.QueryGreenSignal(True): 
-								pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithHitScope", int(EntriesWithHit), False, MyKey)
-								am.time.sleep(0.5)
-							if pf.QueryGreenSignal(True): 
-								pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithTrackWithoutNplanesScope", int(EntriesWithTrackWithoutNplanes), False, MyKey)
-								am.time.sleep(0.5)
 						## add to list of processes to check on
 						## loop over list of runs to check on, grep condor logs to tell when complete, then proceed with checks.
 					am.time.sleep(1)
