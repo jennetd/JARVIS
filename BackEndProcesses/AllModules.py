@@ -72,7 +72,8 @@ ScopeCommFileName = '%sAcquisition/ScopeStatus.txt' % ScopeControlDir
 ConfigFileBasePath = '%sconfig/FNAL_TestBeam_1904/' % TimingDAQDir
 TOFHIRConfigFileBasePath = '/home/daq/2019_04_April_CMSTiming/TOFHIR/ConfigArchive/'
 
-
+###Low pass filter frequencies####
+FrequencyList=[500,750,1000]
 
 ############# OTSDAQ Information ################
 ip_address = "192.168.133.48"

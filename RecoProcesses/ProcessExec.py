@@ -34,7 +34,7 @@ def FileSizeBool(FilePath, SizeCut):
 		return am.os.stat(FilePath).st_size < SizeCut
 	else: return True
 
-def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, RunNumber = -1, DigitizerKey = -1 , MyKey = None, GetRunListEachTime = True, condor = False):
+def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, RunNumber = -1, DigitizerKey = -1 , MyKey = None, GetRunListEachTime = True, condor = False, ApplyFilter = False):
 	
 	if not DigitizerKey == -1: Digitizer = am.DigitizerDict[DigitizerKey]
 	SaveWaveformBool = SaveWaveformBool
@@ -127,8 +127,9 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 					cu.xrdcpTracks(run)
 				elif PID == 1:
 					if not condor:
-						if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[1], False, MyKey)
-						am.time.sleep(15) #should not be necessary to wait too long anymore
+						if pf.QueryGreenSignal(True):
+							pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[1], False, MyKey)
+							am.time.sleep(15) #may not be necessary to wait too long anymore
 						session = am.subprocess.Popen('source %s; %s' % (am.EnvSetupPath,str(CMD)),stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT, shell=True)
 						while True:
 							line = session.stdout.readline()
@@ -142,19 +143,23 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 						else:
 							if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[0], False, MyKey)
 					else:
-						if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[8], False, MyKey)
-						cu.prepareDirs() 
-						jdlname = cu.prepareJDL(PID,DigitizerKey,run,CMD)
-						cu.prepareExecutable(PID,DigitizerKey,run,CMD)
-						## cd and submit to condor
-						print CMD
-						session = am.subprocess.Popen('cd %s; condor_submit %s; cd -' % (am.CondorDir,jdlname),stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT, shell=True)                                                                                                                                                                                   			
+						if pf.QueryGreenSignal(True) and not ApplyFilter: pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[8], False, MyKey)
+						cu.prepareDirs()
 
-						## wait for submission
-						line = session.stdout.readline()
-						am.ProcessLog(ProcessName, run, line)
-						if not line and session.poll() != None:
-							break
+						filterList = [0]
+						if ApplyFilter: filterList = am.FrequencyList 
+						for freq in filterList:
+							jdlname = cu.prepareJDL(PID,DigitizerKey,run,CMD,freq)
+							cu.prepareExecutable(PID,DigitizerKey,run,CMD,freq)
+							## cd and submit to condor
+						#	print CMD
+							session = am.subprocess.Popen('cd %s; condor_submit %s; cd -' % (am.CondorDir,jdlname),stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT, shell=True)                                                                                                                                                                                   			
+
+							## wait for submission
+							line = session.stdout.readline()
+							am.ProcessLog(ProcessName, run, line)
+							if not line and session.poll() != None:
+								break
 
 				elif PID == 2 or PID == 3:
 					######## For TimingDAQ02 
@@ -199,23 +204,26 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 						print '###############################\n'
 
 					elif condor:
-						if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[8], False, MyKey)
+						if pf.QueryGreenSignal(True) and not ApplyFilter: pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[8], False, MyKey)
 						## generate condor jdl and executable
-						cu.prepareDirs() 
-						jdlname = cu.prepareJDL(PID,DigitizerKey,run,CMD)
-						cu.prepareExecutable(PID,DigitizerKey,run,CMD)
-						## cd and submit to condor
-						print CMD
-						print run
-						session = am.subprocess.Popen('cd %s; condor_submit %s; cd -' % (am.CondorDir,jdlname),stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT, shell=True)                                                                                                                                                                                   			
+						cu.prepareDirs()
+						filterList = [0]
+						if ApplyFilter: filterList = am.FrequencyList 
+						for freq in filterList: 
+							jdlname = cu.prepareJDL(PID,DigitizerKey,run,CMD,freq)
+							cu.prepareExecutable(PID,DigitizerKey,run,CMD,freq)
+							## cd and submit to condor
+							#print CMD
+							print run
+							session = am.subprocess.Popen('cd %s; condor_submit %s; cd -' % (am.CondorDir,jdlname),stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT, shell=True)                                                                                                                                                                                   			
 
-						# print 'condor_submit %s; cd -' % (jdlname)
-						# print am.CondorDir
-						## wait for submission
-						line = session.stdout.readline()
-						am.ProcessLog(ProcessName, run, line)
-						if not line and session.poll() != None:
-							break
+							# print 'condor_submit %s; cd -' % (jdlname)
+							# print am.CondorDir
+							## wait for submission
+							line = session.stdout.readline()
+							am.ProcessLog(ProcessName, run, line)
+							if not line and session.poll() != None:
+								break
 						
 
 				elif PID == 5:

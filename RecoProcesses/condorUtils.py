@@ -82,7 +82,7 @@ def xrdcpRaw2(run,Digitizer):
 	# 	success = success and CheckExistsEOS(destination+"Wavenewscope_CH%i_%i.bin" %(i,run),2000)
 
 	return success
-
+ 
 
 def prepareDirs():
 	if not os.path.exists(am.CondorDir):
@@ -121,15 +121,17 @@ def CheckExistsLogs(PID,digitizer_key,run,CMD):
 	if os.path.exists(logname): return True
 	else: return False
 
-def prepareJDL(PID,digitizer_key,run,CMD):
+def prepareJDL(PID,digitizer_key,run,CMD,frequency=0):
 
 	if PID==1: 
 		procname = "Conversion"
 
 	if PID==2: 
 		procname = "TimingDAQ"
-	logname = am.CondorDir+"logs/%s_%i_%i.stdout"%(procname,digitizer_key,run) ### must delete log, since WatchCondor looks for this file to see if job is done. This way, retry can be used.
-	if os.path.exists(logname): os.remove(logname)
+	logname = am.CondorDir+"logs/%s_%i_%i.stdout"%(procname,digitizer_key,run) 
+	if frequency!=0: logname = am.CondorDir+"logs/%s_%i_%i_%i.stdout"%(procname,digitizer_key,run,frequency)
+	if os.path.exists(logname): os.remove(logname) ### must delete log, since WatchCondor looks for this file to see if job is done. This way, retry can be used.
+	
 	# 	inputfile = CMD.split("--input_file=\n")[1].split()[0].replace(am.BaseTestbeamDir,am.eosBaseDir)
 	# 	tracksfile = CMD.split("--pixel_input_file=")[1].split()[0].replace(am.BaseTestbeamDir,am.eosBaseDir)
 	# 	config = CMD.split("--config_file=")[1].split()[0].replace(am.TimingDAQDir,am.eosBaseDir+"condor/")
@@ -139,23 +141,30 @@ def prepareJDL(PID,digitizer_key,run,CMD):
 
 	jdlfile = am.CondorDir+"jdl/condor_"+procname+"_"+str(digitizer_key)+"_"+str(PID)+"_"+str(run)+".jdl"
 	exec_file = am.CondorDir+"exec/condor_"+procname+"_"+str(digitizer_key)+"_"+str(PID)+"_"+str(run)+".sh"
-
+	if frequency!=0:
+		jdlfile = am.CondorDir+"jdl/condor_"+procname+"_"+str(digitizer_key)+"_"+str(PID)+"_"+str(run)+"_"+str(frequency)+".jdl"
+		exec_file = am.CondorDir+"exec/condor_"+procname+"_"+str(digitizer_key)+"_"+str(PID)+"_"+str(run)+"_"+str(frequency)+".sh"
 
 	f = open(jdlfile,"w+")
 	f.write("universe = vanilla\n")
 	f.write("Executable = %s\n"%exec_file)
 	f.write("should_transfer_files = YES\n")
 	f.write("when_to_transfer_output = ON_EXIT\n")
-	f.write("Output = logs/%s_%i_%i.stdout\n"%(procname,digitizer_key,run))
-	f.write("Error = logs/%s_%i_%i.stderr\n"%(procname,digitizer_key,run))
-	f.write("Log = logs/%s_%i_%i.log\n"%(procname,digitizer_key,run))
+	if frequency==0:
+		f.write("Output = logs/%s_%i_%i.stdout\n"%(procname,digitizer_key,run))
+		f.write("Error = logs/%s_%i_%i.stderr\n"%(procname,digitizer_key,run))
+		f.write("Log = logs/%s_%i_%i.log\n"%(procname,digitizer_key,run))
+	else:
+		f.write("Output = logs/%s_%i_%i_%i.stdout\n"%(procname,digitizer_key,run,frequency))
+		f.write("Error = logs/%s_%i_%i_%i.stderr\n"%(procname,digitizer_key,run,frequency))
+		f.write("Log = logs/%s_%i_%i_%i.log\n"%(procname,digitizer_key,run,frequency))
 	# f.write("Arguments = %s\n"%arguments)
 	# f.write("Arguments = \n")
 	f.write("Queue 1\n")
 	f.close()
 	return jdlfile
 
-def prepareExecutable(PID,digitizer_key,run,CMD):
+def prepareExecutable(PID,digitizer_key,run,CMD,frequency=0):
 	if PID==1: 
 		procname = "Conversion"
 		inputfiles = []
@@ -169,23 +178,34 @@ def prepareExecutable(PID,digitizer_key,run,CMD):
 		tracksfile = CMD.split("--pixel_input_file=")[1].split()[0].replace(am.BaseTestbeamDir,am.eosBaseDir)
 		config = CMD.split("--config_file=")[1].split()[0].replace(am.TimingDAQDir,am.eosBaseDir+"condor/")
 		outputfile = CMD.split("--output_file=")[1].split()[0].replace(am.BaseTestbeamDir,am.eosBaseDir)
+		if frequency != 0:
+			inputfile = CMD.split("--input_file=")[1].split()[0].replace(am.BaseTestbeamDir,am.eosBaseDir).replace(".root","_%i.root"%frequency).replace("ConversionRECO","FilterConversionRECO")
+			outputfile = CMD.split("--output_file=")[1].split()[0].replace(am.BaseTestbeamDir,am.eosBaseDir).replace("run_scope","run_scope_dat2root_").replace(".root","_%i.root"%frequency).replace("TimingDAQRECO","FilterTimingDAQRECO").replace("_converted","")
+
+			# if not os.path.exists(os.path.dirname(outputfile)):
+			# 	os.system("eosmkdir %s" %os.path.dirname(outputfile))
 
 	exec_file = am.CondorDir+"exec/condor_"+procname+"_"+str(digitizer_key)+"_"+str(PID)+"_"+str(run)+".sh"
+	if frequency != 0: exec_file = am.CondorDir+"exec/condor_"+procname+"_"+str(digitizer_key)+"_"+str(PID)+"_"+str(run)+"_"+str(frequency)+".sh"
+
+
+
 	f = open(exec_file,"w+")
 	f.write("#!/bin/bash\n")
-	f.write("source /cvmfs/cms.cern.ch/cmsset_default.sh\n")
-	f.write("cd /cvmfs/cms.cern.ch/slc6_amd64_gcc530/cms/cmssw/CMSSW_8_0_20/src/\n")
-	f.write("eval `scramv1 runtime -sh`\n")
-	f.write("cd -\n")
-
 
 	if PID==1:
-		f.write("xrdcp root://cmseos.fnal.gov//store/group/cmstestbeam/2020_02_CMSTiming/condor/conversion_bin_fast.py .\n")
-		f.write("chmod 755 conversion_bin_fast.py\n")
+		f.write("source /cvmfs/sft.cern.ch/lcg/views/LCG_89/x86_64-slc6-gcc62-opt/setup.sh\n")
+		if frequency == 0: 
+			f.write("xrdcp root://cmseos.fnal.gov//store/group/cmstestbeam/2020_02_CMSTiming/condor/conversion_bin_fast.py .\n")
+			f.write("chmod 755 conversion_bin_fast.py\n")
+		else:
+			f.write("xrdcp root://cmseos.fnal.gov//store/group/cmstestbeam/2020_02_CMSTiming/condor/conversion_bin_fast_filter.py .\n")
+			f.write("chmod 755 conversion_bin_fast_filter.py\n")
 		for inputfile in inputfiles:
 			f.write("xrdcp -s %s .\n"%inputfile)
 		f.write("ls\n")	
-		f.write("python conversion_bin_fast.py --Run %i\n"%run)
+		if frequency == 0: f.write("python conversion_bin_fast.py --Run %i\n"%run)
+		else: f.write("python conversion_bin_fast_filter.py --Run %i --Freq %i\n"%(run,frequency))
 		# f.write("xrdcp -fs %s %s\n" % (os.path.basename(outputfile), outputfile)) ## done in script
 		f.write("rm *.dat\n")		
 		f.write("rm *.bin\n")		
@@ -193,6 +213,11 @@ def prepareExecutable(PID,digitizer_key,run,CMD):
 		f.write("rm *.py\n")		
 
 	if PID==2:
+		f.write("source /cvmfs/cms.cern.ch/cmsset_default.sh\n")
+		f.write("cd /cvmfs/cms.cern.ch/slc6_amd64_gcc530/cms/cmssw/CMSSW_8_0_20/src/\n")
+		f.write("eval `scramv1 runtime -sh`\n")
+		f.write("cd -\n")
+
 		f.write("xrdcp root://cmseos.fnal.gov//store/group/cmstestbeam/2020_02_CMSTiming/condor/NetScopeStandaloneDat2Root .\n")
 		f.write("chmod 755 NetScopeStandaloneDat2Root\n")
 
