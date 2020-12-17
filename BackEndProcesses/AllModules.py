@@ -37,8 +37,12 @@ QueryFilePath ="../QueryLog.txt" # Don't care about this
 
 ############# Tracking Paths ##############
 # HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScriptFastTrigger_NewGeo_2020_02_05.sh'
+
 HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScriptETL2020.sh'
 # HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScriptETL2020_TI.sh'
+
+#HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScriptFastTriggerETL2020.sh'
+
 RulinuxSSH = 'otsdaq@rulinux04.dhcp.fnal.gov'
 BaseTrackDirRulinux = '/data/TestBeam/2020_02_February_cmstiming/'
 ResultTrackFileNameBeforeRunNumber = 'Run' ###########'Run%d_CMSTiming_converted.root'
@@ -47,13 +51,13 @@ ResultTrackFileNameAfterRunNumberSlow = '_CMSTiming_SlowTriggerStream_converted.
 ResultTrackFileNameAfterRunNumberFast = '_CMSTiming_FastTriggerStream_converted.root'
 
 ############## For timingdaq02 ############
-BaseTestbeamDir = '/home/daq/2020_02_cmstiming_ETL/' 
+BaseTestbeamDir = '/uscms/home/rheller/nobackup/2020_02_CMSTiming/' 
 eosBaseDir = 'root://cmseos.fnal.gov//store/group/cmstestbeam/2020_02_CMSTiming/'
 BaseTrackDirLocal = '%sTracks/' % BaseTestbeamDir
 LocalSSH = 'daq@timingdaq02.dhcp.fnal.gov'
-EnvSetupPath = '/home/daq/setup.sh' ############### Remember to change ProcessExec accordingly
-#EnvSetupPath2 = '/uscms/home/rheller/nobackup/otsdaq/setup_ots.sh' ############### Remember to change ProcessExec accordingly
-#TimingDAQDir = '/uscms/home/rheller/nobackup/CMS-MTD/TimingDAQ/'
+EnvSetupPath = '/uscms/home/rheller/nobackup/2020_02_CMSTiming/setup.sh' ############### Remember to change ProcessExec accordingly
+EnvSetupPath2 = '/uscms/home/rheller/nobackup/otsdaq/setup_ots.sh' ############### Remember to change ProcessExec accordingly
+# TimingDAQDir = '/uscms/home/rheller/nobackup/CMS-MTD/TimingDAQ/'
 TimingDAQDir = '%sTimingDAQ/'%BaseTestbeamDir
 CondorDir = '%sCondor/'%BaseTestbeamDir
 TOFHIRRecoDir = '/uscms/home/rheller/nobackup/sw_daq_tofhir_v1/build/'
@@ -73,7 +77,8 @@ ScopeCommFileName = '%sAcquisition/ScopeStatus.txt' % ScopeControlDir
 ConfigFileBasePath = '%sconfig/FNAL_TestBeam_1904/' % TimingDAQDir
 TOFHIRConfigFileBasePath = '/home/daq/2019_04_April_CMSTiming/TOFHIR/ConfigArchive/'
 
-
+###Low pass filter frequencies####
+FrequencyList=[500,750,1000]
 
 ############# OTSDAQ Information ################
 ip_address = "192.168.133.48"

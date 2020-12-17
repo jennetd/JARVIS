@@ -6,12 +6,12 @@ PID = 0 #0 means Tracking, Refer to the dictionary in all modules
 GetRunListEachTime = False #Could be true also for this case.
 
 #Give the range of run numbers to process
-StartRunNumber = 27275
-StopRunNumber = 27363
+StartRunNumber = 28766
+StopRunNumber = 28822
 
 ############ Doesn't matter for tracking ###########
 SaveWaveForms = True
-ConfigVersion = "v1"
+ConfigVersion = "v5"
 DigitizerKey = 0 #key=0 for VME, Refer Allmodules
 
 ########### Get Key ###########
