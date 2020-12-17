@@ -93,7 +93,7 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 				if PID!=0: ProcessName = am.ProcessDict[PID].keys()[0] + Digitizer	
 				index = RunList.index(run)      
 				CMD = CMDList[index]  
-				if RunNumber != -1: 
+				if RunNumber != -1 and len(FieldIDList[index])>0: 
 					FieldID = FieldIDList[index][0]
 				else:
 					FieldID = FieldIDList[index]
@@ -253,7 +253,7 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 					## copy raw scope files
 					if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[1], False, MyKey)
 					#am.time.sleep(60) ## allow scope to save at least first channel
-					cpstatus = cu.xrdcpRaw(run,Digitizer)
+					cpstatus = cu.xrdcpRaw2(run,Digitizer)
 					am.time.sleep(0.5)
 					if cpstatus and pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[0], False, MyKey) 
 					elif not cpstatus and pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[2], False, MyKey)

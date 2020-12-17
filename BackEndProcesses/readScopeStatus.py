@@ -7,7 +7,8 @@ UsingAutoPilot = True
 Configuration = 122
 
 
-numEvents = 110000
+# numEvents = 100000
+numEvents = 105000
 sampleRate = 40 #GSa/s
 horizontalWindow = 40 #ns
 ### if sample rate or horizontal window is changed, TimingDAQ must be recompiled to account for new npoints.
@@ -15,9 +16,9 @@ trigCh = "AUX"
 trig = 0.15 #V
 
 vScale1 = 0.03  
-vScale2 = 0.03 
+vScale2 = 0.03
 vScale3 = 0.03 
-vScale4 = 0.050 
+vScale4 = 0.05 
 
 timeoffset = -207 #ns
 

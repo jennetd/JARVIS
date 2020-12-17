@@ -1,6 +1,6 @@
 import os
 import AllModules as am
-
+import time
 
 def xrdcpTracks(run): 
 	mountDir = am.BaseTrackDirLocal #am.TwoStageRecoDigitizers[Digitizer]['RawTimingDAQLocalPath']
@@ -48,7 +48,7 @@ def xrdcpRaw(run,Digitizer):
 	#for i in range(1,5):
 		#success = success and CheckExistsEOS(destination+"Wavenewscope_CH%i_%i.bin" %(i,run),2000)
 
-	return success
+	return True
 
 
 def xrdcpRaw2(run,Digitizer):
@@ -57,7 +57,9 @@ def xrdcpRaw2(run,Digitizer):
 	destination = am.eosBaseDir+Digitizer+"/RawData"
 	for i in range(1,5):
 		raw_filename =  mountDir+"Wavenewscope_CH%i_%i.bin" %(i,run)
-		while not os.path.exists(raw_filename):
+		counter=0
+		while not os.path.exists(raw_filename) and counter<40:
+			counter =counter+1
 			time.sleep(3)
 
 		cmd = ["cp",raw_filename,LocalDir]
@@ -68,7 +70,16 @@ def xrdcpRaw2(run,Digitizer):
 			# am.ProcessLog(ProcessName, run, line)
 			if not line and session.poll() != None:
 				break
-	
+		cmd = ["mv",raw_filename,mountDir+"/to_delete"]
+		print cmd
+		session3 = am.subprocess.Popen(cmd,stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT)
+		while True:
+			line = session3.stdout.readline()
+			# am.ProcessLog(ProcessName, run, line)
+			if not line and session3.poll() != None:
+				break
+		
+
 		cmd = ["xrdcp", "-f",LocalDir+"Wavenewscope_CH%i_%i.bin" %(i,run),destination]
 		print cmd
 		session2 = am.subprocess.Popen(cmd,stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT)
@@ -81,7 +92,7 @@ def xrdcpRaw2(run,Digitizer):
 	# for i in range(1,5):
 	# 	success = success and CheckExistsEOS(destination+"Wavenewscope_CH%i_%i.bin" %(i,run),2000)
 
-	return success
+	return True
 
 
 def prepareDirs():
@@ -188,6 +199,7 @@ def prepareExecutable(PID,digitizer_key,run,CMD):
 		f.write("python conversion_bin_fast.py --Run %i\n"%run)
 		# f.write("xrdcp -fs %s %s\n" % (os.path.basename(outputfile), outputfile)) ## done in script
 		f.write("rm *.dat\n")		
+		f.write("rm *.bin\n")		
 		f.write("rm *.root\n")		
 		f.write("rm *.py\n")		
 

@@ -36,7 +36,9 @@ QueryFilePath ="../QueryLog.txt" # Don't care about this
 #############################################################
 
 ############# Tracking Paths ##############
-HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScriptFastTrigger_NewGeo_2020_02_05.sh'
+# HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScriptFastTrigger_NewGeo_2020_02_05.sh'
+HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScriptETL2020.sh'
+# HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScriptETL2020_TI.sh'
 RulinuxSSH = 'otsdaq@rulinux04.dhcp.fnal.gov'
 BaseTrackDirRulinux = '/data/TestBeam/2020_02_February_cmstiming/'
 ResultTrackFileNameBeforeRunNumber = 'Run' ###########'Run%d_CMSTiming_converted.root'

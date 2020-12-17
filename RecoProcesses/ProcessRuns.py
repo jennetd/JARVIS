@@ -182,14 +182,16 @@ def xrdcpRawRuns(RunNumber, Digitizer, MyKey, False):
     FieldIDList = []                                                                                                                                                                                                                                                                     
     DigitizerList = []   
     MyKey = MyKey     
-    # Condition = pf.EqualToFunc(pf.Curly(am.ProcessDict[6].keys()[0]+ Digitizer), pf.DoubleQuotes(am.StatusDict[3]))
     ProcessName = am.ProcessDict[6].keys()[0]+ Digitizer
-    conversion_done = pf.EqualToFunc(pf.Curly(am.ProcessDict[1].keys()[0]+ Digitizer), pf.DoubleQuotes(am.StatusDict[0]))
-    needsxrdp = pf.ORFunc([ProcessName, ProcessName],[am.StatusDict[3], am.StatusDict[5]])  
-    FilterByFormula = FilterByFormula = 'AND(' + needsxrdp + ',' + conversion_done + ')'
+    Condition = pf.EqualToFunc(pf.Curly(ProcessName), pf.DoubleQuotes(am.StatusDict[3]))
+    
+    # conversion_done = pf.EqualToFunc(pf.Curly(am.ProcessDict[1].keys()[0]+ Digitizer), pf.DoubleQuotes(am.StatusDict[0]))
+    needsxrdcp = pf.ORFunc([ProcessName, ProcessName],[am.StatusDict[3], am.StatusDict[5]])  
+    # FilterByFormula = FilterByFormula = 'AND(' + needsxrdp + ',' + conversion_done + ')'
+
     # FilterByFormula = pf.ORFunc([ProcessName, ProcessName],[am.StatusDict[3], am.StatusDict[5]])  
     headers = {'Authorization': 'Bearer %s' % MyKey, }                                                                                                                                                                                                                                
-    if pf.QueryGreenSignal(True): response = am.requests.get(am.CurlBaseCommand  + '?filterByFormula=' + FilterByFormula, headers=headers)                                                                                                                                                                               
+    if pf.QueryGreenSignal(True): response = am.requests.get(am.CurlBaseCommand  + '?filterByFormula=' + needsxrdcp, headers=headers)                                                                                                                                                                               
     ResponseDict = am.ast.literal_eval(response.text) 
     # print ResponseDict
     for i in ResponseDict["records"]:                                                                                                                                                                                                                                   

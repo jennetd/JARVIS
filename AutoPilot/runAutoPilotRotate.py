@@ -1,7 +1,9 @@
 import os
-conf_list = [165,166,167,168,169,170]
+#conf_list = [169,183,165,166,167,168]
+# conf_list = [171,172,173,174,175,176]
+conf_list = [227]
 AutoPilotStatus=1
-runsPerConf = 2
+runsPerConf = 5
 iteration = 0
 while AutoPilotStatus:
 	

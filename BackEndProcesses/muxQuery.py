@@ -26,7 +26,7 @@ def GetMuxStringConf(GlobalConfNum):
 	mux3 = ResponseDict2['fields']['CH2 MUX']
 	mux4 = ResponseDict2['fields']['CH3 MUX']
 
-	mux4 = 'k7'
+	# mux4 = 'k7'
 	mux_setting =  "%s %s %s %s" %(mux1,mux2,mux3,mux4)
 	print mux_setting
 	return mux_setting

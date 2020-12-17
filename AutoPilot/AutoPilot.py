@@ -17,7 +17,7 @@ NumSpillsPerRun = 1
 RP = False #### It needs to be true if you want to get files from Raspberry Pi, otherwise it would give default values. 
 BTLLogging = False
 ETLTemp = True
-ETROC=True
+ETROC=False
 
 ETROC_config_filename = "/home/daq/RaspberryPi/scriptsPC/config.txt"
 ETROC_baseline_filename = "/home/daq/RaspberryPi/scriptsPC/baseline.txt"
@@ -28,15 +28,19 @@ parser = argparse.ArgumentParser(description='Information for running the AutoPi
 parser.add_argument('-de', '--Debug', type=int, default = 0, required=False)
 parser.add_argument('-it', '--IsTelescope', type=int,default=1, help = 'Give 1 if using the telescope',required=False)
 parser.add_argument('-conf', '--Configuration', type=int, help = 'Make sure to add the configuration in the run table. Give COnfiguration S/N from the run table',required=False)
+parser.add_argument('-nruns', '--maxIterations', type=int, help = 'Number of runs to take',required=False)
 
 args = parser.parse_args()
 Debug = args.Debug
 IsTelescope = args.IsTelescope
 Configuration = args.Configuration
+maxRuns = int(args.maxIterations)
+
 Debug=False
 ########################### Only when Run table is used ############################
 ########### Get Key ###########
 key = GetKey()
+print "Stopping after %i runs." % maxRuns
 
 ############ Getting the digitizer list from the configuration table #############
 DigitizerList = pf.GetDigiFromConfig(Configuration, False, key)
@@ -181,7 +185,7 @@ ETROC_baseline = "N/A"
 # Get Start and stop seconds for the first iteration of the loop
 iteration = 0
 if RP: tp.RPGlobalComm("GlobalStart")
-while (AutoPilotStatus == 1):
+while (AutoPilotStatus == 1 and iteration < maxRuns):
 
 	if iteration % 20 == 0:
 		StartSeconds,StopSeconds = GetStartAndStopSeconds(35, 22)
