@@ -210,7 +210,10 @@ def prepareExecutable(PID,digitizer_key,run,CMD,frequency=0):
 	f.write("#!/bin/bash\n")
 
 	if PID==1:
-		f.write("source /cvmfs/sft.cern.ch/lcg/views/LCG_89/x86_64-slc6-gcc62-opt/setup.sh\n")
+		f.write("source /cvmfs/cms.cern.ch/cmsset_default.sh\n")
+		f.write("cd /cvmfs/cms.cern.ch/slc7_amd64_gcc530/cms/cmssw/CMSSW_8_0_20/src/\n")
+		f.write("eval `scramv1 runtime -sh`\n")
+		f.write("cd -\n")		# f.write("source /cvmfs/sft.cern.ch/lcg/views/LCG_89/x86_64-slc6-gcc62-opt/setup.sh\n")
 		if frequency == 0: 
 			f.write("xrdcp root://cmseos.fnal.gov//store/group/cmstestbeam/2020_02_CMSTiming/condor/conversion_bin_fast.py .\n")
 			f.write("chmod 755 conversion_bin_fast.py\n")
@@ -230,7 +233,7 @@ def prepareExecutable(PID,digitizer_key,run,CMD,frequency=0):
 
 	if PID==2:
 		f.write("source /cvmfs/cms.cern.ch/cmsset_default.sh\n")
-		f.write("cd /cvmfs/cms.cern.ch/slc6_amd64_gcc530/cms/cmssw/CMSSW_8_0_20/src/\n")
+		f.write("cd /cvmfs/cms.cern.ch/slc7_amd64_gcc530/cms/cmssw/CMSSW_8_0_20/src/\n")
 		f.write("eval `scramv1 runtime -sh`\n")
 		f.write("cd -\n")
 
