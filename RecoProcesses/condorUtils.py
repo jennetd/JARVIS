@@ -215,10 +215,10 @@ def prepareExecutable(PID,digitizer_key,run,CMD,frequency=0):
 		f.write("eval `scramv1 runtime -sh`\n")
 		f.write("cd -\n")		# f.write("source /cvmfs/sft.cern.ch/lcg/views/LCG_89/x86_64-slc6-gcc62-opt/setup.sh\n")
 		if frequency == 0: 
-			f.write("xrdcp root://cmseos.fnal.gov//store/group/cmstestbeam/2020_02_CMSTiming/condor/conversion_bin_fast.py .\n")
+			f.write("xrdcp %scondor/conversion_bin_fast.py .\n"%eosBaseDir)
 			f.write("chmod 755 conversion_bin_fast.py\n")
 		else:
-			f.write("xrdcp root://cmseos.fnal.gov//store/group/cmstestbeam/2020_02_CMSTiming/condor/conversion_bin_fast_filter.py .\n")
+			f.write("xrdcp %scondor/conversion_bin_fast_filter.py .\n"%eosBaseDir)
 			f.write("chmod 755 conversion_bin_fast_filter.py\n")
 		for inputfile in inputfiles:
 			f.write("xrdcp -s %s .\n"%inputfile)
@@ -237,7 +237,7 @@ def prepareExecutable(PID,digitizer_key,run,CMD,frequency=0):
 		f.write("eval `scramv1 runtime -sh`\n")
 		f.write("cd -\n")
 
-		f.write("xrdcp root://cmseos.fnal.gov//store/group/cmstestbeam/2020_02_CMSTiming/condor/NetScopeStandaloneDat2Root .\n")
+		f.write("xrdcp %scondor/NetScopeStandaloneDat2Root .\n"%eosBaseDir)
 		f.write("chmod 755 NetScopeStandaloneDat2Root\n")
 
 		f.write("xrdcp -s %s .\n" % inputfile)

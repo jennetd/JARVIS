@@ -53,11 +53,18 @@ OTSDAQ Configuration Procedures:
 
 Run processing on condor:
 
-Copying to condor
+Copying raw scope data to condor
 1) on timingdaq02: open terminal for copying data from scope to EOS ("xrdcpRaw")
 2) source ~/SpecialCommands/setup_xrdcp.sh
 3) go to JARVIS/RecoProcesses/
-4) python startKeySightScopexrdcpRaw.py
+4) python StartKeySightScopexrdcpRaw.py
+
+Processing track reconstruction
+1) on timingdaq02 open terminal
+2) source ~/SpecialCommands/setup_xrdcp.sh
+3) go to JARVIS/RecoProcesses/
+4) python StartTrackingProcessing.py
+
 
 
 
