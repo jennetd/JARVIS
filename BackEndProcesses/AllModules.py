@@ -18,12 +18,12 @@ import argparse
 
 ################### Run Table Information #################
 MyKey = '' #Read MyKey from key file in RecoProcesses
-RunTableName = 'tbl9oxfx83BHIXsTf'
-SensorTableName = 'tbl7ez6VheXFZbmtM'
-ConfigTableName = 'tblm44MVP7erA8Pz1'
-KeySightScopeConfigTableName = 'tblBRJQa2JYPEbJpD'
+RunTableName = 'tblWRkYB2W4WuTuX6'
+SensorTableName = 'tblUHmPZb7qUL7oxD'
+ConfigTableName = 'tbl9xRvZJ0HGm4RDS'
+KeySightScopeConfigTableName = 'tblokwzeWCr4q7Ltu'
 
-BaseID = 'appKskpfdz2uVh1gf'
+BaseID = 'appxV78j7svJHd3k6'
 CurlBaseCommandWithoutTable = 'https://api.airtable.com/v0/%s' % (BaseID)
 CurlBaseCommand = 'https://api.airtable.com/v0/%s/%s' % (BaseID, RunTableName)
 CurlBaseCommandSensor = 'https://api.airtable.com/v0/%s/%s' % (BaseID, SensorTableName)
@@ -52,7 +52,7 @@ ResultTrackFileNameAfterRunNumberFast = '_CMSTiming_FastTriggerStream_converted.
 
 ############## For timingdaq02 ############
 BaseTestbeamDir = '/uscms/home/rheller/nobackup/2020_02_CMSTiming/' 
-eosBaseDir = 'root://cmseos.fnal.gov//store/group/cmstestbeam/2020_02_CMSTiming/'
+eosBaseDir = 'root://cmseos.fnal.gov//store/group/cmstestbeam/2021_CMSTiming/'
 BaseTrackDirLocal = '%sTracks/' % BaseTestbeamDir
 LocalSSH = 'daq@timingdaq02.dhcp.fnal.gov'
 EnvSetupPath = '/uscms/home/rheller/nobackup/2020_02_CMSTiming/setup.sh' ############### Remember to change ProcessExec accordingly
@@ -81,7 +81,7 @@ TOFHIRConfigFileBasePath = '/home/daq/2019_04_April_CMSTiming/TOFHIR/ConfigArchi
 FrequencyList=[500,750,1000]
 
 ############# OTSDAQ Information ################
-ip_address = "192.168.133.48"
+ip_address = "192.168.133.48" #ftbf-daq-06
 use_socket = 17000
 #runFileName ="/data-08/TestBeam/Users/RunNumber/OtherRuns0NextRunNumber.txt"
 runFileName ="/data/TestBeam/Users/RunNumber/OtherRuns0NextRunNumber.txt"
