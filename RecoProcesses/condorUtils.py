@@ -53,8 +53,8 @@ def xrdcpRaw(run,Digitizer):
 
 def xrdcpRaw2(run,Digitizer):
 	mountDir = am.TwoStageRecoDigitizers[Digitizer]['RawConversionLocalPath']
-	LocalDir = "/home/daq/2020_02_cmstiming_ETL/KeySightScope/RawData/"#am.TwoStageRecoDigitizers[Digitizer]['RawConversionLocalPath']
-	destination = am.eosBaseDir+Digitizer+"/RawData"
+	LocalDir = am.BaseTestbeamDir+ Digitizer+"/RawData/" #am.TwoStageRecoDigitizers[Digitizer]['RawConversionLocalPath']
+	destination = am.eosBaseDir+Digitizer+"/RawData" 
 	for i in range(1,5):
 		raw_filename =  mountDir+"Wavenewscope_CH%i_%i.bin" %(i,run)
 		counter=0

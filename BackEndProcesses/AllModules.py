@@ -51,8 +51,9 @@ ResultTrackFileNameAfterRunNumberSlow = '_CMSTiming_SlowTriggerStream_converted.
 ResultTrackFileNameAfterRunNumberFast = '_CMSTiming_FastTriggerStream_converted.root'
 
 ############## For timingdaq02 ############
-BaseTestbeamDir = '/uscms/home/rheller/nobackup/2020_02_CMSTiming/' 
-eosBaseDir = 'root://cmseos.fnal.gov//store/group/cmstestbeam/2021_CMSTiming/'
+# BaseTestbeamDir = '/uscms/home/rheller/nobackup/2020_02_CMSTiming/' 
+BaseTestbeamDir = '/home/daq/2021_CMSTiming_ETL/' 
+eosBaseDir = 'root://cmseos.fnal.gov//store/group/cmstestbeam/2021_CMSTiming_ETL/'
 BaseTrackDirLocal = '%sTracks/' % BaseTestbeamDir
 LocalSSH = 'daq@timingdaq02.dhcp.fnal.gov'
 EnvSetupPath = '/uscms/home/rheller/nobackup/2020_02_CMSTiming/setup.sh' ############### Remember to change ProcessExec accordingly

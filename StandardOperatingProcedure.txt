@@ -12,7 +12,7 @@ Run AutoPilot:
 6) Now to run the autopilot, assuming you are already on timingdaq02:
 		Go to JARVIS/AutoPilot
 		source ~/setup.sh
-		./runAutoPilot.sh <Global Configuration number> 	example: ./runAutoPilot.sh 1
+		./runAutoPilot.sh <Global Configuration number>  <number of runs to take>	example: ./runAutoPilot.sh 1 10
 
 
 Stop AutoPilot:
@@ -51,7 +51,17 @@ OTSDAQ Configuration Procedures:
 	3) Then go to the webpage and initialize and configure the otsdaq
 
 
-Run Auto-Processing: 
+Run processing on condor:
+
+Copying to condor
+1) on timingdaq02: open terminal for copying data from scope to EOS ("xrdcpRaw")
+2) source ~/SpecialCommands/setup_xrdcp.sh
+3) go to JARVIS/RecoProcesses/
+4) python startKeySightScopexrdcpRaw.py
+
+
+
+Run Auto-Processing locally: 
 
 1) On timingdaq02 : Open 3 terminal windows for VME, DT5742 and KeySight reconstruction respectively (if you are using all three).
 2) Go to JARVIS/RecoProcesses/ on all three windows
