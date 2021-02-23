@@ -50,16 +50,16 @@ def GetEnvMeas(timestamp):
                 Resis13 = -1#all_labview_array[1]
                 Resis14 = -1#all_labview_array[2]
                 Resis15 = -1#all_labview_array[3]
-                # Resis16 = all_labview_array[19]
-                # Resis17 = all_labview_array[20]
-                # Resis18 = all_labview_array[21]
-                # Resis19 = all_labview_array[22]
-                # Resis20 = all_labview_array[23]
-                Resis16 = all_labview_array[4]
-                Resis17 = all_labview_array[5]
-                Resis18 = all_labview_array[6]
-                Resis19 = all_labview_array[7]
-                Resis20 = all_labview_array[8]
+                Resis16 = all_labview_array[19]
+                Resis17 = all_labview_array[20]
+                Resis18 = all_labview_array[21]
+                Resis19 = all_labview_array[22]
+                Resis20 = all_labview_array[23]
+                # Resis16 = all_labview_array[4]
+                # Resis17 = all_labview_array[5]
+                # Resis18 = all_labview_array[6]
+                # Resis19 = all_labview_array[7]
+                # Resis20 = all_labview_array[8]
                 # Voltage1 = all_labview_array[13]
                 # Current1 = all_labview_array[14]
                 # Voltage2 = all_labview_array[15]
@@ -83,19 +83,19 @@ def GetEnvMeas(timestamp):
                 Resis13 = -1#all_labview_array[index_labview_time,1]
                 Resis14 = -1#all_labview_array[index_labview_time,2]
                 Resis15 = -1#all_labview_array[index_labview_time, 3]
-                # Resis16 = all_labview_array[index_labview_time, 19]
-                # Resis17 = all_labview_array[index_labview_time, 20]
-                # Resis18 = all_labview_array[index_labview_time, 21]
-                # Resis19 = all_labview_array[index_labview_time, 22]
-                # Resis20 = all_labview_array[index_labview_time, 23]
+                Resis16 = all_labview_array[index_labview_time, 19]
+                Resis17 = all_labview_array[index_labview_time, 20]
+                Resis18 = all_labview_array[index_labview_time, 21]
+                Resis19 = all_labview_array[index_labview_time, 22]
+                Resis20 = all_labview_array[index_labview_time, 23]
                 Resis13 = all_labview_array[index_labview_time,1]
                 Resis14 = all_labview_array[index_labview_time,2]
                 Resis15 = all_labview_array[index_labview_time, 3]
-                Resis16 = all_labview_array[index_labview_time, 4]
-                Resis17 = all_labview_array[index_labview_time, 5]
-                Resis18 = all_labview_array[index_labview_time, 6]
-                Resis19 = all_labview_array[index_labview_time, 7]
-                Resis20 = all_labview_array[index_labview_time, 8]
+                # Resis16 = all_labview_array[index_labview_time, 4]
+                # Resis17 = all_labview_array[index_labview_time, 5]
+                # Resis18 = all_labview_array[index_labview_time, 6]
+                # Resis19 = all_labview_array[index_labview_time, 7]
+                # Resis20 = all_labview_array[index_labview_time, 8]
                 Voltage1 = -1
                 Current1 = -1
                 Voltage2 = -1
@@ -191,12 +191,12 @@ def ConvertEnv(timestamp):
 	else:
 		Temp15 = -999
 	if Resis16 != -1 and Resis16 != 0:
-		Temp16 = Resis16#round(Temp_calc_NTC(Resis16),2)
+		Temp16 = round(Resis16,2)#round(Temp_calc_NTC(Resis16),2)
         #Temp16 = Resis16
 	else:
 		Temp16 = -999
 	if Resis17 != -1 and Resis17 != 0:
-		Temp17 = round(Temp_calc(Resis17),2)
+		Temp17 = round(Temp_calc_NTC(Resis17),2)
 	else:
 		Temp17 = -999 
 	if Resis18 != -1 and Resis18 != 0:
@@ -204,11 +204,11 @@ def ConvertEnv(timestamp):
 	else:
 		Temp18 = -999
 	if Resis19 != -1 and Resis19 != 0:
-		Temp19 = round(Temp_calc(Resis19),2)		
+		Temp19 = round(Temp_calc_NTC(Resis19),2)		
 	else:
 		Temp19 = -999
 	if Resis20 != -1 and Resis20 != 0:
-		Temp20 = round(Temp_calc(Resis20),2)
+		Temp20 = round(Temp_calc_NTC(Resis20),2)
 	else: 
 		Temp20 = -999
 	return Temp13, Temp14, Temp15, Temp16, Temp17, Temp18, Temp19, Temp20, Voltage1, Current1, Voltage2, Current2, Voltage3, Current3

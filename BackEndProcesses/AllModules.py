@@ -1,6 +1,7 @@
 import requests
 import ast
 from datetime import datetime
+from datetime import timedelta
 import time
 import numpy as np
 import getpass
@@ -40,7 +41,7 @@ QueryFilePath ="../QueryLog.txt" # Don't care about this
 
 HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScriptETL2021.sh'
 # HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScriptETL2020_TI.sh'
-
+ 
 #HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScriptFastTriggerETL2020.sh'
 
 RulinuxSSH = 'otsdaq@rulinux04.dhcp.fnal.gov'
@@ -91,6 +92,9 @@ TClockFilePath = "../AutoPilot/TClock"
 
 ########## Key File Path starting from Recoprocesses in Javis
 keyFilePath = "../RecoProcesses/key"
+
+cred="\033[91m"
+cend="\033[0m"
 
 ############### Conversion Commands for different digitizer ###########
 TwoStageRecoDigitizers = {
@@ -220,7 +224,7 @@ def WaitForScopeStart():
         time.sleep(0.5)
         ScopeStateHandle.close()
     return
-
+ 
 def WaitForScopeFinishAcquisition():
     while True:
         ScopeStateHandle = open(ScopeStateFileName, "r")
@@ -313,5 +317,6 @@ def GetStartAndStopSeconds(TClockStartSeconds, TClockStopSeconds):
     print " Local machine time is ", LocalMachineTime
     LocalMachineStartSeconds = (TClockStartSeconds + deltaTwrtTClock) % 60
     LocalMachineStopSeconds = (TClockStopSeconds + deltaTwrtTClock) % 60
+    print cred+"Beam should arrive at %0.1f seconds after minute." % ((deltaTwrtTClock+4)%60)+cend
     return int(LocalMachineStartSeconds), int(LocalMachineStopSeconds)
 

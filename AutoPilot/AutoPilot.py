@@ -187,8 +187,9 @@ iteration = 0
 if RP: tp.RPGlobalComm("GlobalStart")
 while (AutoPilotStatus == 1 and iteration < maxRuns):
 
-	if iteration % 20 == 0:
-		StartSeconds,StopSeconds = GetStartAndStopSeconds(35, 22)
+	if iteration % 5 == 0:
+		if IsTelescope: StartSeconds,StopSeconds = GetStartAndStopSeconds(33, 22) #35,22
+		else: StartSeconds,StopSeconds = GetStartAndStopSeconds(50, 22)
 		print StartSeconds, StopSeconds
 
 	## Refresh this
@@ -226,7 +227,9 @@ while (AutoPilotStatus == 1 and iteration < maxRuns):
 				WaitForScopeStart()
 			print("Scope has started.")
 		else:
-			print("Scope still busy. Excluding scope from the next run\n")
+			# print("Scope still busy. Excluding scope from the next run\n")
+			print("Scope still busy. Wait for next chance.\n")
+			continue
 
 	tp.UpdateRunNumber(RunNumber+1) ##must be called after scope start.
 	tp.SendRunFile()
@@ -239,7 +242,7 @@ while (AutoPilotStatus == 1 and iteration < maxRuns):
 	if RP: tp.RPComm(RunNumber, "start") 
 
 	#Start the run here
-	if not Debug: tp.start_ots(RunNumber,False)
+	if not Debug and IsTelescope: tp.start_ots(RunNumber,False)
 	if DigitizerDict[5] in DigitizerList:
         ###############################################################
         #Archive the Config for the TOFHIR if it's a new configuration
@@ -257,18 +260,20 @@ while (AutoPilotStatus == 1 and iteration < maxRuns):
 	time.sleep(60*(NumSpillsPerRun-1))
 
 	### Don't stop run until scope has acquired all events (OK if still writing events disk, though)
-
+	scope_finished=0
 	if IsScope and ScopeIncludedThisRun:
 		time.sleep(15)
 		print "Waiting for scope to finish"
 		WaitForScopeFinishAcquisition()
-		print "Waiting for TClock stop time"
+		scope_finished=time.time()
+		print "Waiting for TClock stop time (%0.1f)"%StopSeconds
 	wait_until(StopSeconds)
+	tclock_finished=time.time()
 
-	if not Debug: tp.stop_ots(False)
+	if not Debug and IsTelescope: tp.stop_ots(False)
 
 	if RP: tp.RPComm(RunNumber, "stop")
-
+	print ("%0.1f seconds between scope finish and TClock time" % (tclock_finished-scope_finished))
 	StopTime = datetime.now()
 	print "\nRun %i stopped at %s" % (RunNumber,StopTime)
 	print ""
@@ -307,6 +312,7 @@ while (AutoPilotStatus == 1 and iteration < maxRuns):
 			OverVoltageBTL = "N/A"
 			VTHBTL = "N/A"
 
+		SpillTime = (StartTime+timedelta(0,27)).strftime("%Y-%m-%d %H:%M:%S")
 		if ETLTemp:
 			# Get ETL environment data
 			ETLTimestamp = (datetime.now() - datetime.strptime("2000-01-01 00:00:00", "%Y-%m-%d %H:%M:%S")).total_seconds() #- 3600 ### For daylight saving time 
@@ -314,7 +320,7 @@ while (AutoPilotStatus == 1 and iteration < maxRuns):
 			if ETLTemp: Temp13ETL, Temp14ETL, Temp15ETL, Temp16ETL, Temp17ETL, Temp18ETL, Temp19ETL, Temp20ETL, LowVoltage1ETL, Current1ETL, LowVoltage2ETL, Current2ETL, LowVoltage3ETL, Current3ETL = gt.ConvertEnv(ETLTimestamp)
 			print 'Updating the run table'
 			print Temp13ETL, Temp14ETL, Temp15ETL, Temp16ETL, Temp17ETL, Temp18ETL, Temp19ETL, Temp20ETL, LowVoltage1ETL, Current1ETL, LowVoltage2ETL, Current2ETL, LowVoltage3ETL, Current3ETL
-			pf.NewRunRecord4(RunNumber, StartTime, str(Duration), DigiListThisRun, Tracking, ConversionSampic, ConversionTekScope,ETROC_baseline,ETROC_config, xrdcpRawKeySightScope,ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, LabviewRecoVME, LabviewRecoDT5742, LabviewRecoKeySightScope, LabviewRecoSampic, LabviewRecoTekScope, BoxTemp, x_stage, y_stage, BoxVoltage, BarCurrent, z_rotation, BoxHum, BoxCurrent, BarVoltage, str(Temp13ETL), str(Temp14ETL), str(Temp15ETL), str(Temp16ETL), str(Temp17ETL), str(Temp18ETL), str(Temp19ETL), str(Temp20ETL), str(LowVoltage1ETL), str(Current1ETL), str(LowVoltage2ETL), str(Current2ETL), str(LowVoltage3ETL), str(Current3ETL), ConfigID, False, key)
+			pf.NewRunRecord4(RunNumber, SpillTime, str(Duration), DigiListThisRun, Tracking, ConversionSampic, ConversionTekScope,ETROC_baseline,ETROC_config, xrdcpRawKeySightScope,ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, LabviewRecoVME, LabviewRecoDT5742, LabviewRecoKeySightScope, LabviewRecoSampic, LabviewRecoTekScope, BoxTemp, x_stage, y_stage, BoxVoltage, BarCurrent, z_rotation, BoxHum, BoxCurrent, BarVoltage, str(Temp13ETL), str(Temp14ETL), str(Temp15ETL), str(Temp16ETL), str(Temp17ETL), str(Temp18ETL), str(Temp19ETL), str(Temp20ETL), str(LowVoltage1ETL), str(Current1ETL), str(LowVoltage2ETL), str(Current2ETL), str(LowVoltage3ETL), str(Current3ETL), ConfigID, False, key)
 			
 		else:
 			print 'Updating the run table'

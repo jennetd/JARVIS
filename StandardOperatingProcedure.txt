@@ -65,6 +65,14 @@ Processing track reconstruction
 3) go to JARVIS/RecoProcesses/
 4) python StartTrackingProcessing.py
 
+Processing Conversion and TimingDAQ on LPC
+1) ssh to lpc, with 3 terminals
+2) voms-proxy-init --voms cms
+3) cd TestBeamReco/JARVIS/RecoProcesses
+	a) StartKeySightScopeConversionCondor.py
+	b) StartKeySightScopeProcessingCondor.py
+	c) StartKeySightScopeWatchCondor.py
+
 
 
 
