@@ -55,8 +55,15 @@ def xrdcpRaw2(run,Digitizer):
 	mountDir = am.TwoStageRecoDigitizers[Digitizer]['RawConversionLocalPath']
 	LocalDir = am.BaseTestbeamDir+ Digitizer+"/RawData/" #am.TwoStageRecoDigitizers[Digitizer]['RawConversionLocalPath']
 	destination = am.eosBaseDir+Digitizer+"/RawData" 
-	for i in range(1,5):
-		raw_filename =  mountDir+"Wavenewscope_CH%i_%i.bin" %(i,run)
+	nchan = 4
+	print Digitizer
+	if Digitizer == "LecroyScope":
+		nchan=8
+	for i in range(1,nchan+1):
+		if Digitizer == "KeySightScope":
+			raw_filename =  mountDir+"Wavenewscope_CH%i_%i.bin" %(i,run)
+		elif Digitizer == "LecroyScope":
+			raw_filename =  mountDir+"C%i--Trace%i.trc" %(i,run)
 		counter=0
 		while not os.path.exists(raw_filename) and counter<40:
 			counter =counter+1
@@ -79,8 +86,10 @@ def xrdcpRaw2(run,Digitizer):
 			if not line and session3.poll() != None:
 				break
 		
-
-		cmd = ["xrdcp", "-f",LocalDir+"Wavenewscope_CH%i_%i.bin" %(i,run),destination]
+		if Digitizer == "KeySightScope": 
+			cmd = ["xrdcp", "-f",LocalDir+"Wavenewscope_CH%i_%i.bin" %(i,run),destination]
+		elif Digitizer == "LecroyScope":
+			cmd = ["xrdcp", "-f",LocalDir+"C%i--Trace%i.trc" %(i,run),destination]
 		print cmd
 		session2 = am.subprocess.Popen(cmd,stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT)
 		while True:
