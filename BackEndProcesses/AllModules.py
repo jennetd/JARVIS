@@ -19,12 +19,13 @@ import argparse
 
 ################### Run Table Information #################
 MyKey = '' #Read MyKey from key file in RecoProcesses
-RunTableName = 'tblWRkYB2W4WuTuX6'
-SensorTableName = 'tblUHmPZb7qUL7oxD'
-ConfigTableName = 'tbl9xRvZJ0HGm4RDS'
-KeySightScopeConfigTableName = 'tblokwzeWCr4q7Ltu'
+RunTableName = 'tblIyoRk5c4tZiGMF'#'tblWRkYB2W4WuTuX6'
+SensorTableName = 'tblGoqIIenqrgwAmc'##'tblUHmPZb7qUL7oxD'
+ConfigTableName = 'tblVeVoIMgHdRt3sr'
+KeySightScopeConfigTableName = 'tbla1AsXZSrBVwXi3'
+LecroyScopeConfigTableName = 'tblt9DzQI8oQM2Ola'
 
-BaseID = 'appxV78j7svJHd3k6'
+BaseID = 'appjCb12aIvgcCf9F'#'appxV78j7svJHd3k6'
 CurlBaseCommandWithoutTable = 'https://api.airtable.com/v0/%s' % (BaseID)
 CurlBaseCommand = 'https://api.airtable.com/v0/%s/%s' % (BaseID, RunTableName)
 CurlBaseCommandSensor = 'https://api.airtable.com/v0/%s/%s' % (BaseID, SensorTableName)
@@ -76,6 +77,13 @@ ScopeControlDir = '/home/daq/ETL_Agilent_MSO-X-92004A/'
 #ScopeControlDir = '%sKeySightScope/ETL_Agilent_MSO-X-92004A/' % BaseTestbeamDir
 ScopeStateFileName = '%sAcquisition/RunLog.txt' % ScopeControlDir
 ScopeCommFileName = '%sAcquisition/ScopeStatus.txt' % ScopeControlDir
+
+################ Lecroy Scope Control from AutoPilot Paths ################
+LecroyScopeControlDir = '/home/daq/LecroyControl/' 
+LecroyScopeStateFileName = '%sAcquisition/RunLog.txt' % LecroyScopeControlDir
+LecroyScopeCommFileName = '%sAcquisition/ScopeStatus.txt' % LecroyScopeControlDir
+
+
 ConfigFileBasePath = '%sconfig/FNAL_TestBeam_1904/' % TimingDAQDir
 TOFHIRConfigFileBasePath = '/home/daq/2019_04_April_CMSTiming/TOFHIR/ConfigArchive/'
 
@@ -99,7 +107,7 @@ cend="\033[0m"
 ############### Conversion Commands for different digitizer ###########
 TwoStageRecoDigitizers = {
 
-                         'TekScope'     :  {
+                         'TekScope'         :  {
                                             'ConfigFileBasePath'     : '%sTekScope_' % (ConfigFileBasePath),
                                             'DatToROOTExec'          : 'NetScopeStandaloneDat2Root', 
                                             'ConversionCMD'          : 'python %sTekScope/Tektronix_DPO7254Control/Reconstruction/conversion.py %sTekScopeMount/run_scope' % (BaseTestbeamDir,BaseTestbeamDir), 
@@ -108,7 +116,7 @@ TwoStageRecoDigitizers = {
                                             'RecoTimingDAQLocalPath' : '%sTekScope/RecoData/TimingDAQRECO/' % (BaseTestbeamDir),
                                             'RawTimingDAQFileNameFormat' : 'run_scope', ##### run_scope<run>.root 
                                             },
-                         'KeySightScope'     :  {
+                         'KeySightScope'    :  {
                                             'ConfigFileBasePath'     : '%sKeySightScope_' % (ConfigFileBasePath),
                                             'DatToROOTExec'          : 'NetScopeStandaloneDat2Root',
                                             'ConversionCMD'          : 'python %sReconstruction/conversion_bin_fast.py --Run ' % (ScopeControlDir), 
@@ -117,7 +125,7 @@ TwoStageRecoDigitizers = {
                                             'RecoTimingDAQLocalPath' : '%sKeySightScope/RecoData/TimingDAQRECO/' % (BaseTestbeamDir),
                                             'RawTimingDAQFileNameFormat' : 'run_scope', ##### run_scope_converted<run>.root
                                             },
-                         'Sampic'     :  {
+                         'Sampic'           :  {
                                             'ConfigFileBasePath'     : '',
                                             'DatToROOTExec'          : '',
                                             'ConversionCMD'          : 'python %sSampic/Tektronix_DPO7254Control/Reconstruction/conversion.py %sSampicMount/run_scope' % (BaseTestbeamDir,BaseTestbeamDir), 
@@ -125,8 +133,16 @@ TwoStageRecoDigitizers = {
                                             'RawTimingDAQLocalPath'  : '%sSampic/RecoData/ConversionRECO/'  % (BaseTestbeamDir),
                                             'RecoTimingDAQLocalPath' : '%sSampic/RecoData/TimingDAQRECO/' % (BaseTestbeamDir),
                                             'RawTimingDAQFileNameFormat' : 'run_scope', ##### run_scope<run>.root
-
-                                            }
+                                            },
+                         'LecroyScope'      :  {
+                                            'ConfigFileBasePath'     : '%sLecroyScope_' % (ConfigFileBasePath),
+                                            'DatToROOTExec'          : 'NetScopeStandaloneDat2Root', 
+                                            'ConversionCMD'          : 'python %s/Reconstruction/conversion.py --runNumber ' % (LecroyScopeControlDir), 
+                                            'RawConversionLocalPath' : '/home/daq/LecroyScopeMount/',
+                                            'RawTimingDAQLocalPath'  : '%sLecroyScope/RecoData/ConversionRECO/'  % (BaseTestbeamDir),
+                                            'RecoTimingDAQLocalPath' : '%sLecroyScope/RecoData/TimingDAQRECO/' % (BaseTestbeamDir),
+                                            'RawTimingDAQFileNameFormat' : 'run_scope', ##### run_scope<run>.root 
+                                            },
 
                         }
 
@@ -162,7 +178,8 @@ DigitizerDict = {
                     2 : 'TekScope',
                     3 : 'KeySightScope',
                     4 : 'Sampic',
-                    5 : 'TOFHIR'
+                    5 : 'TOFHIR',
+                    6 : 'LecroyScope',
                 }
 
 ProcessDict = {
@@ -204,6 +221,7 @@ def wait_until(nseconds):
         else:
             break
     return
+
 def ScopeState():
     ScopeStateHandle = open(ScopeStateFileName, "r")
     ScopeState = str(ScopeStateHandle.read().strip())
@@ -234,6 +252,39 @@ def WaitForScopeFinishAcquisition():
         ScopeStateHandle.close()
         time.sleep(0.5)
     return
+
+
+def LecroyScopeState():
+    LecroyScopeStateHandle = open(LecroyScopeStateFileName, "r")
+    LecroyScopeState = str(LecroyScopeStateHandle.read().strip())
+    LecroyScopeStateHandle.close()
+    return LecroyScopeState
+
+def LecroyScopeStatusAutoPilot(runNumber):
+    LecroyScopeCommFile = open(LecroyScopeCommFileName, "w")
+    LecroyScopeCommFile.write(str(runNumber))
+    LecroyScopeCommFile.close()
+    return
+
+def WaitForLecroyScopeStart():
+    while True:
+        LecroyScopeStateHandle = open(LecroyScopeCommFileName, "r")
+        LecroyScopeState = str(LecroyScopeStateHandle.read().strip())
+        if LecroyScopeState=="0": break
+        time.sleep(0.5)
+        LecroyScopeStateHandle.close()
+    return
+ 
+def WaitForLecroyScopeFinishAcquisition():
+    while True:
+        LecroyScopeStateHandle = open(LecroyScopeStateFileName, "r")
+        LecroyScopeState = str(LecroyScopeStateHandle.read().strip())
+        if LecroyScopeState=="writing" or LecroyScopeState=="ready": break
+        #if LecroyScopeState=="ready": break
+        LecroyScopeStateHandle.close()
+        time.sleep(0.5)
+    return
+
 
 def ReadRPFile(RunNumber):                                                             
     FilePath = "%s/RP/Run%d_conditions.txt" % (BaseTestbeamDir, RunNumber)

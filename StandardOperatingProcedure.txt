@@ -46,7 +46,7 @@ OTSDAQ Configuration Procedures:
 * If the otsdaq is not in configured state:
 	1) Go to the webpage and configure it.
 * If otsdaq is in a failed state:
-	1) Do "ssh cmstiming@ftbf-daq-08", if you are not already there 
+	1) Do "ssh cmstiming@ftbf-daq-06", if you are not already there 
 	2) Launch the server again using "ots" command
 	3) Then go to the webpage and initialize and configure the otsdaq
 

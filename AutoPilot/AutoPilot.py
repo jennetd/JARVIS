@@ -45,6 +45,8 @@ print "Stopping after %i runs." % maxRuns
 ############ Getting the digitizer list from the configuration table #############
 DigitizerList = pf.GetDigiFromConfig(Configuration, False, key)
 
+
+#IsScope is used to check whether the run configuration includes the Keysight or Tektronix scope
 if DigitizerDict[2] in DigitizerList or DigitizerDict[3] in DigitizerList:
 	IsScope = True
 else:
@@ -138,6 +140,23 @@ else:
 	TimingDAQNoTracksTOFHIR = 'N/A'
 	IncludesTOFHIR = False
 
+if DigitizerDict[6] in DigitizerList:
+	ConversionLecroyScope = 'Not started'
+	if IsTelescope:
+		TimingDAQLecroyScope = 'Not started'
+	else:
+		TimingDAQLecroyScope = 'N/A'
+	TimingDAQNoTracksLecroyScope = 'Not started'
+	LabviewRecoLecroyScope = 'Not started'
+	IncludesLecroyScope = True
+else:
+	ConversionLecroyScope = 'N/A'
+	TimingDAQLecroyScope = 'N/A'
+	TimingDAQNoTracksLecroyScope = 'N/A'
+	LabviewRecoLecroyScope = 'N/A'
+	IncludesLecroyScope = False
+
+
 # Get Sensor ID and Configuration ID list
 if pf.QueryGreenSignal(True):
 	ConfigID = pf.GetFieldIDOtherTable('Config', 'Configuration number', str(Configuration), False, key)
@@ -174,6 +193,8 @@ if (IncludesTekScope):
 	print "Tektronix Scope readout Included"
 if (IncludesKeySightScope):
 	print "Keysight Scope readout Included"
+if (IncludesLecroyScope):
+	print "Lecroy Scope readout Included"
 print ""
 print ""
 print "*********************************************************************"
@@ -231,10 +252,31 @@ while (AutoPilotStatus == 1 and iteration < maxRuns):
 			print("Scope still busy. Wait for next chance.\n")
 			continue
 
+
+	LecroyScopeIncludedThisRun = False
+	if IncludesLecroyScope:	
+		currentLecroyScopeState = LecroyScopeState()
+		if currentLecroyScopeState == 'busy':
+			print "[WARNING] : Lecroy Scope is still acquiring events, but autopilot is ready to start a new run. Likely someone killed a run prematurely. Tracking for scope in previous run is screwed up." 
+
+		if currentLecroyScopeState == 'ready': 
+			print("\n Sending start command to Lecroy scope.\n")
+			if not Debug:
+				LecroyScopeStatusAutoPilot(RunNumber)
+				LecroyScopeIncludedThisRun = True
+				WaitForLecroyScopeStart()
+			print("Lecroy Scope has started.")
+		else:			
+			print("Lecroy Scope still busy. Wait for next chance.\n")
+			continue
+
+
+
 	tp.UpdateRunNumber(RunNumber+1) ##must be called after scope start.
 	tp.SendRunFile()
 	print "Is Scope ",IsScope
-	print "Scope included ",ScopeIncludedThisRun
+	print "Keysight/Tek Scope included ",ScopeIncludedThisRun
+	print "Lecroy Scope included ",LecroyScopeIncludedThisRun
 	################### Starting the run ###################
 	StartTime = datetime.now()  
 	print "\nRun %i started at %s" % (RunNumber,StartTime)
@@ -261,14 +303,28 @@ while (AutoPilotStatus == 1 and iteration < maxRuns):
 
 	### Don't stop run until scope has acquired all events (OK if still writing events disk, though)
 	scope_finished=0
-	if IsScope and ScopeIncludedThisRun:
+
+	if ((IsScope and ScopeIncludedThisRun) or (IncludesLecroyScope and LecroyScopeIncludedThisRun)):
 		time.sleep(15)
-		print "Waiting for scope to finish"
+				
+	if IsScope and ScopeIncludedThisRun:		
+		print "Waiting for Keysight/Tek scope to finish"
 		WaitForScopeFinishAcquisition()
 		scope_finished=time.time()
-		print "Waiting for TClock stop time (%0.1f)"%StopSeconds
+		print "Keysight/Tek scope finished"
+		
+	if IncludesLecroyScope and LecroyScopeIncludedThisRun:		
+		print "Waiting for Lecroy scope to finish"
+		WaitForLecroyScopeFinishAcquisition()
+		scope_finished=time.time()
+		print "Lecroy scope finished"
+
+		
+	print "Waiting for TClock stop time (%0.1f)"%StopSeconds
 	wait_until(StopSeconds)
 	tclock_finished=time.time()
+
+
 
 	if not Debug and IsTelescope: tp.stop_ots(False)
 
@@ -288,19 +344,38 @@ while (AutoPilotStatus == 1 and iteration < maxRuns):
 			if "TekScope" in DigiListThisRun: DigiListThisRun.remove("TekScope")
 			if "KeySightScope" in DigiListThisRun: 
 				DigiListThisRun.remove("KeySightScope")
-				TimingDAQKeySightScope = 'N/A'
-				TimingDAQNoTracksKeySightScope = 'N/A'
-				LabviewRecoKeySightScope = 'N/A'
-				ConversionKeySightScope = 'N/A'
-				xrdcpRawKeySightScope = 'N/A'
 
-		else:
+			TimingDAQKeySightScope = 'N/A'
+			TimingDAQNoTracksKeySightScope = 'N/A'
+			LabviewRecoKeySightScope = 'N/A'
+			ConversionKeySightScope = 'N/A'
+			xrdcpRawKeySightScope = 'N/A'			
+
+		else:			
 			xrdcpRawKeySightScope = 'Not started'
 			ConversionKeySightScope = 'Not started'
 			TimingDAQKeySightScope = 'Not started'
 			TimingDAQNoTracksKeySightScope = 'Not started'
 			LabviewRecoKeySightScope = 'Not started'
 		
+
+		if not LecroyScopeIncludedThisRun:
+			if "LecroyScope" in DigiListThisRun: 
+				DigiListThisRun.remove("LecroyScope")
+
+			TimingDAQLecroyScope = 'N/A'
+			TimingDAQNoTracksLecroyScope = 'N/A'
+			LabviewRecoLecroyScope = 'N/A'
+			ConversionLecroyScope = 'N/A'
+			xrdcpRawLecroyScope = 'N/A'
+		else:
+			TimingDAQLecroyScope = 'Not started'
+			TimingDAQNoTracksLecroyScope = 'Not started'
+			LabviewRecoLecroyScope = 'Not started'
+			ConversionLecroyScope = 'Not started'
+			xrdcpRawLecroyScope = 'Not started'
+
+
 		######If the scope is included It's gonna update this field to "Not Started" in scope listener script
 		# Get Raspberry Pi Value list, Make sure raspberry pi rsync is on, If it is not then the readRPFile function takes care of that.
 
@@ -320,7 +395,7 @@ while (AutoPilotStatus == 1 and iteration < maxRuns):
 			if ETLTemp: Temp13ETL, Temp14ETL, Temp15ETL, Temp16ETL, Temp17ETL, Temp18ETL, Temp19ETL, Temp20ETL, LowVoltage1ETL, Current1ETL, LowVoltage2ETL, Current2ETL, LowVoltage3ETL, Current3ETL = gt.ConvertEnv(ETLTimestamp)
 			print 'Updating the run table'
 			print Temp13ETL, Temp14ETL, Temp15ETL, Temp16ETL, Temp17ETL, Temp18ETL, Temp19ETL, Temp20ETL, LowVoltage1ETL, Current1ETL, LowVoltage2ETL, Current2ETL, LowVoltage3ETL, Current3ETL
-			pf.NewRunRecord4(RunNumber, SpillTime, str(Duration), DigiListThisRun, Tracking, ConversionSampic, ConversionTekScope,ETROC_baseline,ETROC_config, xrdcpRawKeySightScope,ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, LabviewRecoVME, LabviewRecoDT5742, LabviewRecoKeySightScope, LabviewRecoSampic, LabviewRecoTekScope, BoxTemp, x_stage, y_stage, BoxVoltage, BarCurrent, z_rotation, BoxHum, BoxCurrent, BarVoltage, str(Temp13ETL), str(Temp14ETL), str(Temp15ETL), str(Temp16ETL), str(Temp17ETL), str(Temp18ETL), str(Temp19ETL), str(Temp20ETL), str(LowVoltage1ETL), str(Current1ETL), str(LowVoltage2ETL), str(Current2ETL), str(LowVoltage3ETL), str(Current3ETL), ConfigID, False, key)
+			pf.NewRunRecord4(RunNumber, SpillTime, str(Duration), DigiListThisRun, Tracking, ConversionSampic, ConversionTekScope,ETROC_baseline,ETROC_config, xrdcpRawKeySightScope, xrdcpRawLecroyScope,ConversionKeySightScope,ConversionLecroyScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQLecroyScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope,  TimingDAQNoTracksLecroyScope, TimingDAQNoTracksDT5742, LabviewRecoVME, LabviewRecoDT5742, LabviewRecoKeySightScope, LabviewRecoSampic, LabviewRecoTekScope, BoxTemp, x_stage, y_stage, BoxVoltage, BarCurrent, z_rotation, BoxHum, BoxCurrent, BarVoltage, str(Temp13ETL), str(Temp14ETL), str(Temp15ETL), str(Temp16ETL), str(Temp17ETL), str(Temp18ETL), str(Temp19ETL), str(Temp20ETL), str(LowVoltage1ETL), str(Current1ETL), str(LowVoltage2ETL), str(Current2ETL), str(LowVoltage3ETL), str(Current3ETL), ConfigID, False, key)
 			
 		else:
 			print 'Updating the run table'
