@@ -10,7 +10,9 @@ import glob
 from bisect import bisect_left
 
 
-labview_unsync_base_path = '/home/daq/LabviewData/LabviewUnsyncData/'
+#labview_unsync_base_path = '/home/daq/LabviewData/LabviewUnsyncData/'
+labview_unsync_base_path = '/home/daq/2021_CMSTiming_ETL/JARVIS/tempLogs/'
+
 
 def greatest_number_less_than_value(seq,value):
     if bisect_left(seq,value)>0:
@@ -26,12 +28,13 @@ def GetEnvMeas(timestamp):
     exact_labview_file = greatest_number_less_than_value(labview_file_list, timestamp)
     index_labview_file = labview_file_list.index(exact_labview_file)
     labview_file_name = labview_unsync_base_path + "/lab_meas_unsync_%.3f.txt" % labview_file_list[index_labview_file]
-    all_labview_array = np.array(np.loadtxt(labview_file_name, delimiter='\t', unpack=False))
-
+    #all_labview_array = np.array(np.loadtxt(labview_file_name, delimiter='\t', unpack=False))
+    all_labview_array = np.array(np.loadtxt(labview_file_name, unpack=False))
     if all_labview_array.size == 0:
         index_labview_file = index_labview_file - 1
         labview_file_name = labview_unsync_base_path + "/lab_meas_unsync_%.3f.txt" % labview_file_list[index_labview_file]
-        all_labview_array = np.array(np.loadtxt(labview_file_name, delimiter='\t', unpack=False))
+        #all_labview_array = np.array(np.loadtxt(labview_file_name, delimiter='\t', unpack=False))
+        all_labview_array = np.array(np.loadtxt(labview_file_name))
 
     if all_labview_array.size != 0:
     
@@ -47,14 +50,14 @@ def GetEnvMeas(timestamp):
             if abs(delta_time) > 100:
                 LabviewFlag = True
             else:
-                Resis13 = -1#all_labview_array[1]
-                Resis14 = -1#all_labview_array[2]
-                Resis15 = -1#all_labview_array[3]
-                Resis16 = all_labview_array[19]
-                Resis17 = all_labview_array[20]
-                Resis18 = all_labview_array[21]
-                Resis19 = all_labview_array[22]
-                Resis20 = all_labview_array[23]
+                Resis13 = all_labview_array[40]
+                Resis14 = all_labview_array[14]
+                Resis15 = all_labview_array[15]
+                Resis16 = all_labview_array[16]
+                Resis17 = all_labview_array[17]
+                Resis18 = all_labview_array[18]
+                Resis19 = all_labview_array[19]
+                Resis20 = -1#all_labview_array[20]
                 # Resis16 = all_labview_array[4]
                 # Resis17 = all_labview_array[5]
                 # Resis18 = all_labview_array[6]
@@ -75,22 +78,23 @@ def GetEnvMeas(timestamp):
         else:
             labview_time = min(all_labview_array_time_list, key=lambda x:abs(x-float(timestamp)))
             delta_time = labview_time - timestamp
+        #    print "delta time %0.3f, labview_time %0.3f, timestamp %0.3f"%(delta_time,labview_time,timestamp)
             if abs(delta_time) > 100:
                 LabviewFlag = True
             else:
                 index_labview_time = all_labview_array_time_list.index(float(labview_time))
                 
-                Resis13 = -1#all_labview_array[index_labview_time,1]
-                Resis14 = -1#all_labview_array[index_labview_time,2]
-                Resis15 = -1#all_labview_array[index_labview_time, 3]
-                Resis16 = all_labview_array[index_labview_time, 19]
-                Resis17 = all_labview_array[index_labview_time, 20]
-                Resis18 = all_labview_array[index_labview_time, 21]
-                Resis19 = all_labview_array[index_labview_time, 22]
-                Resis20 = all_labview_array[index_labview_time, 23]
-                Resis13 = all_labview_array[index_labview_time,1]
-                Resis14 = all_labview_array[index_labview_time,2]
-                Resis15 = all_labview_array[index_labview_time, 3]
+                Resis13 = all_labview_array[index_labview_time, 40]
+                Resis14 = all_labview_array[index_labview_time, 14]
+                Resis15 = all_labview_array[index_labview_time, 15]
+                Resis16 = all_labview_array[index_labview_time, 16]
+                Resis17 = all_labview_array[index_labview_time, 17]
+                Resis18 = all_labview_array[index_labview_time, 18]
+                Resis19 = all_labview_array[index_labview_time, 19]
+                Resis20 = -1#all_labview_array[index_labview_time, 23]
+               # Resis13 = all_labview_array[index_labview_time,1]
+               # Resis14 = all_labview_array[index_labview_time,2]
+                #Resis15 = all_labview_array[index_labview_time, 3]
                 # Resis16 = all_labview_array[index_labview_time, 4]
                 # Resis17 = all_labview_array[index_labview_time, 5]
                 # Resis18 = all_labview_array[index_labview_time, 6]
@@ -154,7 +158,7 @@ def Resistance_calc(T): #Function to calculate resistance for any temperature
     RT = (R0 + R0*alpha*(T - Delta*(T/100 - 1)*(T/100) - Beta*(T/100 - 1)*((T/100)**3)))*100
     return RT
 
-
+###For standalone temperature probes
 def Temp_calc_NTC(R): #Function to calculate temperature for any resistance                                                                                                                                                                       
     Temp_x = np.linspace(-30, 30, num=61) #Points to be used for interpolation                                                                                                                                                               
     Resis_y = np.array([88500,83200,78250,73600,69250,65200,61450,57900,54550,51450,48560,45830,43270,40860,38610,36490,34500,32630,30880,29230,27670,26210,24830,23540,22320,21170,20080,19060,18100,17190,16330,15520,14750,14030,13340,12700,12090,11510,10960,10440,9950,9485,9045,8630,8230,7855,7500,7160,6840,6535,6245,5970,5710,5460,5225,5000,4787,4583,4389,4204,4029])
@@ -165,6 +169,7 @@ def Temp_calc_NTC(R): #Function to calculate temperature for any resistance
     #plt.show()                                                                                                                                                                                                                               
     return Temperature_R
 
+#### for FNAL 16 ch board
 def Temp_calc(R): #Function to calculate temperature for any resistance                                                                                                                                                                       
     Temp_x = np.linspace(-30, 30, num=100) #Points to be used for interpolation                                                                                                                                                               
     Resis_y = np.array([])
@@ -176,39 +181,40 @@ def Temp_calc(R): #Function to calculate temperature for any resistance
     return Temperature_R
 
 def ConvertEnv(timestamp):
-	Resis13, Resis14, Resis15, Resis16, Resis17, Resis18, Resis19, Resis20, Voltage1, Current1, Voltage2, Current2, Voltage3, Current3 = GetEnvMeas(timestamp)
-	
-	if Resis13 != -1 and Resis13 != 0:
-		Temp13 = round(Temp_calc_NTC(Resis13),2)
-	else:
-		Temp13 = -999	
-	if Resis14 != -1 and Resis14 != 0:
-		Temp14 = round(Temp_calc_NTC(Resis14),2)
-	else:
-		Temp14 = -999
-	if Resis15 != -1 and Resis15 != 0:
-		Temp15 = round(Temp_calc_NTC(Resis15),2)
-	else:
-		Temp15 = -999
-	if Resis16 != -1 and Resis16 != 0:
-		Temp16 = round(Resis16,2)#round(Temp_calc_NTC(Resis16),2)
+
+    Resis13, Resis14, Resis15, Resis16, Resis17, Resis18, Resis19, Resis20, Voltage1, Current1, Voltage2, Current2, Voltage3, Current3 = GetEnvMeas(timestamp)
+    #print "resis 16 and 17  %0.3f %0.3f"%(Resis16,Resis17)  
+    if Resis13 != -1 and Resis13 != 0:
+        Temp13 = round(Resis13,2)
+    else:
+        Temp13 = -999   
+    if Resis14 != -1 and Resis14 != 0:
+        Temp14 = round(Resis14,2)
+    else:
+        Temp14 = -999
+    if Resis15 != -1 and Resis15 != 0:
+        Temp15 = round(Resis15,2)
+    else:
+        Temp15 = -999
+    if Resis16 != -1 and Resis16 != 0:
+        Temp16 = round(Resis16,2)#round(Temp_calc(Resis16),2)
         #Temp16 = Resis16
-	else:
-		Temp16 = -999
-	if Resis17 != -1 and Resis17 != 0:
-		Temp17 = round(Temp_calc_NTC(Resis17),2)
-	else:
-		Temp17 = -999 
-	if Resis18 != -1 and Resis18 != 0:
-		Temp18 = round(Temp_calc_NTC(Resis18),2)	
-	else:
-		Temp18 = -999
-	if Resis19 != -1 and Resis19 != 0:
-		Temp19 = round(Temp_calc_NTC(Resis19),2)		
-	else:
-		Temp19 = -999
-	if Resis20 != -1 and Resis20 != 0:
-		Temp20 = round(Temp_calc_NTC(Resis20),2)
-	else: 
-		Temp20 = -999
-	return Temp13, Temp14, Temp15, Temp16, Temp17, Temp18, Temp19, Temp20, Voltage1, Current1, Voltage2, Current2, Voltage3, Current3
+    else:
+        Temp16 = -999
+    if Resis17 != -1 and Resis17 != 0:
+        Temp17 = round(Resis17,2)
+    else:
+        Temp17 = -999 
+    if Resis18 != -1 and Resis18 != 0:
+        Temp18 = round(Resis18,2)    
+    else:
+        Temp18 = -999
+    if Resis19 != -1 and Resis19 != 0:
+        Temp19 = round(Resis19,2)        
+    else:
+        Temp19 = -999
+    if Resis20 != -1 and Resis20 != 0:
+        Temp20 = round(Resis20,2)
+    else: 
+        Temp20 = -999
+    return Temp13, Temp14, Temp15, Temp16, Temp17, Temp18, Temp19, Temp20, Voltage1, Current1, Voltage2, Current2, Voltage3, Current3

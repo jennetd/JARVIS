@@ -13,4 +13,4 @@ while True:
 	#print CMD
 	os.system(CMD)
 	print "Saved the CAEN Log. Will save another one in some time!!!!"
-	time.sleep(2000) 
+	time.sleep(600) 

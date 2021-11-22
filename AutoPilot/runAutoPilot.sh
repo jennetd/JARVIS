@@ -1,3 +1,4 @@
-IncludeTelescope=1
+IncludeTelescope=0
+nruns=100000
 
-python AutoPilot.py -it $IncludeTelescope -conf $1 -nrun $2
+python AutoPilot.py -it $IncludeTelescope -conf $1 -nrun $nruns

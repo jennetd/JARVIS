@@ -1,3 +1,4 @@
+#!/bin/env python
 import sys 
 sys.path.append('../BackEndProcesses/')
 import ParseFunctions as pf
@@ -26,9 +27,9 @@ ETROC_baseline_filename = "/home/daq/RaspberryPi/scriptsPC/baseline.txt"
 
 parser = argparse.ArgumentParser(description='Information for running the AutoPilot program. /n /n General Instructions: Start OTSDAQ and Configure by hand. If using OTSDAQ make sure the start and stop seconds in the beginning of the program are hard coded correctly. /n Make sure to add sensor and configuration after each controlled access and pass it as an argument to this script. /n/n /n TekScope Specific Instructions: /n Make sure you hard code the dpo_fastframe path. /n If using the OTSDAQ with TekScope make sure the Use_otsdaq boolean is True in dpo_fastframe script. /n Make Sure you pass all four Scope trigger and channel settings. /n /n Other Digitizer Specific Instructions: /n If not running the TekScope make sure that the run file name in TCP_com is correct.')
 parser.add_argument('-de', '--Debug', type=int, default = 0, required=False)
-parser.add_argument('-it', '--IsTelescope', type=int,default=1, help = 'Give 1 if using the telescope',required=False)
-parser.add_argument('-conf', '--Configuration', type=int, help = 'Make sure to add the configuration in the run table. Give COnfiguration S/N from the run table',required=False)
-parser.add_argument('-nruns', '--maxIterations', type=int, help = 'Number of runs to take',required=False)
+parser.add_argument('-it', '--IsTelescope', type=int,default=0, help = 'Give 1 if using the telescope',required=False)
+parser.add_argument('-conf', '--Configuration', type=int, help = 'Make sure to add the configuration in the run table. Give COnfiguration S/N from the run table',required=True)
+parser.add_argument('-nruns', '--maxIterations', type=int,default=999999, help = 'Number of runs to take',required=False)
 
 args = parser.parse_args()
 Debug = args.Debug
@@ -209,7 +210,7 @@ if RP: tp.RPGlobalComm("GlobalStart")
 while (AutoPilotStatus == 1 and iteration < maxRuns):
 
 	if iteration % 5 == 0:
-		if IsTelescope: StartSeconds,StopSeconds = GetStartAndStopSeconds(33, 22) #35,22
+		if IsTelescope: StartSeconds,StopSeconds = GetStartAndStopSeconds(36, 22) #33,22
 		else: StartSeconds,StopSeconds = GetStartAndStopSeconds(50, 22)
 		print StartSeconds, StopSeconds
 
@@ -240,6 +241,8 @@ while (AutoPilotStatus == 1 and iteration < maxRuns):
 		if currentScopeState == 'busy':
 			print "[WARNING] : Scope is still acquiring events, but autopilot is ready to start a new run. Likely someone killed a run prematurely. Tracking for scope in previous run is screwed up." 
 
+
+#### need to check both scopes before continue command
 		if currentScopeState == 'ready': 
 			print("\n Sending start command to scope.\n")
 			if not Debug:

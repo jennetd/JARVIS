@@ -8,7 +8,7 @@ Configuration = 122   ##not used except in BTL mode
 
 
 #numEvents = 13000
-numEvents = 10
+numEvents = 15000
 sampleRate = 10 #GSa/s
 horizontalWindow = 50 #ns
 ### if sample rate or horizontal window is changed, TimingDAQ must be recompiled to account for new npoints.
@@ -25,7 +25,7 @@ vScale6 = 0.05
 vScale7 = 0.05 
 vScale8 = 0.05
 
-timeoffset = -207 #-207 #ns
+timeoffset = 210 #-207 #ns
 
 ############### Remember to source the otsdaq environment
 ############### Assuming the directory structure in the KeySightScope repository is the same as on this computer
@@ -38,6 +38,7 @@ while True:
 	inFile = open(AutoPilotStatusFile,"r")
 	runNumber = inFile.readline().strip()
 	time.sleep(1)
+
 	if (runNumber != str(0)):
 
 		ScopeStateHandle = open(ScopeStateFileName, "r")

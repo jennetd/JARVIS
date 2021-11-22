@@ -1,3 +1,4 @@
+#!/bin/python
 from AllModules import *
 import ParseFunctions as pf
 import TCP_com as tp
@@ -7,22 +8,23 @@ UsingAutoPilot = True
 Configuration = 122   ##not used except in BTL mode
 
 
-#numEvents = 13000
-numEvents = 10
-sampleRate = 40 #GSa/s
-horizontalWindow = 40 #ns
+numEvents = 20000
+sampleRate = 20 #GSa/s 10
+horizontalWindow = 40 #ns 20000
 ### if sample rate or horizontal window is changed, TimingDAQ must be recompiled to account for new npoints.
 trigCh = "AUX" 
 #trigCh = "4" 
-trig =  0.15 # V
+#trig =  -0.020 # V
+#trig =  -0.070 # V
+trig = 0.150 # V
 
-vScale1 = 0.05  
+vScale1 = 0.05 
 vScale2 = 0.05
-vScale3 = 0.05 
+vScale3 = 0.05
 vScale4 = 0.05
 
-timeoffset = -207 #-207 #ns
-TimeOut=-1 #Max run duration [s]. Use -1 for no timeout. 40 for telescope, 25 for photek mode
+timeoffset = -207#-207 #-207 #ns
+TimeOut= 23 #Max run duration [s]. Use -1 for no timeout. 38 for telescope, 23 for photek mode
 
 ############### Remember to source the otsdaq environment
 ############### Assuming the directory structure in the KeySightScope repository is the same as on this computer
@@ -77,7 +79,7 @@ while True:
 		    #### Reading run number ####
 		    #RunNumber = tp.GetRunNumber()
 	            # AgilentScopeCommand = 'python %sAcquisition/acquisition.py --timeout %i --runNum %s --numEvents %d --sampleRate %d --horizontalWindow %d --trigCh %s --trig %f --vScale1 %f --vScale2 %f --vScale3 %f --vScale4 %f --timeoffset %i --trigSlope POS' % (ScopeControlDir,TimeOut,runNumber, numEvents, sampleRate, horizontalWindow, trigCh, trig, vScale1, vScale2, vScale3, vScale4, timeoffset) 
-	            AgilentScopeCommand = 'python %sAcquisition/acquisition.py --vPos2 3 --timeout %i --runNum %s --numEvents %d --sampleRate %d --horizontalWindow %d --trigCh %s --trig %f --vScale1 %f --vScale2 %f --vScale3 %f --vScale4 %f --timeoffset %i --trigSlope POS' % (ScopeControlDir,TimeOut,runNumber, numEvents, sampleRate, horizontalWindow, trigCh, trig, vScale1, vScale2, vScale3, vScale4, timeoffset) 
+	            AgilentScopeCommand = 'python %sAcquisition/acquisition.py --timeout %i --runNum %s --numEvents %d --sampleRate %d --horizontalWindow %d --trigCh %s --trig %f --vScale1 %f --vScale2 %f --vScale3 %f --vScale4 %f --timeoffset %i --trigSlope POS' % (ScopeControlDir,TimeOut,runNumber, numEvents, sampleRate, horizontalWindow, trigCh, trig, vScale1, vScale2, vScale3, vScale4, timeoffset) 
 	            print AgilentScopeCommand
 		    #### Starting the acquisition script ####
 		    os.system(AgilentScopeCommand)

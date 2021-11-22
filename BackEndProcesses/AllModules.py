@@ -19,13 +19,13 @@ import argparse
 
 ################### Run Table Information #################
 MyKey = '' #Read MyKey from key file in RecoProcesses
-RunTableName = 'tblIyoRk5c4tZiGMF'#'tblWRkYB2W4WuTuX6'
-SensorTableName = 'tblGoqIIenqrgwAmc'##'tblUHmPZb7qUL7oxD'
-ConfigTableName = 'tblVeVoIMgHdRt3sr'
-KeySightScopeConfigTableName = 'tbla1AsXZSrBVwXi3'
-LecroyScopeConfigTableName = 'tblt9DzQI8oQM2Ola'
+RunTableName = 'tblBZkzgmZZJsJCDj'#'tblWRkYB2W4WuTuX6'
+SensorTableName = 'tblzPmqEvalHJXwdQ'##'tblUHmPZb7fqUL7oxD'
+ConfigTableName = 'tblOFR6E33CtkUZj5'
+KeySightScopeConfigTableName = 'tbl3swaTgFmRoXT9H'
+LecroyScopeConfigTableName = 'tblmAzhMZVj6ftKcO'
 
-BaseID = 'appjCb12aIvgcCf9F'#'appxV78j7svJHd3k6'
+BaseID = 'appc37JYrvqwF3b0j'#'appxV78j7svJHd3k6'
 CurlBaseCommandWithoutTable = 'https://api.airtable.com/v0/%s' % (BaseID)
 CurlBaseCommand = 'https://api.airtable.com/v0/%s/%s' % (BaseID, RunTableName)
 CurlBaseCommandSensor = 'https://api.airtable.com/v0/%s/%s' % (BaseID, SensorTableName)
@@ -45,7 +45,7 @@ HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScriptETL2021.sh'
  
 #HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScriptFastTriggerETL2020.sh'
 
-RulinuxSSH = 'otsdaq@rulinux04.dhcp.fnal.gov'
+RulinuxSSH = 'otsdaq@teddy01.dhcp.fnal.gov'#'otsdaq@rulinux04.dhcp.fnal.gov'
 BaseTrackDirRulinux = '/data/TestBeam/2020_02_February_cmstiming/'
 ResultTrackFileNameBeforeRunNumber = 'Run' ###########'Run%d_CMSTiming_converted.root'
 ResultTrackFileNameAfterRunNumber = '_CMSTiming_converted.root' 
@@ -58,8 +58,8 @@ BaseTestbeamDir = '/home/daq/2021_CMSTiming_ETL/'
 eosBaseDir = 'root://cmseos.fnal.gov//store/group/cmstestbeam/2021_CMSTiming_ETL/'
 BaseTrackDirLocal = '%sTracks/' % BaseTestbeamDir
 LocalSSH = 'daq@timingdaq02.dhcp.fnal.gov'
-EnvSetupPath = '/uscms/home/rheller/nobackup/2020_02_CMSTiming/setup.sh' ############### Remember to change ProcessExec accordingly
-EnvSetupPath2 = '/uscms/home/rheller/nobackup/otsdaq/setup_ots.sh' ############### Remember to change ProcessExec accordingly
+EnvSetupPath = '/home/daq/setup.sh' ############### Remember to change ProcessExec accordingly
+EnvSetupPath2 = '/home/daq/otsdaq/setup_ots.sh' ############### Remember to change ProcessExec accordingly
 # TimingDAQDir = '/uscms/home/rheller/nobackup/CMS-MTD/TimingDAQ/'
 TimingDAQDir = '%sTimingDAQ/'%BaseTestbeamDir
 CondorDir = '%sCondor/'%BaseTestbeamDir
