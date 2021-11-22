@@ -2,12 +2,12 @@ from ProcessExec import *
 import ProcessRuns as pr
 
 ExecutionOrder = 0 #This is descending Run number order, Refer to the dictionary in all modules
-PID = 2 #2 means Timingdaq, Refer to the dictionary in all modules
-GetRunListEachTime = True 
+PID = 3 #2 means Timingdaq, Refer to the dictionary in all modules
+GetRunListEachTime = True
 
 ############ Doesn't matter for tracking ###########
 SaveWaveForms = True
-ConfigVersion = "v11"
+ConfigVersion = "v13"
 DigitizerKey = 3 #key=3 for KeySightScope, Refer Allmodules
 
 ########### Get Key ###########

@@ -129,7 +129,7 @@ def TimingDAQRuns(RunNumber, DoTracking, Digitizer, MyKey, Debug, condor=False):
         RunList.append(RunNumber)
         FieldIDList.append(pf.GetFieldID(am.QueryFieldsDict[0], RunNumber, False, MyKey))
 
-    # print RunList
+    print RunList
     return RunList, FieldIDList                                                                                                                                                                                                                  
 
 

@@ -244,19 +244,31 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 							am.time.sleep(1)
 							if this_proc_key==2:
 								import GetEntries as ge
-								EntriesWithTrack, EntriesWithTrackAndHit, EntriesWithHit, EntriesWithTrackWithoutNplanes = ge.RunEntries(ResultFileLocation)
+								EntriesWithTrack, EntriesWithTrackAndHit, EntriesWithHit, EntriesWithTrackWithoutNplanes,hits_ch1,hits_ch2,hits_ch3,hits_ch4 = ge.RunEntries(ResultFileLocation)
 								if pf.QueryGreenSignal(True): 
 									pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithTrackScope", int(EntriesWithTrack), False, MyKey)
-									am.time.sleep(0.5)
+									am.time.sleep(0.3)
 								if pf.QueryGreenSignal(True): 
 									pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithTrackAndHitScope", int(EntriesWithTrackAndHit), False, MyKey)
-									am.time.sleep(0.5)
+									am.time.sleep(0.3)
 								if pf.QueryGreenSignal(True): 
 									pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithHitScope", int(EntriesWithHit), False, MyKey)
-									am.time.sleep(0.5)
+									am.time.sleep(0.3)
 								if pf.QueryGreenSignal(True): 
 									pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithTrackWithoutNplanesScope", int(EntriesWithTrackWithoutNplanes), False, MyKey)
-								am.time.sleep(0.5)
+								am.time.sleep(0.3)
+								if pf.QueryGreenSignal(True): 
+									pf.UpdateAttributeStatus2(str(FieldID), "HitsCh1", int(hits_ch1), False, MyKey)
+									am.time.sleep(0.3)
+								if pf.QueryGreenSignal(True): 
+									pf.UpdateAttributeStatus2(str(FieldID), "HitsCh2", int(hits_ch2), False, MyKey)
+									am.time.sleep(0.3)
+								if pf.QueryGreenSignal(True): 
+									pf.UpdateAttributeStatus2(str(FieldID), "HitsCh3", int(hits_ch3), False, MyKey)
+									am.time.sleep(0.3)
+								if pf.QueryGreenSignal(True): 
+									pf.UpdateAttributeStatus2(str(FieldID), "HitsCh4", int(hits_ch4), False, MyKey)
+									am.time.sleep(0.3)
 						else:
 							if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[2], False, MyKey)
 
@@ -529,7 +541,7 @@ def ProcessExecBTL(OrderOfExecution, PID, SaveWaveformBool = None, Version = Non
 					if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[0], False, MyKey)
 					if PID == 2 and DigitizerKey == 3:
 						import GetEntries as ge
-						EntriesWithTrack, EntriesWithTrackAndHit, EntriesWithHit, EntriesWithTrackWithoutNplanes = ge.RunEntries(ResultFileLocation)
+						EntriesWithTrack, EntriesWithTrackAndHit, EntriesWithHit, EntriesWithTrackWithoutNplanes,hits_ch1,hits_ch2,hits_ch3,hits_ch4 = ge.RunEntries(ResultFileLocation)
 						if pf.QueryGreenSignal(True): 
 							pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithTrackScope", int(EntriesWithTrack), False, MyKey)
 							am.time.sleep(0.5)
@@ -540,6 +552,21 @@ def ProcessExecBTL(OrderOfExecution, PID, SaveWaveformBool = None, Version = Non
 							pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithHitScope", int(EntriesWithHit), False, MyKey)
 						if pf.QueryGreenSignal(True): 
 							pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithTrackWithoutNplanesScope", int(EntriesWithTrackWithoutNplanes), False, MyKey)
+						if pf.QueryGreenSignal(True): 
+							pf.UpdateAttributeStatus2(str(FieldID), "HitsCh1", int(hits_ch1), False, MyKey)
+							am.time.sleep(0.3)
+						if pf.QueryGreenSignal(True): 
+							pf.UpdateAttributeStatus2(str(FieldID), "HitsCh2", int(hits_ch2), False, MyKey)
+							am.time.sleep(0.3)
+						if pf.QueryGreenSignal(True): 
+							pf.UpdateAttributeStatus2(str(FieldID), "HitsCh3", int(hits_ch3), False, MyKey)
+							am.time.sleep(0.3)
+						if pf.QueryGreenSignal(True): 
+							pf.UpdateAttributeStatus2(str(FieldID), "HitsCh4", int(hits_ch4), False, MyKey)
+							am.time.sleep(0.3)
+
+
+
 
 				print 'Finished process %s for run %d' % (ProcessName, run)		
 				print '###############################\n'

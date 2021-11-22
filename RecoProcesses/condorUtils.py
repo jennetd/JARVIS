@@ -193,8 +193,12 @@ def prepareExecutable(PID,digitizer_key,run,CMD,frequency=0):
 	if PID==1: 
 		procname = "Conversion"
 		inputfiles = []
-		for i in range(1,5):
-			inputfiles.append(am.eosBaseDir+am.DigitizerDict[digitizer_key]+"/RawData/Wavenewscope_CH%i_%i.bin"%(i,run))
+		if digitizer_key==3:
+			for i in range(1,5):
+				inputfiles.append(am.eosBaseDir+am.DigitizerDict[digitizer_key]+"/RawData/Wavenewscope_CH%i_%i.bin"%(i,run))
+		elif digitizer_key==6:
+			for i in range(1,9):
+				inputfiles.append(am.eosBaseDir+am.DigitizerDict[digitizer_key]+"/RawData/C%i--Trace%i.trc"%(i,run))
 		# outputfile = am.eosBaseDir+digitizer+"RecoData/ConversionRECO/run_scope%i.root"%run
 
 	if PID==2: 
@@ -224,19 +228,28 @@ def prepareExecutable(PID,digitizer_key,run,CMD,frequency=0):
 		f.write("eval `scramv1 runtime -sh`\n")
 		f.write("cd -\n")		# f.write("source /cvmfs/sft.cern.ch/lcg/views/LCG_89/x86_64-slc6-gcc62-opt/setup.sh\n")
 		if frequency == 0: 
-			f.write("xrdcp %scondor/conversion_bin_fast.py .\n"%am.eosBaseDir)
-			f.write("chmod 755 conversion_bin_fast.py\n")
+			if digitizer_key==3:
+				f.write("xrdcp %scondor/conversion_bin_fast.py .\n"%am.eosBaseDir)
+				f.write("chmod 755 conversion_bin_fast.py\n")
+			elif digitizer_key==6:
+				f.write("xrdcp %scondor/conversion.py .\n"%am.eosBaseDir)
+				f.write("chmod 755 conversion.py\n")
 		else:
 			f.write("xrdcp %scondor/conversion_bin_fast_filter.py .\n"%am.eosBaseDir)
 			f.write("chmod 755 conversion_bin_fast_filter.py\n")
 		for inputfile in inputfiles:
 			f.write("xrdcp -s %s .\n"%inputfile)
 		f.write("ls\n")	
-		if frequency == 0: f.write("python conversion_bin_fast.py --Run %i\n"%run)
+		if frequency == 0: 
+			if digitizer_key==3:
+				f.write("python conversion_bin_fast.py --Run %i\n"%run)
+			elif digitizer_key==6:
+				f.write("python conversion.py --runNumber %i\n"%run)
 		else: f.write("python conversion_bin_fast_filter.py --Run %i --Freq %i\n"%(run,frequency))
 		# f.write("xrdcp -fs %s %s\n" % (os.path.basename(outputfile), outputfile)) ## done in script
 		f.write("rm *.dat\n")		
 		f.write("rm *.bin\n")		
+		f.write("rm *.trc\n")		
 		f.write("rm *.root\n")		
 		f.write("rm *.py\n")		
 
@@ -246,22 +259,30 @@ def prepareExecutable(PID,digitizer_key,run,CMD,frequency=0):
 		f.write("eval `scramv1 runtime -sh`\n")
 		f.write("cd -\n")
 
-		f.write("xrdcp %scondor/NetScopeStandaloneDat2Root .\n"%am.eosBaseDir)
-		f.write("chmod 755 NetScopeStandaloneDat2Root\n")
+		if digitizer_key==3:
+			f.write("xrdcp %scondor/NetScopeStandaloneDat2Root .\n"%am.eosBaseDir)
+			f.write("chmod 755 NetScopeStandaloneDat2Root\n")
+		if digitizer_key==6:
+			f.write("xrdcp %scondor/NetScopeStandaloneDat2Root502 .\n"%am.eosBaseDir)
+			f.write("chmod 755 NetScopeStandaloneDat2Root502\n")
 
 		f.write("xrdcp -s %s .\n" % inputfile)
 		f.write("xrdcp -s %s .\n" % tracksfile)
 		f.write("xrdcp -s %s .\n" % config)
 
 		f.write("ls\n")
-		f.write("./NetScopeStandaloneDat2Root --input_file=%s --pixel_input_file=%s  --config=%s --output_file=out_%s --save_meas\n" % (os.path.basename(inputfile),os.path.basename(tracksfile),os.path.basename(config),os.path.basename(outputfile)))
+		if digitizer_key==3:
+			f.write("./NetScopeStandaloneDat2Root --input_file=%s --pixel_input_file=%s  --config=%s --output_file=out_%s --save_meas\n" % (os.path.basename(inputfile),os.path.basename(tracksfile),os.path.basename(config),os.path.basename(outputfile)))
+		if digitizer_key==6:
+			f.write("./NetScopeStandaloneDat2Root502 --input_file=%s --pixel_input_file=%s  --config=%s --output_file=out_%s --save_meas --correctForTimeOffsets=true\n" % (os.path.basename(inputfile),os.path.basename(tracksfile),os.path.basename(config),os.path.basename(outputfile)))
+
 
 		f.write("ls\n")
 		f.write("xrdcp -fs out_%s %s\n" % (os.path.basename(outputfile), outputfile))
 		# f.write("scp out_%s daq@ti\n" % (os.path.basename(outputfile)))
 
 		f.write("rm *.root\n")
-		f.write("rm NetScopeStandaloneDat2Root\n")
+		f.write("rm NetScopeStandaloneDat2Root*\n")
 		f.write("rm *.config\n")
 
 
