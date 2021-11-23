@@ -8,24 +8,24 @@ Configuration = 122   ##not used except in BTL mode
 
 
 #numEvents = 13000
-numEvents = 15000
+numEvents = 500
 sampleRate = 10 #GSa/s
 horizontalWindow = 50 #ns
 ### if sample rate or horizontal window is changed, TimingDAQ must be recompiled to account for new npoints.
-trigCh = "EX" 
-#trigCh = "4" 
-trig =  0.15 # V
+#trigCh = "EX" 
+trigCh = "C4" 
+trig =  -0.015 # V
 
 vScale1 = 0.05  
 vScale2 = 0.05
 vScale3 = 0.05 
-vScale4 = 0.05
+vScale4 = 0.02
 vScale5 = 0.05  
 vScale6 = 0.05
 vScale7 = 0.05 
 vScale8 = 0.05
 
-timeoffset = 210 #-207 #ns
+timeoffset = 0 #-207 #ns
 
 ############### Remember to source the otsdaq environment
 ############### Assuming the directory structure in the KeySightScope repository is the same as on this computer

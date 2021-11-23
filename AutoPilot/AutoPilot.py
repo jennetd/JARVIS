@@ -395,7 +395,21 @@ while (AutoPilotStatus == 1 and iteration < maxRuns):
 			# Get ETL environment data
 			ETLTimestamp = (datetime.now() - datetime.strptime("2000-01-01 00:00:00", "%Y-%m-%d %H:%M:%S")).total_seconds() #- 3600 ### For daylight saving time 
 			print 'Getting ETL environmental data'
-			if ETLTemp: Temp13ETL, Temp14ETL, Temp15ETL, Temp16ETL, Temp17ETL, Temp18ETL, Temp19ETL, Temp20ETL, LowVoltage1ETL, Current1ETL, LowVoltage2ETL, Current2ETL, LowVoltage3ETL, Current3ETL = gt.ConvertEnv(ETLTimestamp)
+			# Temp13ETL, Temp14ETL, Temp15ETL, Temp16ETL, Temp17ETL, Temp18ETL, Temp19ETL, Temp20ETL, LowVoltage1ETL, Current1ETL, LowVoltage2ETL, Current2ETL, LowVoltage3ETL, Current3ETL = gt.ConvertEnv(ETLTimestamp)
+			Temp13ETL =0
+			Temp14ETL=0
+			Temp15ETL=0
+			Temp16ETL=0
+			Temp17ETL=0
+			Temp18ETL=0
+			Temp19ETL=0
+			Temp20ETL=0
+			LowVoltage1ETL=0
+			Current1ETL=0
+			LowVoltage2ETL=0
+			Current2ETL=0
+			LowVoltage3ETL=0
+			Current3ETL =0
 			print 'Updating the run table'
 			print Temp13ETL, Temp14ETL, Temp15ETL, Temp16ETL, Temp17ETL, Temp18ETL, Temp19ETL, Temp20ETL, LowVoltage1ETL, Current1ETL, LowVoltage2ETL, Current2ETL, LowVoltage3ETL, Current3ETL
 			pf.NewRunRecord4(RunNumber, SpillTime, str(Duration), DigiListThisRun, Tracking, ConversionSampic, ConversionTekScope,ETROC_baseline,ETROC_config, xrdcpRawKeySightScope, xrdcpRawLecroyScope,ConversionKeySightScope,ConversionLecroyScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQLecroyScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope,  TimingDAQNoTracksLecroyScope, TimingDAQNoTracksDT5742, LabviewRecoVME, LabviewRecoDT5742, LabviewRecoKeySightScope, LabviewRecoSampic, LabviewRecoTekScope, BoxTemp, x_stage, y_stage, BoxVoltage, BarCurrent, z_rotation, BoxHum, BoxCurrent, BarVoltage, str(Temp13ETL), str(Temp14ETL), str(Temp15ETL), str(Temp16ETL), str(Temp17ETL), str(Temp18ETL), str(Temp19ETL), str(Temp20ETL), str(LowVoltage1ETL), str(Current1ETL), str(LowVoltage2ETL), str(Current2ETL), str(LowVoltage3ETL), str(Current3ETL), ConfigID, False, key)

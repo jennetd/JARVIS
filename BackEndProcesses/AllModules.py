@@ -19,13 +19,13 @@ import argparse
 
 ################### Run Table Information #################
 MyKey = '' #Read MyKey from key file in RecoProcesses
-RunTableName = 'tblBZkzgmZZJsJCDj'#'tblWRkYB2W4WuTuX6'
-SensorTableName = 'tblzPmqEvalHJXwdQ'##'tblUHmPZb7fqUL7oxD'
-ConfigTableName = 'tblOFR6E33CtkUZj5'
-KeySightScopeConfigTableName = 'tbl3swaTgFmRoXT9H'
-LecroyScopeConfigTableName = 'tblmAzhMZVj6ftKcO'
+RunTableName = 'tblb8KaNSDtP4lQ51'#'tblWRkYB2W4WuTuX6'
+SensorTableName = 'tbl9YM1b1OPNlzKFy'##'tblUHmPZb7fqUL7oxD'
+ConfigTableName = 'tbloOhHbzH6zWwdLN'
+KeySightScopeConfigTableName = 'tblDBWLqMjQX0z7Bp'
+LecroyScopeConfigTableName = 'tblWJZSjvzNcR5YEw'
 
-BaseID = 'appc37JYrvqwF3b0j'#'appxV78j7svJHd3k6'
+BaseID = 'appMcxkvX9UChFps1'#'appxV78j7svJHd3k6'
 CurlBaseCommandWithoutTable = 'https://api.airtable.com/v0/%s' % (BaseID)
 CurlBaseCommand = 'https://api.airtable.com/v0/%s/%s' % (BaseID, RunTableName)
 CurlBaseCommandSensor = 'https://api.airtable.com/v0/%s/%s' % (BaseID, SensorTableName)
@@ -54,10 +54,10 @@ ResultTrackFileNameAfterRunNumberFast = '_CMSTiming_FastTriggerStream_converted.
 
 ############## For timingdaq02 ############
 # BaseTestbeamDir = '/uscms/home/rheller/nobackup/2020_02_CMSTiming/' 
-BaseTestbeamDir = '/home/daq/2021_CMSTiming_ETL/' 
-eosBaseDir = 'root://cmseos.fnal.gov//store/group/cmstestbeam/2021_CMSTiming_ETL/'
+BaseTestbeamDir = '/home/daq/SurvivalBeam2021/' 
+eosBaseDir = 'root://cmseos.fnal.gov//store/group/cmstestbeam/SurvivalBeam2021/'
 BaseTrackDirLocal = '%sTracks/' % BaseTestbeamDir
-LocalSSH = 'daq@timingdaq02.dhcp.fnal.gov'
+LocalSSH = 'daq@timingdaq01.dhcp.fnal.gov'
 EnvSetupPath = '/home/daq/setup.sh' ############### Remember to change ProcessExec accordingly
 EnvSetupPath2 = '/home/daq/otsdaq/setup_ots.sh' ############### Remember to change ProcessExec accordingly
 # TimingDAQDir = '/uscms/home/rheller/nobackup/CMS-MTD/TimingDAQ/'
@@ -141,7 +141,8 @@ TwoStageRecoDigitizers = {
                                             'RawConversionLocalPath' : '/home/daq/LecroyMount/',
                                             'RawTimingDAQLocalPath'  : '%sLecroyScope/RecoData/ConversionRECO/'  % (BaseTestbeamDir),
                                             'RecoTimingDAQLocalPath' : '%sLecroyScope/RecoData/TimingDAQRECO/' % (BaseTestbeamDir),
-                                            'RawTimingDAQFileNameFormat' : 'run_scope', ##### run_scope<run>.root 
+                                            'RawTimingDAQFileNameFormat' : 'converted_run', ##### run_scope<run>.root 
+                                            # 'RawTimingDAQFileNameFormat' : 'run_scope', ##### run_scope<run>.root 
                                             },
 
                         }
@@ -184,7 +185,7 @@ DigitizerDict = {
 
 ProcessDict = {
                     0 : {'Tracking' : {'SizeCut' : 7000}},
-                    1 : {'Conversion' : {'SizeCut' : 20000}},
+                    1 : {'Conversion' : {'SizeCut' : 20}},
                     2 : {'TimingDAQ' : {'SizeCut' : 20000}},
                     3 : {'TimingDAQNoTracks' : {'SizeCut' : 20000}},
                     4 : {'LabviewReco' : {'SizeCut' : 20000}},

@@ -131,12 +131,17 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 							pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[1], False, MyKey)
 							am.time.sleep(15) #may not be necessary to wait too long anymore
 						session = am.subprocess.Popen('source %s; %s' % (am.EnvSetupPath,str(CMD)),stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT, shell=True)
+						# print CMD
+						# return
 						while True:
 							line = session.stdout.readline()
 							am.ProcessLog(ProcessName, run, line)
 							if not line and session.poll() != None:
 								break
-						if FileSizeBool(ResultFileLocation,SizeCut) or not am.os.path.exists(ResultFileLocation): BadProcessExec = True                                                                                                                                                                                                                                                     
+						if FileSizeBool(ResultFileLocation,SizeCut) or not am.os.path.exists(ResultFileLocation):
+							BadProcessExec = True
+							print "Looking for file at ",ResultFileLocation
+                                                                                                           
 						if BadProcessExec:                                                                                                                                                                                                                               
 							if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[2], False, MyKey)  
 							print 'Bad %s execution for run %d. Either the CMD format is wrong or somwthing else was wrong while execution. Please check the ProcessLog to know more.\n' % (ProcessName, run)
