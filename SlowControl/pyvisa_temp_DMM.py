@@ -12,7 +12,7 @@ def getResourceDMM(debug=False):
     #my_instrument = rm.open_resource('ASRL/dev/ttyUSB0::INSTR') #KEITHLEY INSTRUMENTS INC.,MODEL 2410,4105344,C33   Mar 31 2015 09:32:39/A02  /J/K
     #my_instrument = rm.open_resource('TCPIP0::192.168.133.159::inst0::INSTR') #KEYSIGHT TECHNOLOGIES,MSOX92004A,MY53240102,05.70.00901
     #my_instrument = rm.open_resource('TCPIP0::192.168.133.169::inst0::INSTR') #LECROY,WR8208HD,LCRY5003N60377,9.4.0
-    my_instrument = rm.open_resource('TCPIP::192.168.133.53::1394::SOCKET') #Keithley DMM
+    my_instrument = rm.open_resource('TCPIP::192.168.99.53::1394::SOCKET') #Keithley DMM
     #my_instrument = rm.open_resource('TCPIP::192.168.133.163::1394::SOCKET') #Keithley DMM
     my_instrument.write("*RST; status:preset; *CLS")
     my_instrument.write("TEMP:TRAN FRTD")

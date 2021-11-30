@@ -3,42 +3,14 @@ from datetime import datetime
 import time as t
 import ROOT
 from array import array
-from collections import Counter
 
 outputtag= "prebeam"
-StartDate_ = '[2021-3-24T18:30:00]:'
-#StartDate_ = '[2021-03-25T12:30:00]:'
-EndDate_ = '[2021-03-28T12:00:00]:'
-dewPointLocalPath="tempLogs/prebeam"
+StartDate_ = '[2021-11-29T18:00:00]:'
+EndDate_ = '[2021-11-30T18:00:00]:'
 
 # outputtag = "batch_one_set_one"
 # StartDate_ = '[2021-03-26T18:00:00]:'
 # EndDate_ = None
-
-
-# outputtag = "batch_two_install"
-# StartDate_ = '[2021-03-29T08:00:00]:'
-# EndDate_ = '[2021-03-29T21:00:00]:'
-# dewPointLocalPath="tempLogs/prebeam_two"
-
-#outputtag = "batch_two"
-#StartDate_ = '[2021-03-30T08:00:00]:'
-#EndDate_ = '[2021-03-31T22:00:00]:'
-
-#outputtag = "batch_three_install"
-#StartDate_ = '[2021-04-01T10:00:00]:'
-#EndDate_ = None
-#dewPointLocalPath="tempLogs"
-
-# outputtag = "batch_three_day_one"
-# StartDate_ = '[2021-04-02T09:00:00]:'
-# EndDate_ = '[2021-04-03T09:00:00]:'
-# dewPointLocalPath="tempLogs"
-
-# outputtag = "batch_three_day_two"
-# StartDate_ = '[2021-04-03T09:00:00]:'
-# EndDate_ = None
-# dewPointLocalPath="tempLogs"
 
 ROOT.gROOT.SetBatch(True)
 
@@ -49,6 +21,14 @@ def getDateTime(date):
 
 def to_seconds(date):
     return t.mktime(date.timetuple())
+
+def dict_merge(y, x):
+    for k, v in x.items(): 
+        if k in y.keys(): 
+            y[k] += v 
+        else: 
+            y[k] = v 
+    return y
 
 def parseDewPointline(l):
     data = l.split()
@@ -110,9 +90,9 @@ def drawTimeHisto(Ymax, Yname, plotLog, pdfName, startTime, endTime, plotDict=No
         try:
             g = plotTGraph(len(plotLog[channel]['x']), array('d', plotLog[channel]['x']), array('d', plotLog[channel]['y']), plotLog[channel]["color"])
         except:
-            print "-------------------------"
-            print "Warning: No Data for ", channel, plotLog[channel]
-            print "-------------------------"
+            print("-------------------------")
+            print("Warning: No Data for ", channel, plotLog[channel])
+            print("-------------------------")
             continue
         g.Draw("P same")
         history.append(g)
@@ -123,7 +103,7 @@ def drawTimeHisto(Ymax, Yname, plotLog, pdfName, startTime, endTime, plotDict=No
         try:
             g1 = plotTGraph(len(plotLog['ch1']['x']), array('d', plotLog['ch1']['x']), array('d', plotDict[channel]), ROOT.kBlack)
         except:
-            print "Broken lol"
+            print("Broken lol")
             continue
         g1.SetMarkerColor(colors[channel])
         g1.Draw("P same")
@@ -134,8 +114,7 @@ def drawTimeHisto(Ymax, Yname, plotLog, pdfName, startTime, endTime, plotDict=No
     c1.Print(pdfName)
 
 def main():
-    # dewPointLocalPath = "tempLogs"    
-
+    dewPointLocalPath = "tempLogs"
     files = glob(dewPointLocalPath+"/*.txt")
     startTime = to_seconds(getDateTime(StartDate_))
     endTime = to_seconds(getDateTime(EndDate_)) if EndDate_ else to_seconds(datetime.now()) + 2*3600
@@ -164,10 +143,11 @@ def main():
         dewpointLog[channel]['y'].append(d['val'])
 
         if allBoardTemps:
-            allBoardTemps = Counter(allBoardTemps) + Counter(d['boardTemps'])
+            #allBoardTemps = Counter(allBoardTemps) + Counter(d['boardTemps'])
+            allBoardTemps = dict_merge(allBoardTemps, d['boardTemps'])
         else:
             allBoardTemps = d['boardTemps']
-    allBoardTemps = dict(allBoardTemps)
+    #allBoardTemps = dict(allBoardTemps)
 
     # Draw histograms
     drawTimeHisto(50.0, "Temp. [C]", dewpointLog, "dewPoint_%s.png"%outputtag, startTime, endTime, allBoardTemps)
