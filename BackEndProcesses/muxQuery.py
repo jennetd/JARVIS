@@ -12,7 +12,7 @@ def GetMuxStringConf(GlobalConfNum):
 	headers = {'Authorization': 'Bearer %s' % MyKey, } 
 	if pf.QueryGreenSignal(True): response = am.requests.get(am.CurlBaseCommandConfig  + '?filterByFormula=' + FilterByFormula, headers=headers)
 	ResponseDict = am.ast.literal_eval(response.text)  
-	scopeconfID = ResponseDict['records'][0]['fields']['ConfigurationKeySightScope']
+	scopeconfID = ResponseDict['records'][0]['fields']['ConfigurationLecroyScope']
 
 
 	## next find mux settings from keysight scope config

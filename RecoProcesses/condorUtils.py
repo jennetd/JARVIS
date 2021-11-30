@@ -53,8 +53,11 @@ def xrdcpRaw(run,Digitizer):
 
 def xrdcpRaw2(run,Digitizer):
 	mountDir = am.TwoStageRecoDigitizers[Digitizer]['RawConversionLocalPath']
+	print "Looking for files at ",mountDir
+
 	LocalDir = am.BaseTestbeamDir+ Digitizer+"/RawData/" #am.TwoStageRecoDigitizers[Digitizer]['RawConversionLocalPath']
-	destination = am.eosBaseDir+Digitizer+"/RawData" 
+	destination = am.eosBaseDir+Digitizer+"/RawData/" 
+
 	nchan = 4
 	print Digitizer
 	if Digitizer == "LecroyScope":
@@ -98,12 +101,24 @@ def xrdcpRaw2(run,Digitizer):
 			if not line and session2.poll() != None:
 				break
 	
+
+	#### Copy configuration info.
+	configFileName = am.LocalConfigPath +"/Runs/info_%i.json"%run
+	configDestination = am.eosBaseDir + "/ConfigInfo/Runs/"
+	cmd = ["xrdcp","-f",configFileName,configDestination]
+	print cmd
+	session3 = am.subprocess.Popen(cmd,stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT)
+	while True:
+		line = session3.stdout.readline()
+		# am.ProcessLog(ProcessName, run, line)
+		if not line and session3.poll() != None:
+			break
+
 	# for i in range(1,5):
 	# 	success = success and CheckExistsEOS(destination+"Wavenewscope_CH%i_%i.bin" %(i,run),2000)
 
 
 	return True
-
 
 #	return success
  

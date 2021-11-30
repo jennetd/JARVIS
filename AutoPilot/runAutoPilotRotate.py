@@ -1,13 +1,13 @@
 import os
 #conf_list = [169,183,165,166,167,168]
 # conf_list = [171,172,173,174,175,176]
-conf_list = [227]
+conf_list = [440,441]
 AutoPilotStatus=1
-runsPerConf = 5
+runsPerConf = 1
 iteration = 0
 while AutoPilotStatus:
 	
-	os.system("python AutoPilotRotate.py -it 1 -nruns %i -conf %i"%(runsPerConf, conf_list[iteration]))
+	os.system("python AutoPilot2.py -it 0 -nruns %i -conf %i"%(runsPerConf, conf_list[iteration]))
 	iteration = (iteration+1) % len(conf_list)
 
 	#################################################

@@ -202,7 +202,7 @@ while (AutoPilotStatus == 1 and iteration < maxRuns):
 	print ""
 	
 	print "Configuration multiplexer for configuration %i"%Configuration
-	ConfigureMux(Configuration)
+	if SetMux: ConfigureMux(Configuration)
 
 	if ETROC:
 		ETROC_baseline_file =  open(ETROC_baseline_filename, "r")
