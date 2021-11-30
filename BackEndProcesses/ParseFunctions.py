@@ -1,5 +1,5 @@
 import AllModules as am
-
+import json as js
 ################################################################################################################################################################################################################                                                                         
 ################################################################################################################################################################################################################                                                                         
 #########################################These Functions parse the run table and performs function such as record query,  record update, record Addition etc ###################################################
@@ -93,6 +93,86 @@ def ORFunc(AttributeNameList, AttributeStatusList):
         index = index + 1
     Output = Output + ')'
     return Output
+
+
+def DownloadConfigs(Debug, MyKey):
+    headers = {'Authorization': 'Bearer %s' % MyKey, }
+    
+    ConfigResponse = am.requests.get(am.CurlBaseCommandConfig, headers=headers)
+    ConfigDict = am.ast.literal_eval(ConfigResponse.text)
+
+    LecroyResponse = am.requests.get(am.CurlBaseCommandLecroy, headers=headers)
+    LecroyDict = am.ast.literal_eval(LecroyResponse.text)
+
+    KeySightResponse = am.requests.get(am.CurlBaseCommandKeySight, headers=headers)
+    KeySightDict = am.ast.literal_eval(KeySightResponse.text)
+
+    CAENResponse = am.requests.get(am.CurlBaseCommandCAEN, headers=headers)
+    CAENDict = am.ast.literal_eval(CAENResponse.text)
+
+    SensorResponse = am.requests.get(am.CurlBaseCommandSensor, headers=headers)
+    SensorDict = am.ast.literal_eval(SensorResponse.text)
+
+
+    globalDictFileName = am.LocalConfigPath+"Configurations.txt"
+    gfile = open(globalDictFileName, "w")
+    js.dump(ConfigDict, gfile)
+    gfile.close()
+
+    LecroyDictFileName = am.LocalConfigPath+"LecroyConfigurations.txt"
+    lfile = open(LecroyDictFileName, "w")
+    js.dump(LecroyDict, lfile)
+    lfile.close()
+
+    KeySightDictFileName = am.LocalConfigPath+"KeySightConfigurations.txt"
+    kfile = open(KeySightDictFileName, "w")
+    js.dump(KeySightDict, kfile)
+    kfile.close()
+
+    CAENDictFileName = am.LocalConfigPath+"CAENConfigurations.txt"
+    cfile = open(CAENDictFileName, "w")
+    js.dump(CAENDict, cfile)
+    cfile.close()
+
+    SensorDictFileName = am.LocalConfigPath+"SensorConfigurations.txt"
+    sensorfile = open(SensorDictFileName, "w")
+    js.dump(SensorDict, sensorfile)
+    sensorfile.close()
+
+    return ConfigDict, LecroyDict,KeySightDict, CAENDict,SensorDict
+
+def getSensorById(SensorDict,idnum):
+    for item in SensorDict['records']: 
+        if item['id']==idnum:
+            return item['fields']['Name no commas allowed']
+
+def getConfigsByGConf(ConfigDict,gconf):
+    for item in ConfigDict['records']:
+        if item['fields']['Configuration number']==gconf:
+            lecroyConfID = item['fields']['ConfigurationLecroyScope'][0]
+            caenConfID = item['fields']['ConfigurationCAENHV'][0]
+            return lecroyConfID,caenConfID
+
+
+def getSimpleLecroyDict(LecroyDict,SensorDict,lecroyConfID):
+    for item in LecroyDict['records']: 
+        if item['id']==lecroyConfID:
+            simpleLecroyDict =  item['fields']
+            for key in simpleLecroyDict: 
+                if "Sensor" in key:
+                    simpleLecroyDict[key] = getSensorById(SensorDict,simpleLecroyDict[key][0])
+        # print key, test['records'][0]['fields'][key]
+            return simpleLecroyDict
+
+def getSimpleCAENDict(CAENDict,SensorDict,caenConfID):
+    for item in CAENDict['records']: 
+        if item['id']==caenConfID:
+            simpleCAENDict =  item['fields']
+            for key in simpleCAENDict: 
+                if "Sensor" in key:
+                    simpleCAENDict[key] = getSensorById(SensorDict,simpleCAENDict[key][0])
+        # print key, test['records'][0]['fields'][key]
+            return simpleCAENDict
 
 
 ##################### Main Run Table Operaton functions #########################
@@ -313,6 +393,22 @@ def NewRunRecord2(RunNumber, StartTime, Duration, DigitizerList, Tracking, Conve
     else:
         print 'Nothing to log in the run table'
 
+
+def NewRunRecordSimple(run_info,ConfigID,Debug,MyKey):
+    header_info = {
+        'Authorization': 'Bearer %s' % MyKey, 
+        'Content-Type': 'application/json',
+    }
+
+    string_run_info = js.dumps({"fields":run_info})
+
+    response = am.requests.post(am.CurlBaseCommand, headers=header_info, data=string_run_info)
+    ResponseDict = am.ast.literal_eval(response.text)
+    print string_run_info
+    print ResponseDict
+    if Debug: return ResponseDict, run_info
+
+
 def NewRunRecord4(RunNumber, StartTime, Duration, DigitizerList, Tracking, ConversionSampic, ConversionTekScope,ETROC_baseline, ETROC_config,xrdcpRawKeySightScope,xrdcpRawLecroyScope,ConversionKeySightScope,ConversionLecroyScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope,TimingDAQLecroyScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope,TimingDAQNoTracksLecroyScope, TimingDAQNoTracksDT5742, LabviewRecoVME, LabviewRecoDT5742, LabviewRecoKeySightScope, LabviewRecoSampic, LabviewRecoTekScope, BoxTemp, x_stage, y_stage, BoxVoltage, BarCurrent, z_rotation, BoxHum, BoxCurrent, BarVoltage, Temp13ETL, Temp14ETL, Temp15ETL, Temp16ETL, Temp17ETL, Temp18ETL, Temp19ETL, Temp20ETL, LowVoltage1ETL, Current1ETL, LowVoltage2ETL, Current2ETL, LowVoltage3ETL, Current3ETL, ConfigID, Debug, MyKey):
     #NewRunRecord(RunNumber, DigitizerList, Debug)
     headers = {
@@ -334,10 +430,12 @@ def NewRunRecord4(RunNumber, StartTime, Duration, DigitizerList, Tracking, Conve
             digitizerListString = digitizerListString + ',' + ( '"%s"' % digitizer )
     digitizerListString = digitizerListString + ']'
 
-    data = '{"fields":{"Run number": %d,"Start time": "%s", "Duration": "%s", %s, "ETROC baseline": "%s", "ETROC config": "%s" ,"xrdcpRawKeySightScope":["%s"],"xrdcpRawLecroyScope":["%s"],"Tracking": ["%s"], "ConversionSampic": ["%s"], "ConversionTekScope": ["%s"], "ConversionKeySightScope": ["%s"], "ConversionLecroyScope": ["%s"], "TimingDAQVME": ["%s"], "TimingDAQSampic": ["%s"], "TimingDAQTekScope": ["%s"], "TimingDAQKeySightScope": ["%s"], "TimingDAQLecroyScope": ["%s"], "TimingDAQDT5742": ["%s"],"TimingDAQNoTracksVME": ["%s"], "TimingDAQNoTracksSampic": ["%s"], "TimingDAQNoTracksTekScope": ["%s"], "TimingDAQNoTracksKeySightScope": ["%s"], "TimingDAQNoTracksLecroyScope": ["%s"], "TimingDAQNoTracksDT5742": ["%s"], "LabviewRecoVME": ["%s"], "LabviewRecoDT5742": ["%s"], "LabviewRecoKeySightScope": ["%s"], "LabviewRecoSampic": ["%s"], "LabviewRecoTekScope": ["%s"], "Configuration": ["%s"],"BoxTempOlmo": "%s","x_stageOlmo": "%s","y_stageOlmo": "%s","BoxVoltageOlmo": "%s","BarCurrentOlmo": "%s","z_rotationOlmo": "%s","BoxHumOlmo": "%s","BoxCurrentOlmo": "%s", "BarVoltageOlmo": "%s", "Temp13ETL" : "%s", "Temp14ETL" : "%s", "Temp15ETL" : "%s", "Temp16ETL" : "%s", "Temp17ETL" : "%s", "Temp18ETL" : "%s", "Temp19ETL" : "%s", "Temp20ETL" : "%s", "LowVoltage1ETL" : "%s", "LowVoltage2ETL" : "%s", "LowVoltage3ETL" : "%s", "Current1ETL" : "%s", "Current2ETL" : "%s", "Current3ETL" : "%s"}}' % (RunNumber, StartTime, Duration, digitizerListString , ETROC_baseline,ETROC_config, xrdcpRawKeySightScope, xrdcpRawLecroyScope, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, ConversionLecroyScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQLecroyScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksLecroyScope, TimingDAQNoTracksDT5742, LabviewRecoVME, LabviewRecoDT5742, LabviewRecoKeySightScope, LabviewRecoSampic, LabviewRecoTekScope, ConfigID[0], BoxTemp, x_stage, y_stage, BoxVoltage, BarCurrent, z_rotation, BoxHum, BoxCurrent, BarVoltage, Temp13ETL, Temp14ETL, Temp15ETL, Temp16ETL, Temp17ETL, Temp18ETL, Temp19ETL, Temp20ETL, LowVoltage1ETL, LowVoltage2ETL, LowVoltage3ETL, Current1ETL, Current2ETL, Current3ETL)
+    data = '{"fields":{"Run number": %d,"Start time": "%s", "Duration": "%s", %s, "ETROC baseline": "%s", "ETROC config": "%s" ,"xrdcpRawKeySightScope":["%s"],"xrdcpRawLecroyScope":["%s"], "ConversionSampic": ["%s"], "ConversionTekScope": ["%s"], "ConversionKeySightScope": ["%s"], "ConversionLecroyScope": ["%s"], "TimingDAQVME": ["%s"], "TimingDAQSampic": ["%s"], "TimingDAQTekScope": ["%s"], "TimingDAQKeySightScope": ["%s"], "TimingDAQLecroyScope": ["%s"], "TimingDAQDT5742": ["%s"],"TimingDAQNoTracksVME": ["%s"], "TimingDAQNoTracksSampic": ["%s"], "TimingDAQNoTracksTekScope": ["%s"], "TimingDAQNoTracksKeySightScope": ["%s"], "TimingDAQNoTracksLecroyScope": ["%s"], "TimingDAQNoTracksDT5742": ["%s"], "LabviewRecoVME": ["%s"], "LabviewRecoDT5742": ["%s"], "LabviewRecoKeySightScope": ["%s"], "LabviewRecoSampic": ["%s"], "LabviewRecoTekScope": ["%s"], "Configuration": ["%s"],"BoxTempOlmo": "%s","x_stageOlmo": "%s","y_stageOlmo": "%s","BoxVoltageOlmo": "%s","BarCurrentOlmo": "%s","z_rotationOlmo": "%s","BoxHumOlmo": "%s","BoxCurrentOlmo": "%s", "BarVoltageOlmo": "%s", "Temp13ETL" : "%s", "Temp14ETL" : "%s", "Temp15ETL" : "%s", "Temp16ETL" : "%s", "Temp17ETL" : "%s", "Temp18ETL" : "%s", "Temp19ETL" : "%s", "Temp20ETL" : "%s", "LowVoltage1ETL" : "%s", "LowVoltage2ETL" : "%s", "LowVoltage3ETL" : "%s", "Current1ETL" : "%s", "Current2ETL" : "%s", "Current3ETL" : "%s"}}' % (RunNumber, StartTime, Duration, digitizerListString , ETROC_baseline,ETROC_config, xrdcpRawKeySightScope, xrdcpRawLecroyScope, ConversionSampic, ConversionTekScope, ConversionKeySightScope, ConversionLecroyScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQLecroyScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksLecroyScope, TimingDAQNoTracksDT5742, LabviewRecoVME, LabviewRecoDT5742, LabviewRecoKeySightScope, LabviewRecoSampic, LabviewRecoTekScope, ConfigID[0], BoxTemp, x_stage, y_stage, BoxVoltage, BarCurrent, z_rotation, BoxHum, BoxCurrent, BarVoltage, Temp13ETL, Temp14ETL, Temp15ETL, Temp16ETL, Temp17ETL, Temp18ETL, Temp19ETL, Temp20ETL, LowVoltage1ETL, LowVoltage2ETL, LowVoltage3ETL, Current1ETL, Current2ETL, Current3ETL)
 
+    print data
 
     #Example template of a query response :  {'records': [{'createdTime': '2015-02-12T03:40:42.000Z', 'fields': {'Conversion': ['Complete'], 'Time Resolution 1': 30, 'TimingDAQ': ['Failed'], 'Notes': 'Make test beam great again\n', 'HV 1': ['recJRiQqSHzTNZqal'], 'Run number': 4, 'Tracking': ['Processing'], 'Configuration': ['rectY95k7m19likjW'], 'Sensor': ['recNwdccBdzS7iBa5']}, 'id': 'recNsKOMDvYKrJzXd'}]}
+
     #data = '{"fields":{"Run number": %d,"Start time": "%s", "Duration": "%s", "Digitizer": ["%s","%s"], "Tracking": ["%s"], "ConversionSampic": ["%s"], "ConversionTekScope": ["%s"], "ConversionKeySightScope": ["%s"], "TimingDAQVME": ["%s"], "TimingDAQSampic": ["%s"], "TimingDAQTekScope": ["%s"], "TimingDAQKeySightScope": ["%s"], "TimingDAQDT5742": ["%s"],"TimingDAQNoTracksVME": ["%s"], "TimingDAQNoTracksSampic": ["%s"], "TimingDAQNoTracksTekScope": ["%s"], "TimingDAQNoTracksKeySightScope": ["%s"], "TimingDAQNoTracksDT5742": ["%s"],"Sensor": ["%s"],"Configuration": ["%s"]}}' % (RunNumber, StartTime, Duration, Digitizer1, Digitizer2, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, SensorID[0], ConfigID[0])
     #data = '{"fields":{"Run number": %d,"Start time": "%s", "Duration": "%s", "Digitizer": %s, "Tracking": ["%s"], "ConversionSampic": ["%s"], "ConversionTekScope": ["%s"], "ConversionKeySightScope": ["%s"], "TimingDAQVME": ["%s"], "TimingDAQSampic": ["%s"], "TimingDAQTekScope": ["%s"], "TimingDAQKeySightScope": ["%s"], "TimingDAQDT5742": ["%s"],"TimingDAQNoTracksVME": ["%s"], "TimingDAQNoTracksSampic": ["%s"], "TimingDAQNoTracksTekScope": ["%s"], "TimingDAQNoTracksKeySightScope": ["%s"], "TimingDAQNoTracksDT5742": ["%s"],"Sensor": ["%s"],"Configuration": ["%s"]}}' % (RunNumber, StartTime, Duration, DigitizerList, Tracking, ConversionSampic, ConversionTekScope, ConversionKeySightScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksDT5742, SensorID[0], ConfigID[0])
     #data = '{"fields":{"Run number": %d, "Digitizer": ["%s","%s"]}}' % (RunNumber, Digitizer1, Digitizer2)

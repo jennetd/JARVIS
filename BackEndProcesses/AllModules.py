@@ -24,6 +24,7 @@ SensorTableName = 'tbl9YM1b1OPNlzKFy'##'tblUHmPZb7fqUL7oxD'
 ConfigTableName = 'tbloOhHbzH6zWwdLN'
 KeySightScopeConfigTableName = 'tblDBWLqMjQX0z7Bp'
 LecroyScopeConfigTableName = 'tblWJZSjvzNcR5YEw'
+CAENConfigTableName = 'tblsHsXkGT6WeIBxq'
 
 BaseID = 'appMcxkvX9UChFps1'#'appxV78j7svJHd3k6'
 CurlBaseCommandWithoutTable = 'https://api.airtable.com/v0/%s' % (BaseID)
@@ -31,6 +32,8 @@ CurlBaseCommand = 'https://api.airtable.com/v0/%s/%s' % (BaseID, RunTableName)
 CurlBaseCommandSensor = 'https://api.airtable.com/v0/%s/%s' % (BaseID, SensorTableName)
 CurlBaseCommandConfig = 'https://api.airtable.com/v0/%s/%s' % (BaseID, ConfigTableName)
 CurlBaseCommandKeySight = 'https://api.airtable.com/v0/%s/%s' % (BaseID, KeySightScopeConfigTableName)
+CurlBaseCommandLecroy = 'https://api.airtable.com/v0/%s/%s' % (BaseID, LecroyScopeConfigTableName)
+CurlBaseCommandCAEN = 'https://api.airtable.com/v0/%s/%s' % (BaseID, CAENConfigTableName)
 QueryFilePath ="../QueryLog.txt" # Don't care about this
 
 #############################################################
@@ -62,10 +65,14 @@ EnvSetupPath = '/home/daq/setup.sh' ############### Remember to change ProcessEx
 EnvSetupPath2 = '/home/daq/otsdaq/setup_ots.sh' ############### Remember to change ProcessExec accordingly
 # TimingDAQDir = '/uscms/home/rheller/nobackup/CMS-MTD/TimingDAQ/'
 TimingDAQDir = '%sTimingDAQ/'%BaseTestbeamDir
+TimingDAQDir = '/home/daq/LecroyControl/HitCounter/' ### HACK FOR LONG ACQ
 CondorDir = '%sCondor/'%BaseTestbeamDir
 TOFHIRRecoDir = '/uscms/home/rheller/nobackup/sw_daq_tofhir_v1/build/'
 TOFHIRConfigDir = '/uscms/home/rheller/nobackup/2019_04_April_CMSTiming/TOFHIR/ConfigArchive/'
 TOFHIRRecoDir2 = '/uscms/home/rheller/nobackup/sw_daq_tofhir_v1/DAQReco/'
+LocalConfigPath = '%sConfigInfo/'%BaseTestbeamDir
+
+
 ############## For PCCITFNAL01 ############
 #BaseTestbeamDir = '/data2/2019_04_April_CMSTiming/'
 #BaseTrackDirLocal = '%sTracks/' % BaseTestbeamDir
@@ -136,14 +143,35 @@ TwoStageRecoDigitizers = {
                                             },
                          'LecroyScope'      :  {
                                             'ConfigFileBasePath'     : '%sLecroyScope_' % (ConfigFileBasePath),
-                                            'DatToROOTExec'          : 'NetScopeStandaloneDat2Root', 
-                                            'ConversionCMD'          : 'python %s/Reconstruction/conversion.py --runNumber ' % (LecroyScopeControlDir), 
+                                            'DatToROOTExec'          : 'makeHitTree', 
+                                            'ConversionCMD'          : 'python %s/Reconstruction/conversion_one_event.py --runNumber ' % (LecroyScopeControlDir), 
                                             'RawConversionLocalPath' : '/home/daq/LecroyMount/',
                                             'RawTimingDAQLocalPath'  : '%sLecroyScope/RecoData/ConversionRECO/'  % (BaseTestbeamDir),
-                                            'RecoTimingDAQLocalPath' : '%sLecroyScope/RecoData/TimingDAQRECO/' % (BaseTestbeamDir),
+                                            'RecoTimingDAQLocalPath' : '%sLecroyScope/RecoData/HitCounterRECO/' % (BaseTestbeamDir),
                                             'RawTimingDAQFileNameFormat' : 'converted_run', ##### run_scope<run>.root 
+                                            'FinalFileNameFormat' : 'hitTree_run', ##### run_scope<run>.root 
                                             # 'RawTimingDAQFileNameFormat' : 'run_scope', ##### run_scope<run>.root 
                                             },
+                        # 'LecroyScope'      :  {
+                        #                    'ConfigFileBasePath'     : '%sLecroyScope_' % (ConfigFileBasePath),
+                        #                    'DatToROOTExec'          : 'NetScopeStandaloneDat2Root', 
+                        #                    'ConversionCMD'          : 'python %s/Reconstruction/conversion.py --runNumber ' % (LecroyScopeControlDir), 
+                        #                    'RawConversionLocalPath' : '/home/daq/LecroyMount/',
+                        #                    'RawTimingDAQLocalPath'  : '%sLecroyScope/RecoData/ConversionRECO/'  % (BaseTestbeamDir),
+                        #                    'RecoTimingDAQLocalPath' : '%sLecroyScope/RecoData/TimingDAQRECO/' % (BaseTestbeamDir),
+                        #                    'RawTimingDAQFileNameFormat' : 'converted_run', ##### run_scope<run>.root 
+                        #                    # 'RawTimingDAQFileNameFormat' : 'run_scope', ##### run_scope<run>.root 
+                        #                    },
+                        # 'LecroyScopeLong'  :  {
+                        #                    'ConfigFileBasePath'     : '%sLecroyScopeLong_' % (ConfigFileBasePath),
+                        #                    'DatToROOTExec'          : 'makeHitTree', 
+                        #                    'ConversionCMD'          : 'python %s/Reconstruction/conversion_one_event.py --runNumber ' % (LecroyScopeControlDir), 
+                        #                    'RawConversionLocalPath' : '/home/daq/LecroyMount/',
+                        #                    'RawTimingDAQLocalPath'  : '%sLecroyScopeLong/RecoData/ConversionRECO/'  % (BaseTestbeamDir),
+                        #                    'RecoTimingDAQLocalPath' : '%sLecroyScopeLong/RecoData/HitCounterRECO/' % (BaseTestbeamDir),
+                        #                    'RawTimingDAQFileNameFormat' : 'converted_run', ##### run_scope<run>.root 
+                        #                    # 'RawTimingDAQFileNameFormat' : 'run_scope', ##### run_scope<run>.root 
+                        #                    },
 
                         }
 
@@ -180,14 +208,14 @@ DigitizerDict = {
                     3 : 'KeySightScope',
                     4 : 'Sampic',
                     5 : 'TOFHIR',
-                    6 : 'LecroyScope',
+                    6 : 'LecroyScope'
                 }
 
 ProcessDict = {
                     0 : {'Tracking' : {'SizeCut' : 7000}},
                     1 : {'Conversion' : {'SizeCut' : 20}},
                     2 : {'TimingDAQ' : {'SizeCut' : 20000}},
-                    3 : {'TimingDAQNoTracks' : {'SizeCut' : 20000}},
+                    3 : {'TimingDAQNoTracks' : {'SizeCut' : 20}},
                     4 : {'LabviewReco' : {'SizeCut' : 20000}},
                     5 : {'WatchCondor' : {'SizeCut' : 20000}},
                     6 : {'xrdcpRaw' : {'SizeCut' : 20000}}
