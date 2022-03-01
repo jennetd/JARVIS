@@ -1,6 +1,6 @@
 import os
 import AllModules as am
-import time
+import time 
 
 def xrdcpTracks(run): 
 	mountDir = am.BaseTrackDirLocal #am.TwoStageRecoDigitizers[Digitizer]['RawTimingDAQLocalPath']
@@ -68,9 +68,9 @@ def xrdcpRaw2(run,Digitizer):
 		elif Digitizer == "LecroyScope":
 			raw_filename =  mountDir+"C%i--Trace%i.trc" %(i,run)
 		counter=0
-		while not os.path.exists(raw_filename) and counter<40:
+		while not os.path.exists(raw_filename) and not os.path.exists(LocalDir+("C%i--Trace%i.trc" %(i,run))) and counter<5:
 			counter =counter+1
-			time.sleep(3)
+			time.sleep(2)
 
 		cmd = ["cp",raw_filename,LocalDir]
 		print cmd

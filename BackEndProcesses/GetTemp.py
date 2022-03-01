@@ -7,11 +7,46 @@ import subprocess as sp
 import socket
 import sys
 import glob
+import AllModules as am
 from bisect import bisect_left
 
 
 #labview_unsync_base_path = '/home/daq/LabviewData/LabviewUnsyncData/'
 labview_unsync_base_path = '/home/daq/2021_CMSTiming_ETL/JARVIS/tempLogs/'
+active_temp_base_path = am.BaseTestbeamDir+'/JARVIS/SlowControl/temp_dew_active.txt'
+active_CAEN_base_path = am.BaseTestbeamDir+'/JARVIS/SlowControl/CAEN_HV_active.txt'
+
+def GetACNetYield(run_info_dict):
+    path = am.BaseTestbeamDir+"JARVIS/SlowControl/acnet_buffer.txt"
+    infile = open(path,'r')
+
+    buff = infile.readline()
+    print buff
+    run_info_dict["MW1SEM [E9 ppp]"]=(float(buff.replace("+",""))/1.e9)
+
+
+def GetTemperaturesSimple(run_info_dict):
+    infile = open(active_temp_base_path,'r')
+    temps = infile.readline().split()
+
+    run_info_dict["Dew point"]="%0.2f"%float(temps[-1])
+    run_info_dict["TempSlot3"]="%0.2f"%float(temps[14])
+    run_info_dict["TempSlot7"]="%0.2f"%float(temps[15])
+    run_info_dict["TempSlot11"]="%0.2f"%float(temps[16])
+    run_info_dict["TempSlot15"]="%0.2f"%float(temps[17])
+    run_info_dict["TempSlot19"]="%0.2f"%float(temps[18])
+    run_info_dict["TempAir"]="%0.2f"%float(temps[19])
+
+def GetCAENInfoSimple(run_info_dict):
+    infile = open(active_CAEN_base_path,'r')
+    CAEN = infile.readline().split(",")
+
+# time, 1638578809, V_HV_0, 0.000000, I_HV_0, 0.500000, V_HV_1, 170.500000, I_HV_1, 0.500000, V_HV_2, 0.000000, I_HV_2, 0.000000, V_HV_3, 450.500000, I_HV_3, 24.000000, V_HV_4, 450.500000, I_HV_4, 20.000000, V_HV_5, 451.000000, I_HV_5, 29.500000, V_HV_6, 450.500000, I_HV_6, 26.500000, V_HV_7, 0.000000, I_HV_7, 0.000000, V_HV_8, 0.500000, I_HV_8, 0.000000, V_HV_9, 0.000000, I_HV_9, 0.000000, V_HV_10, 0.000000, I_HV_10, 0.000000, V_HV_11, 0.500000, I_HV_11, 0.500000, V_HV_12, 0.000000, I_HV_12, 0.000000, V_HV_13, 0.000000, I_HV_13, 0.000000, V_HV_14, 0.000000, I_HV_14, 0.000000, V_HV_15, 0.000000, I_HV_15, 0.000000, V_HV_16, 0.000000, I_HV_16, 0.000000, V_HV_17, 0.000000, I_HV_17, 0.000000, V_HV_18, 0.000000, I_HV_18, 0.500000, V_HV_19, 0.000000, I_HV_19, 0.500000, V_HV_20, 170.500000, I_HV_20, 0.500000, V_HV_21, 0.000000, I_HV_21, 0.000000, V_HV_22, 0.000000, I_HV_22, 0.500000, V_HV_23, 0.000000, I_HV_23, 0.000000
+
+
+    for i in range(3, 20):
+        run_info_dict["V{}".format(i)]=float("%0.2f"%float(CAEN[15 + 4*(i-3)]))
+        run_info_dict["I{}".format(i)]=float("%0.2f"%float(CAEN[17 + 4*(i-3)]))
 
 
 def greatest_number_less_than_value(seq,value):

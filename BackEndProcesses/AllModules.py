@@ -34,6 +34,7 @@ CurlBaseCommandConfig = 'https://api.airtable.com/v0/%s/%s' % (BaseID, ConfigTab
 CurlBaseCommandKeySight = 'https://api.airtable.com/v0/%s/%s' % (BaseID, KeySightScopeConfigTableName)
 CurlBaseCommandLecroy = 'https://api.airtable.com/v0/%s/%s' % (BaseID, LecroyScopeConfigTableName)
 CurlBaseCommandCAEN = 'https://api.airtable.com/v0/%s/%s' % (BaseID, CAENConfigTableName)
+CurlBaseCommandRunTable = 'https://api.airtable.com/v0/%s/%s' % (BaseID, RunTableName)
 QueryFilePath ="../QueryLog.txt" # Don't care about this
 
 #############################################################

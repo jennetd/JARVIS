@@ -11,25 +11,25 @@ LongAcquisitionMode = True
 
 #numEvents = 13000
 numEvents = 500 ## not used in Long mode
-numPoints = 10 ##MSa, only used in Long mode
-sampleRate = 10 #GSa/s
-horizontalWindow = 50 #ns
+numPoints = 25 ##MSa, only used in Long mode
+sampleRate = 2.5 #GSa/s
+horizontalWindow = 1000000 #ns
 
 ### if sample rate or horizontal window is changed, TimingDAQ must be recompiled to account for new npoints.
 #trigCh = "EX" 
 trigCh = "C4" 
-trig =  -0.01 # V
+trig =  -0.025 # V
 
 vScale1 = 0.05  
 vScale2 = 0.05
 vScale3 = 0.05 
-vScale4 = 0.02
+vScale4 = 0.05
 vScale5 = 0.05  
 vScale6 = 0.05
 vScale7 = 0.05 
 vScale8 = 0.05
 
-timeoffset = 0 #-207 #ns
+timeoffset = 5000000 #-207 #ns
 
 ############### Remember to source the otsdaq environment
 ############### Assuming the directory structure in the KeySightScope repository is the same as on this computer
@@ -83,7 +83,11 @@ while True:
             print "\n ####################### Running the scope acquisition ##################################\n"
             
             if not LongAcquisitionMode: ScopeCommand = 'python %s/Acquisition/acquisition.py --runNum %s --numEvents %d --sampleRate %d --horizontalWindow %d --trigCh %s --trig %f --vScale1 %f --vScale2 %f --vScale3 %f --vScale4 %f --vScale5 %f --vScale6 %f --vScale7 %f --vScale8 %f --timeoffset %i --trigSlope POS' % (LecroyScopeControlDir,runNumber, numEvents, sampleRate, horizontalWindow, trigCh, trig, vScale1, vScale2, vScale3, vScale4,vScale5, vScale6, vScale7, vScale8, timeoffset) 
-            else: ScopeCommand = 'python %s/Acquisition/acquisition_one_event.py --display 1 --runNum %s --numPoints %d --sampleRate %d --trigCh %s --trig %f --vScale1 %f --vScale2 %f --vScale3 %f --vScale4 %f --vScale5 %f --vScale6 %f --vScale7 %f --vScale8 %f --timeoffset %i --trigSlope NEG' % (LecroyScopeControlDir,runNumber, numPoints, sampleRate, trigCh, trig, vScale1, vScale2, vScale3, vScale4,vScale5, vScale6, vScale7, vScale8, timeoffset) 
+
+            
+            else: 
+                newtimeoffset = -0.5*(int(runNumber) % 8)-0.25
+                ScopeCommand = 'python %s/Acquisition/acquisition_one_event.py --display 1 --runNum %s --numPoints %d --sampleRate %d --trigCh %s --trig %f --vScale1 %f --vScale2 %f --vScale3 %f --vScale4 %f --vScale5 %f --vScale6 %f --vScale7 %f --vScale8 %f --timeoffset %0.2f --trigSlope NEG' % (LecroyScopeControlDir,runNumber, numPoints, sampleRate, trigCh, trig, vScale1, vScale2, vScale3, vScale4,vScale5, vScale6, vScale7, vScale8, newtimeoffset) 
             print ScopeCommand
             #### Starting the acquisition script ####
             os.system(ScopeCommand)

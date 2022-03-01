@@ -5,8 +5,10 @@ import ROOT
 from array import array
 
 outputtag= "prebeam"
-StartDate_ = '[2021-11-29T18:00:00]:'
-EndDate_ = '[2021-11-30T18:00:00]:'
+#StartDate_ = '[2021-12-05T21:30:00]:'
+#EndDate_ = '[2021-12-05T22:00:00]:'
+StartDate_ = '[2021-12-05T23:00:00]:'
+EndDate_ = '[2021-12-06T08:00:00]:'
 
 # outputtag = "batch_one_set_one"
 # StartDate_ = '[2021-03-26T18:00:00]:'
@@ -143,11 +145,9 @@ def main():
         dewpointLog[channel]['y'].append(d['val'])
 
         if allBoardTemps:
-            #allBoardTemps = Counter(allBoardTemps) + Counter(d['boardTemps'])
             allBoardTemps = dict_merge(allBoardTemps, d['boardTemps'])
         else:
             allBoardTemps = d['boardTemps']
-    #allBoardTemps = dict(allBoardTemps)
 
     # Draw histograms
     drawTimeHisto(50.0, "Temp. [C]", dewpointLog, "dewPoint_%s.png"%outputtag, startTime, endTime, allBoardTemps)
