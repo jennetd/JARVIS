@@ -94,6 +94,18 @@ def ORFunc(AttributeNameList, AttributeStatusList):
     Output = Output + ')'
     return Output
 
+def DownloadRuntable(Debug,MyKey):
+    headers = {'Authorization': 'Bearer %s' % MyKey, }
+
+    RunTableResponse = am.requests.get(am.CurlBaseCommandRunTable, headers=headers)
+    RunTableDict = am.ast.literal_eval(RunTableResponse.text)
+
+    runTableFileName = am.LocalConfigPath+"RunTable.txt"
+    gfile = open(runTableFileName, "w")
+    js.dump(RunTableDict, gfile)
+    gfile.close()
+    return RunTableDict
+
 
 def DownloadConfigs(Debug, MyKey):
     headers = {'Authorization': 'Bearer %s' % MyKey, }

@@ -61,7 +61,7 @@ default_run_info["TimingDAQLecroyScope"] = not_applicable
 default_run_info["TimingDAQNoTracksLecroyScope"] = not_applicable
 
 ############ Initialize progress fields on run table ################
-if IsTelescope: default_run_info["Tracking"] = 'Not started'
+if IsTelescope: default_run_info["Tracking"] = not_started
 
 IncludesKeySightScope=False
 IncludesLecroyScope = False
@@ -84,11 +84,10 @@ simpleLecroyDict= pf.getSimpleLecroyDict(LecroyDict,SensorDict,lecroyConfID)
 simpleCAENDict= pf.getSimpleCAENDict(CAENDict,SensorDict,caenConfID)
 
 
-print caenConfID
-
-print ConfigDict
-print simpleLecroyDict
-print simpleCAENDict
+# print caenConfID
+# print ConfigDict
+# print simpleLecroyDict
+# print simpleCAENDict
 
 #### Set multiplexer channels for this config
 if SetMux: ConfigureMux(Configuration)
@@ -267,8 +266,10 @@ while (AutoPilotStatus == 1 and iteration < maxRuns):
 		this_run_info["Configuration"]=ConfigID
 		this_run_info["Start time"]=str(SpillTime)
 		this_run_info["Duration"]=str(Duration)
-		this_run_info["Temp17ETL"]="0"
-		this_run_info["Time Resolution 1"]=30.11111
+
+		gt.GetTemperaturesSimple(this_run_info)
+		gt.GetCAENInfoSimple(this_run_info)
+		gt.GetACNetYield(this_run_info)
 
 		this_run_info["Digitizer"]=DigiListThisRun
 

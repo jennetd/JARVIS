@@ -117,6 +117,11 @@ def main():
                 f = open(fileName,"a")
                 f.write(line+"\n")
                 f.close()
+
+                fActive = open("temp_dew_active.txt","w")
+                fActive.write(line+"\n")
+                fActive.close()
+
                 time.sleep(1)
             
     except KeyboardInterrupt:

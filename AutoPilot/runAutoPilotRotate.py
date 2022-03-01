@@ -1,9 +1,10 @@
 import os
 #conf_list = [169,183,165,166,167,168]
 # conf_list = [171,172,173,174,175,176]
-conf_list = [440,441]
+#conf_list = [515,516,517,518,519,520,521]
+conf_list = [522,523,524,525,526,527,528]
 AutoPilotStatus=1
-runsPerConf = 1
+runsPerConf = 8
 iteration = 0
 while AutoPilotStatus:
 	
