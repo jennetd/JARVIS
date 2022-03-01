@@ -19,14 +19,14 @@ import argparse
 
 ################### Run Table Information #################
 MyKey = '' #Read MyKey from key file in RecoProcesses
-RunTableName = 'tblb8KaNSDtP4lQ51'#'tblWRkYB2W4WuTuX6'
-SensorTableName = 'tbl9YM1b1OPNlzKFy'##'tblUHmPZb7fqUL7oxD'
-ConfigTableName = 'tbloOhHbzH6zWwdLN'
-KeySightScopeConfigTableName = 'tblDBWLqMjQX0z7Bp'
-LecroyScopeConfigTableName = 'tblWJZSjvzNcR5YEw'
-CAENConfigTableName = 'tblsHsXkGT6WeIBxq'
+RunTableName = 'tbli26HT8q0dnn8MH'
+SensorTableName = 'tblgS8yhhBmbEB2me'
+ConfigTableName = 'tblvIDehPuDXfyvst'
+KeySightScopeConfigTableName = 'tblKviiw26nljBpi5'
+LecroyScopeConfigTableName = 'tbl3DlppLmkAa7glc'
+CAENConfigTableName = 'tblzBOuqWGDkxKTe6'
 
-BaseID = 'appMcxkvX9UChFps1'#'appxV78j7svJHd3k6'
+BaseID = 'appT6TRBdWr0AHH9H'
 CurlBaseCommandWithoutTable = 'https://api.airtable.com/v0/%s' % (BaseID)
 CurlBaseCommand = 'https://api.airtable.com/v0/%s/%s' % (BaseID, RunTableName)
 CurlBaseCommandSensor = 'https://api.airtable.com/v0/%s/%s' % (BaseID, SensorTableName)
@@ -66,7 +66,7 @@ EnvSetupPath = '/home/daq/setup.sh' ############### Remember to change ProcessEx
 EnvSetupPath2 = '/home/daq/otsdaq/setup_ots.sh' ############### Remember to change ProcessExec accordingly
 # TimingDAQDir = '/uscms/home/rheller/nobackup/CMS-MTD/TimingDAQ/'
 TimingDAQDir = '%sTimingDAQ/'%BaseTestbeamDir
-TimingDAQDir = '/home/daq/LecroyControl/HitCounter/' ### HACK FOR LONG ACQ
+#TimingDAQDir = '/home/daq/LecroyControl/HitCounter/' ### HACK FOR LONG ACQ
 CondorDir = '%sCondor/'%BaseTestbeamDir
 TOFHIRRecoDir = '/uscms/home/rheller/nobackup/sw_daq_tofhir_v1/build/'
 TOFHIRConfigDir = '/uscms/home/rheller/nobackup/2019_04_April_CMSTiming/TOFHIR/ConfigArchive/'
@@ -142,27 +142,27 @@ TwoStageRecoDigitizers = {
                                             'RecoTimingDAQLocalPath' : '%sSampic/RecoData/TimingDAQRECO/' % (BaseTestbeamDir),
                                             'RawTimingDAQFileNameFormat' : 'run_scope', ##### run_scope<run>.root
                                             },
-                         'LecroyScope'      :  {
-                                            'ConfigFileBasePath'     : '%sLecroyScope_' % (ConfigFileBasePath),
-                                            'DatToROOTExec'          : 'makeHitTree', 
-                                            'ConversionCMD'          : 'python %s/Reconstruction/conversion_one_event.py --runNumber ' % (LecroyScopeControlDir), 
-                                            'RawConversionLocalPath' : '/home/daq/LecroyMount/',
-                                            'RawTimingDAQLocalPath'  : '%sLecroyScope/RecoData/ConversionRECO/'  % (BaseTestbeamDir),
-                                            'RecoTimingDAQLocalPath' : '%sLecroyScope/RecoData/HitCounterRECO/' % (BaseTestbeamDir),
-                                            'RawTimingDAQFileNameFormat' : 'converted_run', ##### run_scope<run>.root 
-                                            'FinalFileNameFormat' : 'hitTree_run', ##### run_scope<run>.root 
-                                            # 'RawTimingDAQFileNameFormat' : 'run_scope', ##### run_scope<run>.root 
-                                            },
-                        # 'LecroyScope'      :  {
-                        #                    'ConfigFileBasePath'     : '%sLecroyScope_' % (ConfigFileBasePath),
-                        #                    'DatToROOTExec'          : 'NetScopeStandaloneDat2Root', 
-                        #                    'ConversionCMD'          : 'python %s/Reconstruction/conversion.py --runNumber ' % (LecroyScopeControlDir), 
-                        #                    'RawConversionLocalPath' : '/home/daq/LecroyMount/',
-                        #                    'RawTimingDAQLocalPath'  : '%sLecroyScope/RecoData/ConversionRECO/'  % (BaseTestbeamDir),
-                        #                    'RecoTimingDAQLocalPath' : '%sLecroyScope/RecoData/TimingDAQRECO/' % (BaseTestbeamDir),
-                        #                    'RawTimingDAQFileNameFormat' : 'converted_run', ##### run_scope<run>.root 
-                        #                    # 'RawTimingDAQFileNameFormat' : 'run_scope', ##### run_scope<run>.root 
-                        #                    },
+                         # 'LecroyScope'      :  {
+                         #                    'ConfigFileBasePath'     : '%sLecroyScope_' % (ConfigFileBasePath),
+                         #                    'DatToROOTExec'          : 'makeHitTree', 
+                         #                    'ConversionCMD'          : 'python %s/Reconstruction/conversion_one_event.py --runNumber ' % (LecroyScopeControlDir), 
+                         #                    'RawConversionLocalPath' : '/home/daq/LecroyMount/',
+                         #                    'RawTimingDAQLocalPath'  : '%sLecroyScope/RecoData/ConversionRECO/'  % (BaseTestbeamDir),
+                         #                    'RecoTimingDAQLocalPath' : '%sLecroyScope/RecoData/HitCounterRECO/' % (BaseTestbeamDir),
+                         #                    'RawTimingDAQFileNameFormat' : 'converted_run', ##### run_scope<run>.root 
+                         #                    'FinalFileNameFormat' : 'hitTree_run', ##### run_scope<run>.root 
+                         #                    # 'RawTimingDAQFileNameFormat' : 'run_scope', ##### run_scope<run>.root 
+                         #                    },
+                        'LecroyScope'      :  {
+                                           'ConfigFileBasePath'     : '%sLecroyScope_' % (ConfigFileBasePath),
+                                           'DatToROOTExec'          : 'NetScopeStandaloneDat2Root', 
+                                           'ConversionCMD'          : 'python %s/Reconstruction/conversion.py --runNumber ' % (LecroyScopeControlDir), 
+                                           'RawConversionLocalPath' : '/home/daq/LecroyMount/',
+                                           'RawTimingDAQLocalPath'  : '%sLecroyScope/RecoData/ConversionRECO/'  % (BaseTestbeamDir),
+                                           'RecoTimingDAQLocalPath' : '%sLecroyScope/RecoData/TimingDAQRECO/' % (BaseTestbeamDir),
+                                           'RawTimingDAQFileNameFormat' : 'converted_run', ##### run_scope<run>.root 
+                                           # 'RawTimingDAQFileNameFormat' : 'run_scope', ##### run_scope<run>.root 
+                                           },
                         # 'LecroyScopeLong'  :  {
                         #                    'ConfigFileBasePath'     : '%sLecroyScopeLong_' % (ConfigFileBasePath),
                         #                    'DatToROOTExec'          : 'makeHitTree', 
