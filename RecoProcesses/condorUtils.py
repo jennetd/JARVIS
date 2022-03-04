@@ -188,6 +188,7 @@ def prepareJDL(PID,digitizer_key,run,CMD,frequency=0):
 	f = open(jdlfile,"w+")
 	f.write("universe = vanilla\n")
 	f.write("Executable = %s\n"%exec_file)
+        f.write("Transfer_Input_Files = %sConversion/conversion.py\n"%am.LecroyScopeControlDir)
 	f.write("should_transfer_files = YES\n")
 	f.write("when_to_transfer_output = ON_EXIT\n")
 	if frequency==0:
@@ -246,8 +247,8 @@ def prepareExecutable(PID,digitizer_key,run,CMD,frequency=0):
 			if digitizer_key==3:
 				f.write("xrdcp %scondor/conversion_bin_fast.py .\n"%am.eosBaseDir)
 				f.write("chmod 755 conversion_bin_fast.py\n")
-			elif digitizer_key==6:
-				f.write("xrdcp %scondor/conversion.py .\n"%am.eosBaseDir)
+                        elif digitizer_key==6:
+				#f.write("xrdcp %scondor/conversion.py .\n"%am.eosBaseDir)
 				f.write("chmod 755 conversion.py\n")
 		else:
 			f.write("xrdcp %scondor/conversion_bin_fast_filter.py .\n"%am.eosBaseDir)
