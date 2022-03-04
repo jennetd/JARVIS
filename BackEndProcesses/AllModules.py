@@ -58,8 +58,8 @@ ResultTrackFileNameAfterRunNumberFast = '_CMSTiming_FastTriggerStream_converted.
 
 ############## For timingdaq02 ############
 # BaseTestbeamDir = '/uscms/home/rheller/nobackup/2020_02_CMSTiming/' 
-BaseTestbeamDir = '/home/daq/SurvivalBeam2021/' 
-eosBaseDir = 'root://cmseos.fnal.gov//store/group/cmstestbeam/SurvivalBeam2021/'
+BaseTestbeamDir = '/home/daq/SensorBeam2022/' 
+eosBaseDir = 'root://cmseos.fnal.gov//store/group/cmstestbeam/SensorBeam2022/'
 BaseTrackDirLocal = '%sTracks/' % BaseTestbeamDir
 LocalSSH = 'daq@timingdaq01.dhcp.fnal.gov'
 EnvSetupPath = '/home/daq/setup.sh' ############### Remember to change ProcessExec accordingly
@@ -81,13 +81,12 @@ LocalConfigPath = '%sConfigInfo/'%BaseTestbeamDir
 ##### Check ProcessExec for uncommenting the environment setup thingy
 
 ################ Scope Control from AutoPilot Paths ################
-ScopeControlDir = '/home/daq/ETL_Agilent_MSO-X-92004A/' 
-#ScopeControlDir = '%sKeySightScope/ETL_Agilent_MSO-X-92004A/' % BaseTestbeamDir
+ScopeControlDir = '%s/ScopeHandler/KeySight/' % BaseTestbeamDir
 ScopeStateFileName = '%sAcquisition/RunLog.txt' % ScopeControlDir
 ScopeCommFileName = '%sAcquisition/ScopeStatus.txt' % ScopeControlDir
 
 ################ Lecroy Scope Control from AutoPilot Paths ################
-LecroyScopeControlDir = '/home/daq/LecroyControl/' 
+LecroyScopeControlDir = '%sScopeHandler/Lecroy/' % BaseTestbeamDir
 LecroyScopeStateFileName = '%sAcquisition/RunLog.txt' % LecroyScopeControlDir
 LecroyScopeCommFileName = '%sAcquisition/ScopeStatus.txt' % LecroyScopeControlDir
 

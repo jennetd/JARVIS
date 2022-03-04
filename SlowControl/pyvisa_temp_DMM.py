@@ -4,6 +4,9 @@ import time
 import sys
 from datetime import datetime
 
+tempCMD = "MEAS:TEMP?"
+resCMD  = "MEAS:RES?"
+
 def getResourceDMM(debug=False):    
     # Setup resource that will talk to DMM
     rm = visa.ResourceManager('@py')
@@ -12,8 +15,8 @@ def getResourceDMM(debug=False):
     #my_instrument = rm.open_resource('ASRL/dev/ttyUSB0::INSTR') #KEITHLEY INSTRUMENTS INC.,MODEL 2410,4105344,C33   Mar 31 2015 09:32:39/A02  /J/K
     #my_instrument = rm.open_resource('TCPIP0::192.168.133.159::inst0::INSTR') #KEYSIGHT TECHNOLOGIES,MSOX92004A,MY53240102,05.70.00901
     #my_instrument = rm.open_resource('TCPIP0::192.168.133.169::inst0::INSTR') #LECROY,WR8208HD,LCRY5003N60377,9.4.0
-    my_instrument = rm.open_resource('TCPIP::192.168.99.53::1394::SOCKET') #Keithley DMM
-    #my_instrument = rm.open_resource('TCPIP::192.168.133.163::1394::SOCKET') #Keithley DMM
+    #my_instrument = rm.open_resource('TCPIP::192.168.99.53::1394::SOCKET') #Keithley DMM
+    my_instrument = rm.open_resource('TCPIP::192.168.133.163::1394::SOCKET') #Keithley DMM
     my_instrument.write("*RST; status:preset; *CLS")
     my_instrument.write("TEMP:TRAN FRTD")
     my_instrument.read_termination = '\n'
@@ -28,35 +31,41 @@ def getResourceDMM(debug=False):
 
     return my_instrument
 
-def queryVal(my_instrument, cmd, typeRead):
+def sendCMD(my_instrument, cmd):
     # Query intrument 
     val = str(my_instrument.query(cmd))
     time.sleep(0.5)
-
-    # Parse output of pyvisa and convert to float
     val = val.split(",")[0].replace("+","")
+    return val
+
+def queryVal(my_instrument, cmd, typeRead):
+    # Parse output of pyvisa and convert to float
     try:
-        #print "string", val, typeRead
         if typeRead == "temp":
-            val = float(val[:-1])
+            my_instrument.write("*RST; status:preset; *CLS")
+            my_instrument.write("TEMP:TRAN FRTD") 
+            val = sendCMD(my_instrument, cmd)
+            val = float(val.replace(" C",""))
+        elif typeRead == "amp":
+            val = sendCMD(my_instrument, cmd)
+            val = float(val.replace("ADC",""))
         else:
-            val = float(val[:-3])
-        #print "int", val
+            val = sendCMD(my_instrument, cmd)
+            val = float(val.replace("OHM",""))
     except:
-        try:
-            val = float(val[1:-2])
-        except:
-            raise ValueError('Could not convert string to float: ', val)
+        raise ValueError('Could not convert string to float: ', val)
 
     return val
 
-def queryMultiVal(my_instrument, cmd, channels, typeRead="temp"):
+def queryMultiVal(my_instrument, channels):
     t = round((datetime.now() - datetime.strptime("2000-01-01 00:00:00", "%Y-%m-%d %H:%M:%S")).total_seconds(), 3)
     vals = []
-    for ch, doRead in channels:
+    for ch, doRead, cmd in channels:
+        typeRead = "temp" if cmd == tempCMD else "res"
         val = 0
         if doRead:
             val = queryVal(my_instrument, "{0} (@{1})".format(cmd, ch), typeRead)
+            #print ch, doRead, typeRead, cmd, val
         vals.append(val)
 
     line = "{:.13f}\t".format(t)
@@ -90,12 +99,18 @@ def main():
     print("Start logging temp")
     my_instrument = getResourceDMM()
     print("Connected to multi-meter")
-    
+
+    entriesPerLogFile = 1000    
     minChannel = 94; maxChannel = 132
-    readChannels = [107,108,109,110,111,112]
-    entriesPerLogFile = 1000
-    allChannels = list((channel,True if channel in readChannels else False) for channel in range(minChannel,maxChannel+1))
     f=None
+
+    allChannels = [
+        ( 94,False,tempCMD),( 95,False,tempCMD),( 96,False,tempCMD),( 97,False,tempCMD),( 98,False,tempCMD),( 99,False,tempCMD),(100,False,tempCMD),(101,False,tempCMD),
+        (102,False,tempCMD),(103,False,tempCMD),(104,False,tempCMD),(105,False,tempCMD),(106,False,tempCMD),(107, True,tempCMD),(108, True,tempCMD),(109, True,tempCMD),
+        (110,False,tempCMD),(111,False,tempCMD),(112,False,tempCMD),(113, True, resCMD),(114,False,tempCMD),(115,False,tempCMD),(116,False,tempCMD),(117,False,tempCMD),
+        (119,False,tempCMD),(120,False,tempCMD),(121,False,tempCMD),(122,False,tempCMD),(123,False,tempCMD),(124,False,tempCMD),(125,False,tempCMD),(126,False,tempCMD),
+        (127,False,tempCMD),(128,False,tempCMD),(129,False,tempCMD),(130,False,tempCMD),(131,False,tempCMD),(132,False,tempCMD),
+    ]
 
     try:
         while True:
@@ -109,8 +124,9 @@ def main():
             #for lineCounter in range(entriesPerLogFile):
                 #queryVal(my_instrument, 'MEAS:TEMP? (@112)','temp')
                 #my_instrument.write("TEMP:TRAN FRTD")
-                line = queryMultiVal(my_instrument, 'MEAS:TEMP?', allChannels)
-                #line = queryMultiVal(my_instrument, 'MEAS:RES?', allChannels)
+                #line = queryMultiVal(my_instrument, 'MEAS:TEMP?', allChannels, "temp")
+                #line = queryMultiVal(my_instrument, 'MEAS:RES?', allChannels,"res")
+                line = queryMultiVal(my_instrument, allChannels)
                 dewCurr = queryVal(my_instrument, 'MEAS:CURR? (@142)', 'amp')
                 dp = dewPoint(dewCurr*1000.0)
                 line += "\t"+str(dp)
