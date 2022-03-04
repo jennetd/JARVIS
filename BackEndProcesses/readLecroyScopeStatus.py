@@ -6,19 +6,20 @@ import TCP_com as tp
 UsingAutoPilot = True
 Configuration = 122   ##not used except in BTL mode
 
-LongAcquisitionMode = True
+LongAcquisitionMode = False #True
 
 
 #numEvents = 13000
 numEvents = 500 ## not used in Long mode
 numPoints = 25 ##MSa, only used in Long mode
-sampleRate = 2.5 #GSa/s
-horizontalWindow = 1000000 #ns
+sampleRate = 10 #GSa/s
+horizontalWindow = 50 #ns
 
 ### if sample rate or horizontal window is changed, TimingDAQ must be recompiled to account for new npoints.
 #trigCh = "EX" 
-trigCh = "C4" 
-trig =  -0.025 # V
+#trigCh = "C4"
+trigCh = "LINE" 
+trig = 0.0 # V
 
 vScale1 = 0.05  
 vScale2 = 0.05
@@ -29,7 +30,7 @@ vScale6 = 0.05
 vScale7 = 0.05 
 vScale8 = 0.05
 
-timeoffset = 5000000 #-207 #ns
+timeoffset = 0 #5000000 #-207 #ns
 
 ############### Remember to source the otsdaq environment
 ############### Assuming the directory structure in the KeySightScope repository is the same as on this computer

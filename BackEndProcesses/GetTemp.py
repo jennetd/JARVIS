@@ -10,19 +10,25 @@ import glob
 import AllModules as am
 from bisect import bisect_left
 
-
-#labview_unsync_base_path = '/home/daq/LabviewData/LabviewUnsyncData/'
-labview_unsync_base_path = '/home/daq/2021_CMSTiming_ETL/JARVIS/tempLogs/'
+########################## Temp Log and CAEN Log Paths #################################
+labview_unsync_base_path = am.BaseTestbeamDir+'/JARVIS/tempLogs/'
 active_temp_base_path = am.BaseTestbeamDir+'/JARVIS/SlowControl/temp_dew_active.txt'
 active_CAEN_base_path = am.BaseTestbeamDir+'/JARVIS/SlowControl/CAEN_HV_active.txt'
 
 def GetACNetYield(run_info_dict):
+    #try:
+    #session = am.subprocess.Popen(["python3", am.BaseTestbeamDir+"JARVIS/SlowControl/query_acnet.py"],stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT)
+    # os.system("python3 "+am.BaseTestbeamDir+"JARVIS/SlowControl/query_acnet.py")
+    #print "-"*50
+    #print "Ran query_acnet"
+    #print "-"*50
+    #except:
+    #    return
     path = am.BaseTestbeamDir+"JARVIS/SlowControl/acnet_buffer.txt"
     infile = open(path,'r')
 
     buff = infile.readline()
-    print buff
-    run_info_dict["MW1SEM [E9 ppp]"]=(float(buff.replace("+",""))/1.e9)
+    run_info_dict["MT6SC2 [ppp]"]=(float(buff.replace("+","")))
 
 
 def GetTemperaturesSimple(run_info_dict):
@@ -41,12 +47,11 @@ def GetCAENInfoSimple(run_info_dict):
     infile = open(active_CAEN_base_path,'r')
     CAEN = infile.readline().split(",")
 
-# time, 1638578809, V_HV_0, 0.000000, I_HV_0, 0.500000, V_HV_1, 170.500000, I_HV_1, 0.500000, V_HV_2, 0.000000, I_HV_2, 0.000000, V_HV_3, 450.500000, I_HV_3, 24.000000, V_HV_4, 450.500000, I_HV_4, 20.000000, V_HV_5, 451.000000, I_HV_5, 29.500000, V_HV_6, 450.500000, I_HV_6, 26.500000, V_HV_7, 0.000000, I_HV_7, 0.000000, V_HV_8, 0.500000, I_HV_8, 0.000000, V_HV_9, 0.000000, I_HV_9, 0.000000, V_HV_10, 0.000000, I_HV_10, 0.000000, V_HV_11, 0.500000, I_HV_11, 0.500000, V_HV_12, 0.000000, I_HV_12, 0.000000, V_HV_13, 0.000000, I_HV_13, 0.000000, V_HV_14, 0.000000, I_HV_14, 0.000000, V_HV_15, 0.000000, I_HV_15, 0.000000, V_HV_16, 0.000000, I_HV_16, 0.000000, V_HV_17, 0.000000, I_HV_17, 0.000000, V_HV_18, 0.000000, I_HV_18, 0.500000, V_HV_19, 0.000000, I_HV_19, 0.500000, V_HV_20, 170.500000, I_HV_20, 0.500000, V_HV_21, 0.000000, I_HV_21, 0.000000, V_HV_22, 0.000000, I_HV_22, 0.500000, V_HV_23, 0.000000, I_HV_23, 0.000000
-
-
-    for i in range(3, 20):
-        run_info_dict["V{}".format(i)]=float("%0.2f"%float(CAEN[15 + 4*(i-3)]))
-        run_info_dict["I{}".format(i)]=float("%0.2f"%float(CAEN[17 + 4*(i-3)]))
+    # time, 1638578809, V_HV_0, 0.000000, I_HV_0, 0.500000, V_HV_1, 170.500000, I_HV_1, 0.500000, V_HV_2, 0.000000, I_HV_2, 0.000000, V_HV_3, 450.500000, I_HV_3, 24.000000, V_HV_4, 450.500000, I_HV_4, 20.000000, V_HV_5, 451.000000, I_HV_5, 29.500000, V_HV_6, 450.500000, I_HV_6, 26.500000, V_HV_7, 0.000000, I_HV_7, 0.000000, V_HV_8, 0.500000, I_HV_8, 0.000000, V_HV_9, 0.000000, I_HV_9, 0.000000, V_HV_10, 0.000000, I_HV_10, 0.000000, V_HV_11, 0.500000, I_HV_11, 0.500000, V_HV_12, 0.000000, I_HV_12, 0.000000, V_HV_13, 0.000000, I_HV_13, 0.000000, V_HV_14, 0.000000, I_HV_14, 0.000000, V_HV_15, 0.000000, I_HV_15, 0.000000, V_HV_16, 0.000000, I_HV_16, 0.000000, V_HV_17, 0.000000, I_HV_17, 0.000000, V_HV_18, 0.000000, I_HV_18, 0.500000, V_HV_19, 0.000000, I_HV_19, 0.500000, V_HV_20, 170.500000, I_HV_20, 0.500000, V_HV_21, 0.000000, I_HV_21, 0.000000, V_HV_22, 0.000000, I_HV_22, 0.500000, V_HV_23, 0.000000, I_HV_23, 0.000000
+    # time, 1646351954, V_HV_0, 0.000000, I_HV_0, 0.000000, V_HV_1, 0.000000, I_HV_1, 0.000000, V_HV_2, 0.000000, I_HV_2, 0.000000, V_HV_3, 0.000000, I_HV_3, 0.000000, V_HV_4, 29.299999, I_HV_4, 249.154999, V_HV_5, 0.000000, I_HV_5, 0.000000, V_HV_6, 0.000000, I_HV_6, 0.000000, V_HV_7, 0.000000, I_HV_7, 0.000000
+    for i in range(0, 7+1):
+        run_info_dict["V{}".format(i)]=float("%0.2f"%float(CAEN[3 + 4*i]))
+        run_info_dict["I{}".format(i)]=float("%0.2f"%float(CAEN[5 + 4*i]))
 
 
 def greatest_number_less_than_value(seq,value):
