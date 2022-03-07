@@ -16,6 +16,16 @@ import pipes
 from pipes import quote
 import argparse
 
+#############################################################
+#Define User and Host
+#############################################################
+user, isLPC = 'daq', False
+try:
+    user = os.environ['USER']
+    isLPC = 'cmslpc' in os.environ['HOSTNAME'] 
+except:
+    print "Failed to find environment"
+print "Found user: {} Running on LPC: {}".format(user, isLPC)
 
 ################### Run Table Information #################
 MyKey = '' #Read MyKey from key file in RecoProcesses
@@ -57,14 +67,20 @@ ResultTrackFileNameAfterRunNumberSlow = '_CMSTiming_SlowTriggerStream_converted.
 ResultTrackFileNameAfterRunNumberFast = '_CMSTiming_FastTriggerStream_converted.root'
 
 ############## For timingdaq02 ############
-# BaseTestbeamDir = '/uscms/home/rheller/nobackup/2020_02_CMSTiming/' 
 BaseTestbeamDir = '/home/daq/SensorBeam2022/' 
+if isLPC:
+    if "rheller" in user:
+        BaseTestbeamDir = '/uscms/home/rheller/nobackup/2020_02_CMSTiming/'
+    elif 'cmadrid' in user:
+        BaseTestbeamDir = '/uscms/home/cmadrid/nobackup/ana/SensorBeam2022/'
+    else:
+        raise ValueError("\"{}\" please define your code path above for the lpc in JARVIS/BackEndProcesses/AllModules.py".format(user))
+
 eosBaseDir = 'root://cmseos.fnal.gov//store/group/cmstestbeam/SensorBeam2022/'
 BaseTrackDirLocal = '%sTracks/' % BaseTestbeamDir
 LocalSSH = 'daq@timingdaq01.dhcp.fnal.gov'
 EnvSetupPath = '/home/daq/setup.sh' ############### Remember to change ProcessExec accordingly
 EnvSetupPath2 = '/home/daq/otsdaq/setup_ots.sh' ############### Remember to change ProcessExec accordingly
-# TimingDAQDir = '/uscms/home/rheller/nobackup/CMS-MTD/TimingDAQ/'
 TimingDAQDir = '%sTimingDAQ/'%BaseTestbeamDir
 #TimingDAQDir = '/home/daq/LecroyControl/HitCounter/' ### HACK FOR LONG ACQ
 CondorDir = '%sCondor/'%BaseTestbeamDir
