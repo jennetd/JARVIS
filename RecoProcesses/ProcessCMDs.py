@@ -116,17 +116,18 @@ def TimingDAQCMDs(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer, M
                     RunsNotPresent.append(run)
             else:
                 RawLocalPath =  RawBaseLocalPath + am.TwoStageRecoDigitizers[Digitizer]['RawTimingDAQFileNameFormat'] + str(run) + '.root'                                      
-                # RecoLocalPath = RecoBaseLocalPath + '/' + am.TwoStageRecoDigitizers[Digitizer]['RawTimingDAQFileNameFormat']+ str(run) + '_converted.root' 
+                RecoLocalPath = RecoBaseLocalPath + '/' + am.TwoStageRecoDigitizers[Digitizer]['RawTimingDAQFileNameFormat']+ str(run) + '_converted.root' 
                 ## hack for long acq
-                RecoLocalPath = RecoBaseLocalPath + '/' + am.TwoStageRecoDigitizers[Digitizer]['FinalFileNameFormat']+ str(run) + '.root' 
+                #RecoLocalPath = RecoBaseLocalPath + '/' + am.TwoStageRecoDigitizers[Digitizer]['FinalFileNameFormat']+ str(run) + '.root' 
 
             if not RunNotPresent:
 
                 ResultFileLocationList.append(RecoLocalPath)
+                print DatToROOTExec, ConfigFilePath, RawLocalPath, RecoLocalPath
                 DatToRootCMD = './' + DatToROOTExec + ' --config_file=' + ConfigFilePath + ' --input_file=' + RawLocalPath + ' --output_file=' + RecoLocalPath
                 if SaveWaveformBool: DatToRootCMD = DatToRootCMD + ' --save_meas'
-            ### Hack for long acq
-                DatToRootCMD = './' + DatToROOTExec  +' '+ str(run)+ ' '+ Version.split("v")[1]
+                ### Hack for long acq
+                #DatToRootCMD = './' + DatToROOTExec  +' '+ str(run)+ ' '+ Version.split("v")[1]
     
 
                 if DoTracking: 
