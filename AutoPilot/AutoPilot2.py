@@ -202,16 +202,14 @@ while (AutoPilotStatus == 1 and iteration < maxRuns):
 		this_run_info["xrdcpRawKeySightScope"] = not_started
 		this_run_info["ConversionKeySightScope"] = not_started
 		this_run_info["TimingDAQNoTracksKeySightScope"] = not_started
-		if IsTelescope:
-			this_run_info["TimingDAQKeySightScope"] = not_started
+		this_run_info["TimingDAQKeySightScope"] = not_started
 
 	if LecroyScopeIncludedThisRun:
 		DigiListThisRun.append("LecroyScope")
 		this_run_info["xrdcpRawLecroyScope"] = not_started
 		this_run_info["ConversionLecroyScope"] = not_started
 		this_run_info["TimingDAQNoTracksLecroyScope"] = not_started
-		if IsTelescope:
-			this_run_info["TimingDAQLecroyScope"] = not_started
+		this_run_info["TimingDAQLecroyScope"] = not_started
 
 
 	## Minimum run duration
