@@ -170,9 +170,6 @@ def prepareJDL(PID,digitizer_key,run,CMD,frequency=0):
 	if PID==2: 
 		procname = "TimingDAQ"
 		config = CMD.split("--config_file=")[1].split()[0]
-		#print "-"*50
-		#print config
-		#exit()
 
 	logname = am.CondorDir+"logs/%s_%i_%i.stdout"%(procname,digitizer_key,run) 
 	if frequency!=0: logname = am.CondorDir+"logs/%s_%i_%i_%i.stdout"%(procname,digitizer_key,run,frequency)
@@ -193,7 +190,7 @@ def prepareJDL(PID,digitizer_key,run,CMD,frequency=0):
 	f = open(jdlfile,"w+")
 	f.write("universe = vanilla\n")
 	f.write("Executable = %s\n"%exec_file)
-    f.write("Transfer_Input_Files = %sConversion/conversion.py, %sNetScopeStandaloneDat2Root \n"%(am.LecroyScopeControlDir,am.TimingDAQDir))
+        f.write("Transfer_Input_Files = %sConversion/conversion.py, %sNetScopeStandaloneDat2Root, %s\n"%(am.LecroyScopeControlDir,am.TimingDAQDir, config))
 	f.write("should_transfer_files = YES\n")
 	f.write("when_to_transfer_output = ON_EXIT\n")
 	if frequency==0:
@@ -279,14 +276,7 @@ def prepareExecutable(PID,digitizer_key,run,CMD,frequency=0):
 		f.write("cd /cvmfs/cms.cern.ch/slc7_amd64_gcc530/cms/cmssw/CMSSW_8_0_20/src/\n")
 		f.write("eval `scramv1 runtime -sh`\n")
 		f.write("cd -\n")
-
-		if digitizer_key==3:
-			f.write("xrdcp %scondor/NetScopeStandaloneDat2Root .\n"%am.eosBaseDir)
-			f.write("chmod 755 NetScopeStandaloneDat2Root\n")
-		if digitizer_key==6:
-			f.write("xrdcp %scondor/NetScopeStandaloneDat2Root502 .\n"%am.eosBaseDir)
-			f.write("chmod 755 NetScopeStandaloneDat2Root502\n")
-
+                f.write("chmod 755 NetScopeStandaloneDat2Root\n")
 		f.write("xrdcp -s %s .\n" % inputfile)
 		f.write("xrdcp -s %s .\n" % tracksfile)
 		f.write("xrdcp -s %s .\n" % config)
@@ -295,7 +285,7 @@ def prepareExecutable(PID,digitizer_key,run,CMD,frequency=0):
 		if digitizer_key==3:
 			f.write("./NetScopeStandaloneDat2Root --input_file=%s --pixel_input_file=%s  --config=%s --output_file=out_%s --save_meas\n" % (os.path.basename(inputfile),os.path.basename(tracksfile),os.path.basename(config),os.path.basename(outputfile)))
 		if digitizer_key==6:
-			f.write("./NetScopeStandaloneDat2Root502 --input_file=%s --pixel_input_file=%s  --config=%s --output_file=out_%s --save_meas --correctForTimeOffsets=true\n" % (os.path.basename(inputfile),os.path.basename(tracksfile),os.path.basename(config),os.path.basename(outputfile)))
+			f.write("./NetScopeStandaloneDat2Root --input_file=%s --pixel_input_file=%s  --config=%s --output_file=out_%s --save_meas --correctForTimeOffsets=true\n" % (os.path.basename(inputfile),os.path.basename(tracksfile),os.path.basename(config),os.path.basename(outputfile)))
 
 
 		f.write("ls\n")
