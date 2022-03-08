@@ -2,8 +2,8 @@ from ProcessExec import *
 import ProcessRuns as pr
 
 ExecutionOrder = 0 #This is descending Run number order, Refer to the dictionary in all modules
-PID = 5 #5 means watching condor, Refer to the dictionary in all modules
-GetRunListEachTime = False 
+PID = 2 #2 means Timingdaq, Refer to the dictionary in all modules
+GetRunListEachTime = True 
 
 ############ Doesn't matter for tracking ###########
 SaveWaveForms = True
