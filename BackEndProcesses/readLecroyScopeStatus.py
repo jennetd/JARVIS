@@ -38,6 +38,9 @@ timeoffset = 0 #5000000 #-207 #ns
 AutoPilotStatusFile = '%s/Acquisition/ScopeStatus.txt' % LecroyScopeControlDir
 #AgilentScopeCommand = 'python %sAcquisition/acquisition.py --numEvents %d --sampleRate %d --horizontalWindow %d --trigCh %s --trig %f --vScale1 %f --vScale2 %f --vScale3 %f --vScale4 %f --timeoffset %i --trigSlope POS' % (ScopeControlDir, numEvents, sampleRate, horizontalWindow, trigCh, trig, vScale1, vScale2, vScale3, vScale4, timeoffset) 
 #print AgilentScopeCommand
+print "####################################"
+print "## Starting Loop: Waiting for run ##"
+print "####################################"
 while True:
 
     inFile = open(AutoPilotStatusFile,"r")

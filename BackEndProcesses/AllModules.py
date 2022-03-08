@@ -25,7 +25,8 @@ try:
     isLPC = 'cmslpc' in os.environ['HOSTNAME'] 
 except:
     print "Failed to find environment"
-print "Found user: {} Running on LPC: {}".format(user, isLPC)
+if isLPC:
+    print "Found user: {} Running on LPC: {}".format(user, isLPC)
 
 ################### Run Table Information #################
 MyKey = '' #Read MyKey from key file in RecoProcesses
@@ -107,7 +108,7 @@ LecroyScopeStateFileName = '%sAcquisition/RunLog.txt' % LecroyScopeControlDir
 LecroyScopeCommFileName = '%sAcquisition/ScopeStatus.txt' % LecroyScopeControlDir
 
 
-ConfigFileBasePath = '%sconfig/FNAL_TestBeam_1904/' % TimingDAQDir
+ConfigFileBasePath = '%sconfig/' % TimingDAQDir
 TOFHIRConfigFileBasePath = '/home/daq/2019_04_April_CMSTiming/TOFHIR/ConfigArchive/'
 
 ###Low pass filter frequencies####

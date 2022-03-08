@@ -163,20 +163,25 @@ def CheckExistsLogs(PID,digitizer_key,run,CMD):
 
 def prepareJDL(PID,digitizer_key,run,CMD,frequency=0):
 
+	config = ''
 	if PID==1: 
 		procname = "Conversion"
 
 	if PID==2: 
 		procname = "TimingDAQ"
+		config = CMD.split("--config_file=")[1].split()[0]
+		#print "-"*50
+		#print config
+		#exit()
+
 	logname = am.CondorDir+"logs/%s_%i_%i.stdout"%(procname,digitizer_key,run) 
 	if frequency!=0: logname = am.CondorDir+"logs/%s_%i_%i_%i.stdout"%(procname,digitizer_key,run,frequency)
 	if os.path.exists(logname): os.remove(logname) ### must delete log, since WatchCondor looks for this file to see if job is done. This way, retry can be used.
 	
 	# 	inputfile = CMD.split("--input_file=\n")[1].split()[0].replace(am.BaseTestbeamDir,am.eosBaseDir)
 	# 	tracksfile = CMD.split("--pixel_input_file=")[1].split()[0].replace(am.BaseTestbeamDir,am.eosBaseDir)
-	# 	config = CMD.split("--config_file=")[1].split()[0].replace(am.TimingDAQDir,am.eosBaseDir+"condor/")
 	# 	outputfile = CMD.split("--output_file=")[1].split()[0].replace(am.BaseTestbeamDir,am.eosBaseDir)
-
+    #   config = CMD.split("--config_file=")[1].split()[0].replace(am.TimingDAQDir,am.eosBaseDir+"condor/")
 	# 	arguments = " ".join([inputfile,tracksfile,config,outputfile])
 
 	jdlfile = am.CondorDir+"jdl/condor_"+procname+"_"+str(digitizer_key)+"_"+str(PID)+"_"+str(run)+".jdl"
@@ -188,7 +193,7 @@ def prepareJDL(PID,digitizer_key,run,CMD,frequency=0):
 	f = open(jdlfile,"w+")
 	f.write("universe = vanilla\n")
 	f.write("Executable = %s\n"%exec_file)
-        f.write("Transfer_Input_Files = %sConversion/conversion.py\n"%am.LecroyScopeControlDir)
+    f.write("Transfer_Input_Files = %sConversion/conversion.py, %sNetScopeStandaloneDat2Root \n"%(am.LecroyScopeControlDir,am.TimingDAQDir))
 	f.write("should_transfer_files = YES\n")
 	f.write("when_to_transfer_output = ON_EXIT\n")
 	if frequency==0:
