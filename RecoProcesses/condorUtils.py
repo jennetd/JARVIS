@@ -190,7 +190,7 @@ def prepareJDL(PID,digitizer_key,run,CMD,frequency=0):
 	f = open(jdlfile,"w+")
 	f.write("universe = vanilla\n")
 	f.write("Executable = %s\n"%exec_file)
-        f.write("Transfer_Input_Files = %sConversion/conversion.py, %sNetScopeStandaloneDat2Root, %s, %s/add_branches2.py\n"%(am.LecroyScopeControlDir, am.TimingDAQDir, config, am.LecroyScopeControlDir))
+        f.write("Transfer_Input_Files = %sConversion/conversion.py, %sNetScopeStandaloneDat2Root, %s, %s/add_branches_TimingDAQ.py\n"%(am.LecroyScopeControlDir, am.TimingDAQDir, config, am.LecroyScopeControlDir))
 	f.write("should_transfer_files = YES\n")
 	f.write("when_to_transfer_output = ON_EXIT\n")
 	if frequency==0:
@@ -277,10 +277,9 @@ def prepareExecutable(PID,digitizer_key,run,CMD,frequency=0):
 		f.write("eval `scramv1 runtime -sh`\n")
 		f.write("cd -\n")
                 f.write("chmod 755 NetScopeStandaloneDat2Root\n")
-                f.write("chmod 755 add_branches2.py\n")
+                f.write("chmod 755 add_branches_TimingDAQ.py\n")
 		f.write("xrdcp -s %s .\n" % inputfile)
 		f.write("xrdcp -s %s .\n" % tracksfile)
-		f.write("xrdcp -s %s .\n" % config)
                 f.write("xrdcp %s/ConfigInfo/Runs/info_%i.json .\n"%(am.eosBaseDir,run))
 
 		f.write("ls\n")
@@ -289,9 +288,9 @@ def prepareExecutable(PID,digitizer_key,run,CMD,frequency=0):
 		if digitizer_key==6:
 			f.write("./NetScopeStandaloneDat2Root --input_file=%s --pixel_input_file=%s  --config=%s --output_file=out_%s --save_meas --correctForTimeOffsets=true\n" % (os.path.basename(inputfile),os.path.basename(tracksfile),os.path.basename(config),os.path.basename(outputfile)))
 
-                f.write("python add_branches2.py %i %i %s\n" % (run,9999,"out_"+os.path.basename(outputfile)))
+                f.write("python add_branches_TimingDAQ.py %i %i %s\n" % (run,9999,"out_"+os.path.basename(outputfile)))
 		f.write("ls\n")
-		f.write("xrdcp -fs out_%s %s\n" % (os.path.basename(outputfile).replace(".root","_info.root"), outputfile))
+		f.write("xrdcp -fs out_%s %s\n" % (os.path.basename(outputfile).replace(".root","_info.root"), outputfile.replace(".root","_info.root")))
 		# f.write("scp out_%s daq@ti\n" % (os.path.basename(outputfile)))
 
 		f.write("rm *.root\n")
