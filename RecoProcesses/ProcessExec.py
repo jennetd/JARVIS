@@ -575,6 +575,18 @@ def ProcessExecBTL(OrderOfExecution, PID, SaveWaveformBool = None, Version = Non
 						if pf.QueryGreenSignal(True): 
 							pf.UpdateAttributeStatus2(str(FieldID), "HitsCh4", int(hits_ch4), False, MyKey)
 							am.time.sleep(0.3)
+						if pf.QueryGreenSignal(True): 
+							pf.UpdateAttributeStatus2(str(FieldID), "HitsCh5", int(hits_ch5), False, MyKey)
+							am.time.sleep(0.3)
+						if pf.QueryGreenSignal(True): 
+							pf.UpdateAttributeStatus2(str(FieldID), "HitsCh6", int(hits_ch6), False, MyKey)
+							am.time.sleep(0.3)
+						if pf.QueryGreenSignal(True): 
+							pf.UpdateAttributeStatus2(str(FieldID), "HitsCh7", int(hits_ch7), False, MyKey)
+							am.time.sleep(0.3)
+						if pf.QueryGreenSignal(True): 
+							pf.UpdateAttributeStatus2(str(FieldID), "HitsCh8", int(hits_ch8), False, MyKey)
+							am.time.sleep(0.3)
 
 
 
