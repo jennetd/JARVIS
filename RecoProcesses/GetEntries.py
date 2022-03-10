@@ -27,7 +27,12 @@ def RunEntries(FileLocation):
 	hits_ch2 = chain.GetEntries("amp[1]>20")
 	hits_ch3 = chain.GetEntries("amp[2]>20")
 	hits_ch4 = chain.GetEntries("amp[3]>20")
+	hits_ch5 = chain.GetEntries("amp[4]>20")
+	hits_ch6 = chain.GetEntries("amp[5]>20")
+	hits_ch7 = chain.GetEntries("amp[6]>20")
+	hits_ch8 = chain.GetEntries("amp[7]>20")
 
-	return EntriesWithTrack, EntriesWithTrackAndHit, EntriesWithHit, EntriesWithTrackWithoutNplanes,hits_ch1,hits_ch2,hits_ch3,hits_ch4
+
+	return EntriesWithTrack, EntriesWithTrackAndHit, EntriesWithHit, EntriesWithTrackWithoutNplanes,hits_ch1,hits_ch2,hits_ch3,hits_ch4,hits_ch5,hits_ch6,hits_ch7,hits_ch8
 	# else:
 	# 	return -1,-1,-1,-1
