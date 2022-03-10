@@ -267,7 +267,7 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 									am.time.sleep(0.3)
 								if pf.QueryGreenSignal(True): 
 									pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithTrackWithoutNplanesScope", int(EntriesWithTrackWithoutNplanes), False, MyKey)
-								am.time.sleep(0.3)
+									am.time.sleep(0.3)
 								if pf.QueryGreenSignal(True): 
 									pf.UpdateAttributeStatus2(str(FieldID), "HitsCh1", int(hits_ch1), False, MyKey)
 									am.time.sleep(0.3)
