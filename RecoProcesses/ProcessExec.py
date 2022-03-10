@@ -255,7 +255,7 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 							am.time.sleep(1)
 							if this_proc_key==2:
 								import GetEntries as ge
-								EntriesWithTrack, EntriesWithTrackAndHit, EntriesWithHit, EntriesWithTrackWithoutNplanes,hits_ch1,hits_ch2,hits_ch3,hits_ch4 = ge.RunEntries(ResultFileLocation)
+								EntriesWithTrack, EntriesWithTrackAndHit, EntriesWithHit, EntriesWithTrackWithoutNplanes,hits_ch1,hits_ch2,hits_ch3,hits_ch4,hits_ch5,hits_ch6,hits_ch7,hits_ch8 = ge.RunEntries(ResultFileLocation)
 								if pf.QueryGreenSignal(True): 
 									pf.UpdateAttributeStatus2(str(FieldID), "EntriesWithTrackScope", int(EntriesWithTrack), False, MyKey)
 									am.time.sleep(0.3)
