@@ -157,7 +157,7 @@ def WatchCondorCMDs(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer,
 
     for i,run in enumerate(RunList):
         if(ProcessList[i]==2):
-            RecoLocalPath = RecoBaseLocalPath + am.TwoStageRecoDigitizers[Digitizer]['RawTimingDAQFileNameFormat']+ str(run) + '_converted.root' 
+            RecoLocalPath = RecoBaseLocalPath + am.TwoStageRecoDigitizers[Digitizer]['FinalFileNameFormat']+ str(run) + '_info.root' 
             RecoEOSpath = RecoLocalPath.replace(am.BaseTestbeamDir,am.eosBaseDir)
             WatchCMDList.append("TimingDAQ")
         if(ProcessList[i]==1):

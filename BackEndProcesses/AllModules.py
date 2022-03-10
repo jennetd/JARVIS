@@ -55,7 +55,8 @@ QueryFilePath ="../QueryLog.txt" # Don't care about this
 ############# Tracking Paths ##############
 # HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScriptFastTrigger_NewGeo_2020_02_05.sh'
 
-HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScriptETL2021.sh'
+# HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScriptETL2021.sh'
+HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScriptFastTrigger_NewMoniRecover.sh'
 # HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScriptETL2020_TI.sh'
  
 #HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScriptFastTriggerETL2020.sh'
@@ -115,10 +116,12 @@ TOFHIRConfigFileBasePath = '/home/daq/2019_04_April_CMSTiming/TOFHIR/ConfigArchi
 FrequencyList=[500,750,1000]
 
 ############# OTSDAQ Information ################
-ip_address = "192.168.133.48" #ftbf-daq-06
+#ip_address = "192.168.133.48" #ftbf-daq-06
+# ip_address = "192.168.133.10" #athenanu 
+ip_address = "131.225.179.70" #athenanu internet
 use_socket = 17000
-#runFileName ="/data-08/TestBeam/Users/RunNumber/OtherRuns0NextRunNumber.txt"
-runFileName ="/data/TestBeam/Users/RunNumber/OtherRuns0NextRunNumber.txt"
+runFileName ="/data-08/TestBeam/Users/RunNumber/OtherRuns0NextRunNumber.txt"
+#runFileName ="/data/TestBeam/Users/RunNumber/OtherRuns0NextRunNumber.txt"
 localRunFileName = "../AutoPilot/otsdaq_runNumber.txt"
 TClockFilePath = "../AutoPilot/TClock"
 
