@@ -9,6 +9,7 @@ import sys
 import glob
 import AllModules as am
 from bisect import bisect_left
+from query_acnet import get_acnet_data
 
 ########################## Temp Log and CAEN Log Paths #################################
 labview_unsync_base_path = am.BaseTestbeamDir+'/JARVIS/tempLogs/'
@@ -16,20 +17,15 @@ active_temp_base_path = am.BaseTestbeamDir+'/JARVIS/SlowControl/temp_dew_active.
 active_CAEN_base_path = am.BaseTestbeamDir+'/JARVIS/SlowControl/CAEN_HV_active.txt'
 
 def GetACNetYield(run_info_dict):
-    #try:
-    #session = am.subprocess.Popen(["python3", am.BaseTestbeamDir+"JARVIS/SlowControl/query_acnet.py"],stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT)
-    # os.system("python3 "+am.BaseTestbeamDir+"JARVIS/SlowControl/query_acnet.py")
-    #print "-"*50
-    #print "Ran query_acnet"
-    #print "-"*50
-    #except:
-    #    return
-    path = am.BaseTestbeamDir+"JARVIS/SlowControl/acnet_buffer.txt"
-    infile = open(path,'r')
+    startTime = '9-mar-2022-00:00:00'
+    endTime = '3-apr-2022-18:15:00'
 
-    buff = infile.readline()
-    run_info_dict["MT6SC2 [ppp]"]=(float(buff.replace("+","")))
+    run_info_dict["MT6SC2 [ppp]"]=(float(get_acnet_data(startTime, endTime, "F:MT6SC2")))
+    #run_info_dict["MW1SEM [ppp]"]=(float(get_acnet_data(startTime, endTime, "F:MW1SEM"))
+    run_info_dict["M6p1AH [mm]"]=(float(get_acnet_data(startTime, endTime, "E:1AH")))
+    run_info_dict["M6p1AV [mm]"]=(float(get_acnet_data(startTime, endTime, "E:1AV")))
 
+    print run_info_dict["MT6SC2 [ppp]"], run_info_dict["M6p1AH [mm]"], run_info_dict["M6p1AV [mm]"]
 
 def GetTemperaturesSimple(run_info_dict):
     infile = open(active_temp_base_path,'r')
