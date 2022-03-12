@@ -23,14 +23,14 @@ def RunEntries(FileLocation):
 	EntriesWithHit = chain.GetEntries(str_channels)
 	# EntriesWithHit = chain.GetEntries("amp[0]>20||amp[1]>20||amp[2]>20")
 
-	hits_ch1 = chain.GetEntries("amp[0]>20")
-	hits_ch2 = chain.GetEntries("amp[1]>20")
-	hits_ch3 = chain.GetEntries("amp[2]>20")
-	hits_ch4 = chain.GetEntries("amp[3]>20")
-	hits_ch5 = chain.GetEntries("amp[4]>20")
-	hits_ch6 = chain.GetEntries("amp[5]>20")
-	hits_ch7 = chain.GetEntries("amp[6]>20")
-	hits_ch8 = chain.GetEntries("amp[7]>20")
+	hits_ch1 = chain.GetEntries("amp[0]>50")
+	hits_ch2 = chain.GetEntries("amp[1]>50")
+	hits_ch3 = chain.GetEntries("amp[2]>50")
+	hits_ch4 = chain.GetEntries("amp[3]>50")
+	hits_ch5 = chain.GetEntries("amp[4]>50")
+	hits_ch6 = chain.GetEntries("amp[5]>50")
+	hits_ch7 = chain.GetEntries("amp[6]>50")
+	hits_ch8 = chain.GetEntries("amp[7]>50")
 
 
 	return EntriesWithTrack, EntriesWithTrackAndHit, EntriesWithHit, EntriesWithTrackWithoutNplanes,hits_ch1,hits_ch2,hits_ch3,hits_ch4,hits_ch5,hits_ch6,hits_ch7,hits_ch8
