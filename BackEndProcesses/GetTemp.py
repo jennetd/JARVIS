@@ -20,10 +20,16 @@ def GetACNetYield(run_info_dict):
     startTime = '9-mar-2022-00:00:00'
     endTime = '3-apr-2022-18:15:00'
 
-    run_info_dict["MT6SC2 [ppp]"]=(float(get_acnet_data(startTime, endTime, "F:MT6SC2")))
-    #run_info_dict["MW1SEM [ppp]"]=(float(get_acnet_data(startTime, endTime, "F:MW1SEM"))
-    run_info_dict["M6p1AH [mm]"]=(float(get_acnet_data(startTime, endTime, "E:1AH")))
-    run_info_dict["M6p1AV [mm]"]=(float(get_acnet_data(startTime, endTime, "E:1AV")))
+    try:
+        run_info_dict["MT6SC2 [ppp]"]=(float(get_acnet_data(startTime, endTime, "F:MT6SC2")))
+        #run_info_dict["MW1SEM [ppp]"]=(float(get_acnet_data(startTime, endTime, "F:MW1SEM"))
+        run_info_dict["M6p1AH [mm]"]=(float(get_acnet_data(startTime, endTime, "E:1AH")))
+        run_info_dict["M6p1AV [mm]"]=(float(get_acnet_data(startTime, endTime, "E:1AV")))
+    except:
+        run_info_dict["MT6SC2 [ppp]"]=-999
+        #run_info_dict["MW1SEM [ppp]"]=-999
+        run_info_dict["M6p1AH [mm]"]=-990
+        run_info_dict["M6p1AV [mm]"]=-999
 
     print run_info_dict["MT6SC2 [ppp]"], run_info_dict["M6p1AH [mm]"], run_info_dict["M6p1AV [mm]"]
 
