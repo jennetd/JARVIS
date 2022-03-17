@@ -32,7 +32,10 @@ def RunEntries(FileLocation):
 	hits_ch7 = chain.GetEntries("amp[6]>50")
 	hits_ch8 = chain.GetEntries("amp[7]>50")
 
+        Events_ge8planes = chain.GetEntries("ntracks==1 && nplanes>=8")
+        Events_ge8planes_ge1pix = chain.GetEntries("ntracks==1 && nplanes>=8 && npix>=1")
 
-	return EntriesWithTrack, EntriesWithTrackAndHit, EntriesWithHit, EntriesWithTrackWithoutNplanes,hits_ch1,hits_ch2,hits_ch3,hits_ch4,hits_ch5,hits_ch6,hits_ch7,hits_ch8
+
+	return EntriesWithTrack, EntriesWithTrackAndHit, EntriesWithHit, EntriesWithTrackWithoutNplanes,hits_ch1,hits_ch2,hits_ch3,hits_ch4,hits_ch5,hits_ch6,hits_ch7,hits_ch8, Events_ge8planes, Events_ge8planes_ge1pix
 	# else:
 	# 	return -1,-1,-1,-1
