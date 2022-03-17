@@ -1,6 +1,7 @@
 import os
 import AllModules as am
-import time 
+import time
+import ProcessExec as pe
 
 def xrdcpTracks(run): 
 	mountDir = am.BaseTrackDirLocal #am.TwoStageRecoDigitizers[Digitizer]['RawTimingDAQLocalPath']
@@ -57,7 +58,7 @@ def xrdcpRaw2(run,Digitizer):
 
 	LocalDir = am.BaseTestbeamDir+ Digitizer+"/RawData/" #am.TwoStageRecoDigitizers[Digitizer]['RawConversionLocalPath']
 	destination = am.eosBaseDir+Digitizer+"/RawData/" 
-
+	time.sleep(26)
 	nchan = 4
 	print Digitizer
 	if Digitizer == "LecroyScope":
@@ -68,8 +69,10 @@ def xrdcpRaw2(run,Digitizer):
 		elif Digitizer == "LecroyScope":
 			raw_filename =  mountDir+"C%i--Trace%i.trc" %(i,run)
 		counter=0
-		while not os.path.exists(raw_filename) and not os.path.exists(LocalDir+("C%i--Trace%i.trc" %(i,run))) and counter<5:
+		#while not os.path.exists(raw_filename) and not os.path.exists(LocalDir+("C%i--Trace%i.trc" %(i,run))) and counter<15:
+		while pe.FileSizeBool(raw_filename, 10**6) and not os.path.exists(LocalDir+("C%i--Trace%i.trc" %(i,run))) and counter<15:
 			counter =counter+1
+			print "Sleeping 2 sec, counter: {} for file: {}".format(counter, raw_filename)
 			time.sleep(2)
 
 		cmd = ["cp",raw_filename,LocalDir]

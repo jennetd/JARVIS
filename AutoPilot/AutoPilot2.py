@@ -124,7 +124,7 @@ iteration = 0
 while (AutoPilotStatus == 1 and iteration < maxRuns):
 
 	if iteration % 5 == 0:
-		if IsTelescope: StartSeconds,StopSeconds = GetStartAndStopSeconds(36, 22) #33,22
+		if IsTelescope: StartSeconds,StopSeconds = GetStartAndStopSeconds(36, 0) #33,22
 		else: StartSeconds,StopSeconds = GetStartAndStopSeconds(50, 22)
 		print StartSeconds, StopSeconds
 
@@ -234,8 +234,10 @@ while (AutoPilotStatus == 1 and iteration < maxRuns):
 		print "Lecroy scope finished"
 
 		
-	print "Waiting for TClock stop time (%0.1f)"%StopSeconds
-	wait_until(StopSeconds)
+	if IncludesKeySightScope: 
+		print "Waiting for TClock stop time (%0.1f)"%StopSeconds
+		wait_until(StopSeconds)
+	
 	tclock_finished=time.time()
 
 
