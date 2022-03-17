@@ -79,7 +79,7 @@ if isLPC:
         raise ValueError("\"{}\" please define your code path above for the lpc in JARVIS/BackEndProcesses/AllModules.py".format(user))
 
 eosBaseDir = 'root://cmseos.fnal.gov//store/group/cmstestbeam/SensorBeam2022/'
-BaseTrackDirLocal = '%sTracks/' % BaseTestbeamDir
+BaseTrackDirLocal = '%sTracks/v3/' % BaseTestbeamDir
 LocalSSH = 'daq@timingdaq01.dhcp.fnal.gov'
 EnvSetupPath = '/home/daq/setup.sh' ############### Remember to change ProcessExec accordingly
 EnvSetupPath2 = '/home/daq/otsdaq/setup_ots.sh' ############### Remember to change ProcessExec accordingly
