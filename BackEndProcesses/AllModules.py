@@ -56,7 +56,7 @@ QueryFilePath ="../QueryLog.txt" # Don't care about this
 # HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScriptFastTrigger_NewGeo_2020_02_05.sh'
 
 # HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScriptETL2021.sh'
-HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScriptFastTrigger_NewMoniRecover.sh'
+HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScript2022.sh'
 # HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScriptETL2020_TI.sh'
  
 #HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScriptFastTriggerETL2020.sh'
