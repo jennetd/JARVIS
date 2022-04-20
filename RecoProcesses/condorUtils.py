@@ -3,9 +3,9 @@ import AllModules as am
 import time
 import ProcessExec as pe
 
-def xrdcpTracks(run): 
+def xrdcpTracks(run,Version): 
 	mountDir = am.BaseTrackDirLocal #am.TwoStageRecoDigitizers[Digitizer]['RawTimingDAQLocalPath']
-	destination = am.eosBaseDir+"Tracks"
+	destination = am.eosBaseDir+"Tracks/%s"%Version
 	success=True
 	cmd = ["xrdcp", "-fs", mountDir+"Run%i_CMSTiming_FastTriggerStream_converted.root" %run,destination]
 	print cmd
@@ -58,7 +58,7 @@ def xrdcpRaw2(run,Digitizer):
 
 	LocalDir = am.BaseTestbeamDir+ Digitizer+"/RawData/" #am.TwoStageRecoDigitizers[Digitizer]['RawConversionLocalPath']
 	destination = am.eosBaseDir+Digitizer+"/RawData/" 
-	time.sleep(26)
+	time.sleep(36)
 	nchan = 4
 	print Digitizer
 	if Digitizer == "LecroyScope":

@@ -30,14 +30,14 @@ if isLPC:
 
 ################### Run Table Information #################
 MyKey = '' #Read MyKey from key file in RecoProcesses
-RunTableName = 'tbli26HT8q0dnn8MH'
-SensorTableName = 'tblgS8yhhBmbEB2me'
-ConfigTableName = 'tblvIDehPuDXfyvst'
-KeySightScopeConfigTableName = 'tblKviiw26nljBpi5'
-LecroyScopeConfigTableName = 'tbl3DlppLmkAa7glc'
-CAENConfigTableName = 'tblzBOuqWGDkxKTe6'
+RunTableName = 'tbll6K78TBGoYB35V'
+SensorTableName = 'tbljWMYw2M2mfPXFs'
+ConfigTableName = 'tblyMhEwAFj8QMqLH'
+KeySightScopeConfigTableName = 'tblNzWILNh3wUPkBj'
+LecroyScopeConfigTableName = 'tbl6HZPEwx0LLlbEq'
+CAENConfigTableName = 'tblCFsUFHRjv8YOxk'
 
-BaseID = 'appT6TRBdWr0AHH9H'
+BaseID = 'appWaxhQY77bbVCsV'
 CurlBaseCommandWithoutTable = 'https://api.airtable.com/v0/%s' % (BaseID)
 CurlBaseCommand = 'https://api.airtable.com/v0/%s/%s' % (BaseID, RunTableName)
 CurlBaseCommandSensor = 'https://api.airtable.com/v0/%s/%s' % (BaseID, SensorTableName)
@@ -79,7 +79,7 @@ if isLPC:
         raise ValueError("\"{}\" please define your code path above for the lpc in JARVIS/BackEndProcesses/AllModules.py".format(user))
 
 eosBaseDir = 'root://cmseos.fnal.gov//store/group/cmstestbeam/SensorBeam2022/'
-BaseTrackDirLocal = '%sTracks/v3/' % BaseTestbeamDir
+BaseTrackDirLocal = '%sTracks/v10/' % BaseTestbeamDir
 LocalSSH = 'daq@timingdaq01.dhcp.fnal.gov'
 EnvSetupPath = '/home/daq/setup.sh' ############### Remember to change ProcessExec accordingly
 EnvSetupPath2 = '/home/daq/otsdaq/setup_ots.sh' ############### Remember to change ProcessExec accordingly
