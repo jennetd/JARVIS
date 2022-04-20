@@ -38,10 +38,13 @@ def GetTemperaturesSimple(run_info_dict):
     temps = infile.readline().split()
 
     run_info_dict["Dew point"]="%0.2f"%float(temps[-1])
-    run_info_dict["TempSlot2"]="%0.2f"%float(temps[14])
-    run_info_dict["TempSlot3"]="%0.2f"%float(temps[15])
-    run_info_dict["TempSlot4"]="%0.2f"%float(temps[16])
-    run_info_dict["TempCenter"]="%0.2f"%Temp_calc(float(temps[20]))
+    run_info_dict["TempSlot1"]="%0.2f"%float(temps[14])
+    run_info_dict["TempSlot2"]="%0.2f"%float(temps[15])
+    run_info_dict["TempSlot3"]="%0.2f"%min(float(temps[16]),100.0)
+    run_info_dict["TempSlot4"]="%0.2f"%float(temps[17])
+    run_info_dict["TempSlot5"]="%0.2f"%float(temps[18])
+    run_info_dict["TempSlot6"]="%0.2f"%float(temps[19])
+    run_info_dict["TempCenter"]="%0.2f"%Temp_calc(float(temps[22]))
     #run_info_dict["TempSlot19"]="%0.2f"%float(temps[18])
     #run_info_dict["TempAir"]="%0.2f"%float(temps[19])
 

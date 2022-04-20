@@ -9,7 +9,7 @@ Configuration = 122   ##not used except in BTL mode
 LongAcquisitionMode = False #True
 
 
-numEvents = 13000 ## not used in Long mode
+numEvents = 25000 ## not used in Long mode
 numPoints = 25 ##MSa, only used in Long mode
 sampleRate = 10 #GSa/s
 horizontalWindow = 50 #ns
@@ -20,17 +20,17 @@ trigCh = "EX"
 #trigCh = "LINE" 
 trig = 0.41 #0.15 # V
 
-vScale1 = 0.07  
-vScale2 = 0.07
-vScale3 = 0.07 
-vScale4 = 0.07
-vScale5 = 0.07  
-vScale6 = 0.07
-vScale7 = 0.07 
+vScale1 = 0.05  
+vScale2 = 0.05
+vScale3 = 0.05 
+vScale4 = 0.05
+vScale5 = 0.05  
+vScale6 = 0.05
+vScale7 = 0.05 
 vScale8 = 0.10
 
 
-timeoffset = 85  #115 ns (50D) 30 ns (SiPM self trigger) 85 (Lorenzo scin) 105 (SiPM telescope trigger)
+timeoffset = 105  #105 ns (50D) 30 ns (SiPM self trigger) 85 (Lorenzo scin) 105 (SiPM telescope trigger)
 
 ############### Remember to source the otsdaq environment
 ############### Assuming the directory structure in the KeySightScope repository is the same as on this computer
