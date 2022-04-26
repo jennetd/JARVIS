@@ -6,12 +6,12 @@ PID = 2 #2 means Timingdaq, Refer to the dictionary in all modules
 GetRunListEachTime = False #Could be true also for this case.
 
 #Give the range of run numbers to process
-StartRunNumber = 34308 #35084#34511   
-StopRunNumber = 34503#34679
+StartRunNumber = 60233 #35084#34511   
+StopRunNumber = 60534#34679
 
 ############ Doesn't matter for tracking ###########
 SaveWaveForms = True
-ConfigVersion = "v6"
+ConfigVersion = "v11"
 DigitizerKey = 6 #key=3 for KeySightScope, Refer Allmodules
 
 ########### Get Key ###########
