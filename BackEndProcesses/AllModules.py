@@ -53,14 +53,7 @@ QueryFilePath ="../QueryLog.txt" # Don't care about this
 #############################################################
 
 ############# Tracking Paths ##############
-# HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScriptFastTrigger_NewGeo_2020_02_05.sh'
-
-# HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScriptETL2021.sh'
-HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScript2022.sh'
-# HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScriptETL2020_TI.sh'
- 
-#HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScriptFastTriggerETL2020.sh'
-
+HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScript2022_AprilCenterbox.sh'
 RulinuxSSH = 'otsdaq@teddy01.dhcp.fnal.gov'#'otsdaq@rulinux04.dhcp.fnal.gov'
 BaseTrackDirRulinux = '/data/TestBeam/2020_02_February_cmstiming/'
 ResultTrackFileNameBeforeRunNumber = 'Run' ###########'Run%d_CMSTiming_converted.root'
@@ -79,7 +72,7 @@ if isLPC:
         raise ValueError("\"{}\" please define your code path above for the lpc in JARVIS/BackEndProcesses/AllModules.py".format(user))
 
 eosBaseDir = 'root://cmseos.fnal.gov//store/group/cmstestbeam/SensorBeam2022/'
-BaseTrackDirLocal = '%sTracks/v10/' % BaseTestbeamDir
+BaseTrackDirLocal = '%sTracks/v11/' % BaseTestbeamDir
 LocalSSH = 'daq@timingdaq01.dhcp.fnal.gov'
 EnvSetupPath = '/home/daq/setup.sh' ############### Remember to change ProcessExec accordingly
 EnvSetupPath2 = '/home/daq/otsdaq/setup_ots.sh' ############### Remember to change ProcessExec accordingly

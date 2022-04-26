@@ -124,7 +124,7 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 					else:
 						if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[0], False, MyKey)
 				
-					cu.xrdcpTracks(run)
+					cu.xrdcpTracks(run,Version)
 				elif PID == 1:
 					if not condor:
 						if pf.QueryGreenSignal(True):
