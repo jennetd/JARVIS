@@ -30,7 +30,7 @@ vScale7 = 0.05
 vScale8 = 0.10
 
 
-timeoffset = 105  #105 ns (50D) 30 ns (SiPM self trigger) 85 (Lorenzo scin) 105 (SiPM telescope trigger)
+timeoffset = 95  #105 ns (50D) 30 ns (SiPM self trigger) 85 (Lorenzo scin) 105 (SiPM telescope trigger)
 
 ############### Remember to source the otsdaq environment
 ############### Assuming the directory structure in the KeySightScope repository is the same as on this computer
