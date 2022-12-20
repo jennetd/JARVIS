@@ -6,8 +6,8 @@ PID = 2 #2 means Timingdaq, Refer to the dictionary in all modules
 GetRunListEachTime = False #Could be true also for this case.
 
 #Give the range of run numbers to process
-StartRunNumber = 60233 #35084#34511   
-StopRunNumber = 60534#34679
+StartRunNumber = 60957 #35084#34511   
+StopRunNumber = 61302#34679
 
 ############ Doesn't matter for tracking ###########
 SaveWaveForms = True
