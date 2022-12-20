@@ -17,8 +17,8 @@ active_temp_base_path = am.BaseTestbeamDir+'/JARVIS/SlowControl/temp_dew_active.
 active_CAEN_base_path = am.BaseTestbeamDir+'/JARVIS/SlowControl/CAEN_HV_active.txt'
 
 def GetACNetYield(run_info_dict):
-    startTime = '9-mar-2022-00:00:00'
-    endTime = '3-apr-2022-18:15:00'
+    startTime = '20-apr-2022-00:00:00'
+    endTime = '30-apr-2022-00:00:00'
 
     try:
         run_info_dict["MT6SC2 [ppp]"]=(float(get_acnet_data(startTime, endTime, "F:MT6SC2")))

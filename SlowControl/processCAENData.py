@@ -5,22 +5,29 @@ import ROOT
 from array import array
 
 
-CAENUnsyncLocalPath = '/home/daq/SurvivalBeam2021/JARVIS/SlowControl/CAENLogs/'
+CAENUnsyncLocalPath = '/home/daq/SensorBeam2022/JARVIS/SlowControl/CAENLogs/'
 
 #outputtag= "batch_12-5"
 #outputtag= "batch_three_day_two"
-outputtag= "death_batch" 
+#outputtag= "death_batch" 
 #StartDate_ = '[2021-12-05T01:00:00]:'
 #EndDate_ = '[2021-12-06T01:00:00]:'
-StartDate_ = '[2021-12-05T23:00:00]:'
-EndDate_ = '[2021-12-06T08:00:00]:'
+#StartDate_ = '[2021-12-05T23:00:00]:'
+#EndDate_ = '[2021-12-06T08:00:00]:'
 #StartDate_ = '[2021-12-05T21:30:00]:'
 #EndDate_ = '[2021-12-05T22:00:00]:'
 
 
-outputtag= "death_slot19"
-StartDate_ = '[2021-12-05T04:30:00]:'                                                                                                                                                                                                       
-EndDate_ = '[2021-12-05T05:30:00]:'  
+#outputtag= "death_slot19"
+#StartDate_ = '[2021-12-05T04:30:00]:'                                                                                                                                                                                                       
+#EndDate_ = '[2021-12-05T05:30:00]:' 
+
+outputtag= "pre_beam"
+StartDate_ = '[2022-04-23T00:00:00]:'                                                                                                                                                                                                       
+EndDate_ = '[2022-04-23T23:00:00]:'  
+
+
+
 ROOT.gROOT.SetBatch(True)
 outputdir = "CAENPlots/"
 
@@ -124,7 +131,7 @@ def drawTimeHisto(Ymax, Yname, time, plotLog, pdfName, startTime,endTime):
     legend.Draw()
     c1.Print(pdfName)
 
-def drawIV(Xname, Yname, dataIV, pdfName):
+def drawIV(Xmax, Ymax, Xname, Yname, V, I, pdfName):
     c1 = ROOT.TCanvas("c1","c1",1000,1000)
     ROOT.gPad.SetGridy(); ROOT.gPad.SetGridx()
     ROOT.gPad.SetTopMargin(0.15)
@@ -132,19 +139,16 @@ def drawIV(Xname, Yname, dataIV, pdfName):
     ROOT.gPad.SetBottomMargin(0.15)
     ROOT.gPad.SetRightMargin(0.15)
 
-    legend = ROOT.TLegend(0.8, 0.5, 1.0, 0.8)
+    legend = ROOT.TLegend(0.9, 0.6, 1.0, 0.8)
     
-    ##Xmin = 0.0
-    #Xmax = (endTime - startTime)/3600.
-    Ymax = 60.0
+    Xmin = 0.0
     Ymin = 0.0
-    #h = ROOT.TH1F("dummy","dummy",1, Xmin, Xmax)
-    h = ROOT.TH1F("dummy","dummy",1, 0, 800)
+    h = ROOT.TH1F("dummy","dummy",1, Xmin, Xmax)
     h.SetMaximum(Ymax)
     h.SetMinimum(Ymin)
     h.SetTitle("")
     h.SetStats(0)
-    #h.GetXaxis().SetLimits(Xmin,Xmax)
+    h.GetXaxis().SetLimits(Xmin,Xmax)
     h.GetXaxis().SetLabelSize(0.05)
     h.GetXaxis().SetTitleSize(0.05)
     h.GetXaxis().SetTitleOffset(1.3)
@@ -155,27 +159,36 @@ def drawIV(Xname, Yname, dataIV, pdfName):
     h.GetYaxis().SetTitle(Yname)
     h.Draw()
     
+    colors = [
+        ROOT.kAzure+4, ROOT.kRed, ROOT.kBlack, 
+        ROOT.kGreen+2, ROOT.kMagenta, ROOT.kCyan+1, ROOT.kBlue,
+        ROOT.kOrange, ROOT.kRed+2, ROOT.kYellow+2,
+        ROOT.kAzure+4, ROOT.kRed, ROOT.kBlack, 
+        ROOT.kGreen+2, ROOT.kMagenta, ROOT.kCyan+1, ROOT.kBlue,
+        ROOT.kOrange, ROOT.kRed+2, ROOT.kYellow+2,
+        ROOT.kAzure+4, ROOT.kRed, ROOT.kBlack, 
+        ROOT.kGreen+2, ROOT.kMagenta, ROOT.kCyan+1, ROOT.kBlue,
+        ROOT.kOrange, ROOT.kRed+2, ROOT.kYellow+2,
+    ]
     history = []
-    for channel in dataIV:
-        cIndex = int(channel.replace('ch',''))
-        if cIndex >= 4: continue
+    for i, channel in enumerate(V):
         g = None
-        #if channel == "ch1" or channel=="ch6": continue
+        #if not channel is "ch2": continue
         try:
-            g = ROOT.TGraph(len(dataIV[channel]['data']['I']), array('d', dataIV[channel]['data']['V']), array('d', dataIV[channel]['data']['I']))
+            g = ROOT.TGraph(len(V[channel]), array('d', V[channel]), array('d', I[channel]))
         except:
             print "-------------------------"
-            print "Warning: No Data for ", channel, dataIV[channel]
+            print "Warning: No Data for ", channel, V[channel], I[channel]
             print "-------------------------"
             continue
         #g.SetLineStyle(ROOT.kDashed)
-        g.SetLineColor(dataIV[channel]["color"])
-        g.SetMarkerColor(dataIV[channel]["color"])
+        g.SetLineColor(colors[i])
+        g.SetMarkerColor(colors[i])
         g.SetMarkerStyle(20)
-        g.SetMarkerSize(0.8)
+        g.SetMarkerSize(0.6)
         g.Draw("P same")
         history.append(g)
-        legend.AddEntry(g, sensorNames[channel], "p")
+        legend.AddEntry(g, channel, "l")
     
     legend.Draw()
     c1.Print(pdfName)
@@ -216,6 +229,8 @@ def main():
     startTime = to_seconds(getDateTime(StartDate_))
     endTime = to_seconds(getDateTime(EndDate_)) if EndDate_ else to_seconds(datetime.now()) + 3600
 
+    print(files)
+
     # Loop through all log files and collect the data
     data = []
     for i, name in enumerate(files):
@@ -243,53 +258,12 @@ def main():
             allChannelI = dict_merge(allChannelI, d['I'])
         else:
             allChannelI = d['I']
-
-    # Get log data
-    #currentLog = {"ch"+i:{'x':[],'y':[],'color':color} for i, color in channelInfo}
-    #voltageLog = {"ch"+i:{'x':[],'y':[],'color':color} for i, color in channelInfo}
-    #for d in data:
-    #    channel = "ch"+str(d["ch"])
-    #    #if outputtag== "batch_one_set_one":
-    #   # if channel!="ch0" and channel!="ch1" and channel!="ch4" and channel!="ch6":continue
-    #    if to_seconds(d["ETLTimeStamp"]) < to_seconds(getDateTime(StartDate_)): continue
-    #    if EndDate_ is not None and to_seconds(d["ETLTimeStamp"]) > to_seconds(getDateTime(EndDate_)): continue
-    #    if channel not in currentLog.keys(): continue
-    #
-    #    t_sec = to_seconds(d["ETLTimeStamp"]) - startTime
-    #    if d['par'] == "IMonH" or d['par'] == "IMon":                
-    #        currentLog[channel]['x'].append(t_sec/3600.)
-    #        currentLog[channel]['y'].append(d['val'])
-    #    elif d['par'] == "VMon":                
-    #        voltageLog[channel]['x'].append(t_sec/3600.)
-    #        voltageLog[channel]['y'].append(d['val'])
     
     # Draw histograms
-    drawTimeHisto(180.0, "Current [#muA]", time, allChannelI, "%s/current_%s.png" % (outputdir,outputtag), startTime,endTime)
-    drawTimeHisto(800.0, "Voltage [V]", time, allChannelV, "%s/voltage_%s.png" % (outputdir,outputtag), startTime,endTime)
-    #
-    ##draw1D("current channel 3", currentLog['ch3']['y'], 100, 0.0, 70.0, "%s/current_ch3_1D_%s.pdf" % (outputdir,outputtag))
-    ##draw1D("current channel 4", currentLog['ch4']['y'], 100, 0.0, 70.0, "%s/current_ch4_1D_%s.pdf" % (outputdir,outputtag))
-    #
-    #
-    ##dataIV = {"ch"+i:{'data':None,'color':color} for i, color in channelInfo}
-    ##for channel in currentLog.keys():
-    ##    data = {'I':[],'V':[]}
-    ##    for i in range(len(currentLog[channel]['x'])):
-    ##        val1=currentLog[channel]['y'][i]
-    ##        time1=currentLog[channel]['x'][i]
-    ##        bestMatchInfo = (999,-1,999)
-    ##        for j in range(len(voltageLog[channel]['x'])):
-    ##            time2=voltageLog[channel]['x'][j]
-    ##            val2=voltageLog[channel]['y'][j]
-    ##            deltaT = time1 - time2
-    ##            if(deltaT < bestMatchInfo[0] and deltaT >= 0):
-    ##                bestMatchInfo = (deltaT, j, val2)
-    ##        data['I'].append(val1)
-    ##        data['V'].append(bestMatchInfo[2])                
-    ##    dataIV[channel]['data'] = data
-    ##
-    ##drawIV("Voltage [V]", "Current [uA]", dataIV, "%s/IV_%s.png" % (outputdir,outputtag))
+    drawTimeHisto(80.0, "Current [#muA]", time, allChannelI, "%s/current_%s.png" % (outputdir,outputtag), startTime,endTime)
+    drawTimeHisto(720.0, "Voltage [V]", time, allChannelV, "%s/voltage_%s.png" % (outputdir,outputtag), startTime,endTime)
 
+    drawIV(720.0, 80.0, "Voltage [v]", "Current [#muA]", allChannelV, allChannelI, "%s/IV_%s.png" % (outputdir,outputtag))
 
 if __name__ == '__main__':
     main()
