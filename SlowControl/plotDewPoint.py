@@ -3,12 +3,12 @@ from datetime import datetime
 import time as t
 import ROOT
 from array import array
+import numpy as np
 
-outputtag= "prebeam"
-#StartDate_ = '[2021-12-05T21:30:00]:'
-#EndDate_ = '[2021-12-05T22:00:00]:'
-StartDate_ = '[2021-12-05T23:00:00]:'
-EndDate_ = '[2021-12-06T08:00:00]:'
+outputtag= "batch3install"
+StartDate_ = '[2022-04-25T12:00:00]:'
+EndDate_ = '[2022-04-26T20:00:00]:'
+
 
 # outputtag = "batch_one_set_one"
 # StartDate_ = '[2021-03-26T18:00:00]:'
@@ -16,7 +16,7 @@ EndDate_ = '[2021-12-06T08:00:00]:'
 
 ROOT.gROOT.SetBatch(True)
 
-colors = {16:ROOT.kBlue+2,17:ROOT.kGreen+2,18:ROOT.kCyan+1,19:ROOT.kMagenta+2,14:ROOT.kBlack,15:ROOT.kYellow+1}
+colors = {16:ROOT.kBlue+2,17:ROOT.kGreen+2,18:ROOT.kCyan+1,19:ROOT.kMagenta+2,14:ROOT.kBlack,15:ROOT.kYellow+1,20:ROOT.kOrange+1,21:ROOT.kPink,22:ROOT.kBlue+2}
 
 def getDateTime(date):
     return datetime.strptime(date, "[%Y-%m-%dT%H:%M:%S]:")
@@ -31,6 +31,28 @@ def dict_merge(y, x):
         else: 
             y[k] = v 
     return y
+
+def Resistance_calc(T): #Function to calculate resistance for any temperature                                                                                                                                                                 
+    R0 = 100 #Resistance in ohms at 0 degree celsius                                                                                                                                                                                          
+    alpha = 0.00385
+    Delta = 1.4999 #For pure platinum                                                                                                                                                                                                         
+    if T < 0:
+        Beta = 0.10863
+    elif T > 0:
+        Beta = 0
+    RT = (R0 + R0*alpha*(T - Delta*(T/100 - 1)*(T/100) - Beta*(T/100 - 1)*((T/100)**3)))*100
+    return RT
+
+#### for FNAL 16 ch board
+def Temp_calc(R): #Function to calculate temperature for any resistance                                                                                                                                                                       
+    Temp_x = np.linspace(-30, 30, num=100) #Points to be used for interpolation                                                                                                                                                               
+    Resis_y = np.array([])
+    for i in range(len(Temp_x)):
+        Resis_y = np.append(Resis_y,Resistance_calc(Temp_x[i]))
+    Temperature_R = np.interp(R, Resis_y, Temp_x)
+    #plt.plot(Temp_x, Resis_y, 'o')                                                                                                                                                                                                           
+    #plt.show()                                                                                                                                                                                                                               
+    return Temperature_R
 
 def parseDewPointline(l):
     data = l.split()
@@ -103,6 +125,8 @@ def drawTimeHisto(Ymax, Yname, plotLog, pdfName, startTime, endTime, plotDict=No
     for channel in plotDict.keys():
         g1 = None
         try:
+            for i in range(len(plotDict[channel])):
+                plotDict[channel][i] = Temp_calc(plotDict[channel][i])
             g1 = plotTGraph(len(plotLog['ch1']['x']), array('d', plotLog['ch1']['x']), array('d', plotDict[channel]), ROOT.kBlack)
         except:
             print("Broken lol")
@@ -141,6 +165,7 @@ def main():
         if EndDate_ is not None and ETLTimeStamp > to_seconds(getDateTime(EndDate_)): continue
     
         t_sec = d["time"] - startTime + to_seconds(datetime.strptime("2000-01-01 00:00:00", "%Y-%m-%d %H:%M:%S"))
+
         dewpointLog[channel]['x'].append(t_sec/3600.)
         dewpointLog[channel]['y'].append(d['val'])
 

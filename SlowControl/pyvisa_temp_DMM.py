@@ -106,8 +106,8 @@ def main():
 
     allChannels = [
         ( 94,False,tempCMD),( 95,False,tempCMD),( 96,False,tempCMD),( 97,False,tempCMD),( 98,False,tempCMD),( 99,False,tempCMD),(100,False,tempCMD),(101,False,tempCMD),
-        (102,False,tempCMD),(103,False,tempCMD),(104,False,tempCMD),(105,False,tempCMD),(106,False,tempCMD),(107, True,tempCMD),(108, True,tempCMD),(109, True,tempCMD),
-        (110,False,tempCMD),(111,False,tempCMD),(112,False,tempCMD),(113, True, resCMD),(114,False,tempCMD),(115,False,tempCMD),(116,False,tempCMD),(117,False,tempCMD),
+        (102,False,tempCMD),(103,False,tempCMD),(104,False,tempCMD),(105,False,tempCMD),(106,False,tempCMD),(107,False,tempCMD), (108, False,tempCMD),(109, False,tempCMD),
+        (110,False, tempCMD),(111,False, tempCMD),(112,False, tempCMD),(113,False,resCMD), (114,True,resCMD), (115,True,resCMD), (116,False,tempCMD),(117,False,tempCMD),
         (119,False,tempCMD),(120,False,tempCMD),(121,False,tempCMD),(122,False,tempCMD),(123,False,tempCMD),(124,False,tempCMD),(125,False,tempCMD),(126,False,tempCMD),
         (127,False,tempCMD),(128,False,tempCMD),(129,False,tempCMD),(130,False,tempCMD),(131,False,tempCMD),(132,False,tempCMD),
     ]
