@@ -9,15 +9,15 @@ Configuration = 122   ##not used except in BTL mode
 LongAcquisitionMode = False #True
 
 
-numEvents = 25000 ## not used in Long mode
+numEvents = 3000 ## not used in Long mode
 numPoints = 25 ##MSa, only used in Long mode
 sampleRate = 10 #GSa/s
 horizontalWindow = 50 #ns
 
 ### if sample rate or horizontal window is changed, TimingDAQ must be recompiled to account for new npoints.
 #trigCh = "C8" 
-trigCh = "EX"
-#trigCh = "LINE" 
+#trigCh = "EX"
+trigCh = "LINE" 
 trig = 0.41 #0.15 # V
 
 vScale1 = 0.05  
