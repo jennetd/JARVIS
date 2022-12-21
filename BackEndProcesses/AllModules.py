@@ -30,14 +30,14 @@ if isLPC:
 
 ################### Run Table Information #################
 MyKey = '' #Read MyKey from key file in RecoProcesses
-RunTableName = 'tbll6K78TBGoYB35V'
-SensorTableName = 'tbljWMYw2M2mfPXFs'
-ConfigTableName = 'tblyMhEwAFj8QMqLH'
-KeySightScopeConfigTableName = 'tblNzWILNh3wUPkBj'
-LecroyScopeConfigTableName = 'tbl6HZPEwx0LLlbEq'
-CAENConfigTableName = 'tblCFsUFHRjv8YOxk'
+RunTableName = 'tblf6RYlowYIrnGrG'
+SensorTableName = 'tbldWTPJxHkGIBA1d'
+ConfigTableName = 'tblsMovJ5ABsjy37s'
+KeySightScopeConfigTableName = 'tblHz3zYiclQnBXX4'
+LecroyScopeConfigTableName = 'tbl0H6GR1si5e7O0b'
+CAENConfigTableName = 'tblwFzLScMBPBKrT5'
 
-BaseID = 'appWaxhQY77bbVCsV'
+BaseID = 'appQaE83t2pvEHfOG'
 CurlBaseCommandWithoutTable = 'https://api.airtable.com/v0/%s' % (BaseID)
 CurlBaseCommand = 'https://api.airtable.com/v0/%s/%s' % (BaseID, RunTableName)
 CurlBaseCommandSensor = 'https://api.airtable.com/v0/%s/%s' % (BaseID, SensorTableName)
@@ -62,16 +62,16 @@ ResultTrackFileNameAfterRunNumberSlow = '_CMSTiming_SlowTriggerStream_converted.
 ResultTrackFileNameAfterRunNumberFast = '_CMSTiming_FastTriggerStream_converted.root'
 
 ############## For timingdaq02 ############
-BaseTestbeamDir = '/home/daq/SensorBeam2022/' 
+BaseTestbeamDir = '/home/daq/SensorBeam2023/' 
 if isLPC:
     if 'rheller' in user:
-        BaseTestbeamDir = '/uscms/home/rheller/nobackup/SensorBeam2022/'
+        BaseTestbeamDir = '/uscms/home/rheller/nobackup/SensorBeam2023/'
     elif 'cmadrid' in user:
-        BaseTestbeamDir = '/uscms/home/cmadrid/nobackup/ana/SensorBeam2022/'
+        BaseTestbeamDir = '/uscms/home/cmadrid/nobackup/ana/SensorBeam2023/'
     else:
         raise ValueError("\"{}\" please define your code path above for the lpc in JARVIS/BackEndProcesses/AllModules.py".format(user))
 
-eosBaseDir = 'root://cmseos.fnal.gov//store/group/cmstestbeam/SensorBeam2022/'
+eosBaseDir = 'root://cmseos.fnal.gov//store/group/cmstestbeam/SensorBeam2023/'
 BaseTrackDirLocal = '%sTracks/v11/' % BaseTestbeamDir
 LocalSSH = 'daq@timingdaq01.dhcp.fnal.gov'
 EnvSetupPath = '/home/daq/setup.sh' ############### Remember to change ProcessExec accordingly
@@ -110,8 +110,8 @@ FrequencyList=[500,750,1000]
 
 ############# OTSDAQ Information ################
 #ip_address = "192.168.133.48" #ftbf-daq-06
-# ip_address = "192.168.133.10" #athenanu 
-ip_address = "131.225.179.70" #athenanu internet
+ip_address = "192.168.133.10" #athenanu 
+#ip_address = "131.225.179.70" #athenanu internet
 use_socket = 17000
 runFileName ="/data-08/TestBeam/Users/RunNumber/OtherRuns0NextRunNumber.txt"
 #runFileName ="/data/TestBeam/Users/RunNumber/OtherRuns0NextRunNumber.txt"
