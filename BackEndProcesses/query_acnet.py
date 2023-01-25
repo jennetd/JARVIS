@@ -36,8 +36,8 @@ def return_acnet_data():
 	MT61AV = 'E:1AV'
 
 	### For first bias config, (387,388,389)
-	startTime = '9-mar-2022-00:00:00' #38372
-	endTime = '3-apr-2022-18:15:00' #39422
+	startTime = '4-jan-2023-00:00:00' #38372
+	endTime = '11-jan-2023-00:00:00' #39422
 
 	counts1_buff = get_acnet_data(startTime, endTime, counts1)
 	counts2_buff = get_acnet_data(startTime, endTime, counts2)
