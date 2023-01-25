@@ -9,15 +9,17 @@ Configuration = 122   ##not used except in BTL mode
 LongAcquisitionMode = False #True
 
 
-numEvents = 3000 ## not used in Long mode
+numEvents = 25000 ## not used in Long mode
 numPoints = 25 ##MSa, only used in Long mode
 sampleRate = 10 #GSa/s
 horizontalWindow = 50 #ns
 
 ### if sample rate or horizontal window is changed, TimingDAQ must be recompiled to account for new npoints.
-#trigCh = "C8" 
-#trigCh = "EX"
-trigCh = "LINE" 
+#trigCh = "C8"
+#trig   = 0.15
+
+trigCh = "EX"
+#trigCh = "LINE" 
 trig = 0.41 #0.15 # V
 
 vScale1 = 0.05  
@@ -29,8 +31,13 @@ vScale6 = 0.05
 vScale7 = 0.05 
 vScale8 = 0.10
 
+vPos1 = 3
+vPos2 = 3
+vPos3 = 3
 
-timeoffset = 95  #105 ns (50D) 30 ns (SiPM self trigger) 85 (Lorenzo scin) 105 (SiPM telescope trigger)
+timeoffset = 75#100 ##75 scintillator trigger
+
+#2022 values  #105 ns (50D) 30 ns (SiPM self trigger) 85 (Lorenzo scin) 105 (SiPM telescope trigger)
 
 ############### Remember to source the otsdaq environment
 ############### Assuming the directory structure in the KeySightScope repository is the same as on this computer
@@ -61,7 +68,7 @@ while True:
             
             #### Reading run number ####
             #RunNumber = tp.GetRunNumber()
-            ScopeCommand = 'python %s/Acquisition/acquisition.py --runNum %s --numEvents %d --sampleRate %d --horizontalWindow %d --trigCh %s --trig %f --vScale1 %f --vScale2 %f --vScale3 %f --vScale4 %f --timeoffset %i --trigSlope POS' % (LecroyScopeControlDir,runNumber, numEvents, sampleRate, horizontalWindow, trigCh, trig, vScale1, vScale2, vScale3, vScale4, timeoffset) 
+            ScopeCommand = 'python %s/Acquisition/acquisition.py --runNum %s --numEvents %d --sampleRate %d --horizontalWindow %d --trigCh %s --trig %f --vScale1 %f --vScale2 %f --vScale3 %f --vScale4 %f --timeoffset %i --trigSlope POS --vPos1 %f --vPos2 %f --vPos3 %f ' % (LecroyScopeControlDir,runNumber, numEvents, sampleRate, horizontalWindow, trigCh, trig, vScale1, vScale2, vScale3, vScale4, timeoffset, vPos1, vPos2, vPos3) 
             print ScopeCommand
             #### Starting the acquisition script ####
             os.system(ScopeCommand)

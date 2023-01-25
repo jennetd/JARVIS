@@ -53,7 +53,7 @@ QueryFilePath ="../QueryLog.txt" # Don't care about this
 #############################################################
 
 ############# Tracking Paths ##############
-HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScript2022_AprilCenterbox.sh'
+HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScript2023.sh'
 RulinuxSSH = 'otsdaq@teddy01.dhcp.fnal.gov'#'otsdaq@rulinux04.dhcp.fnal.gov'
 BaseTrackDirRulinux = '/data/TestBeam/2020_02_February_cmstiming/'
 ResultTrackFileNameBeforeRunNumber = 'Run' ###########'Run%d_CMSTiming_converted.root'
@@ -72,7 +72,7 @@ if isLPC:
         raise ValueError("\"{}\" please define your code path above for the lpc in JARVIS/BackEndProcesses/AllModules.py".format(user))
 
 eosBaseDir = 'root://cmseos.fnal.gov//store/group/cmstestbeam/SensorBeam2023/'
-BaseTrackDirLocal = '%sTracks/v11/' % BaseTestbeamDir
+BaseTrackDirLocal = '%sTracks/v12/' % BaseTestbeamDir
 LocalSSH = 'daq@timingdaq01.dhcp.fnal.gov'
 EnvSetupPath = '/home/daq/setup.sh' ############### Remember to change ProcessExec accordingly
 EnvSetupPath2 = '/home/daq/otsdaq/setup_ots.sh' ############### Remember to change ProcessExec accordingly
