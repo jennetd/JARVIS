@@ -130,8 +130,46 @@ def TimingDAQRuns(RunNumber, DoTracking, Digitizer, MyKey, Debug, condor=False):
         FieldIDList.append(pf.GetFieldID(am.QueryFieldsDict[0], RunNumber, False, MyKey))
 
     print RunList
-    return RunList, FieldIDList                                                                                                                                                                                                                  
+    return RunList, FieldIDList                                            
 
+def RecoTOFHIRRuns(RunNumber, doScope, Digitizer, MyKey):
+    #RunNumber = RunNumber    
+    #Digitizer = Digitizer                                                                                                                                                                                                                                           
+    #MyKey = MyKey                                                        
+    RunList = []                                                                                                                                                                                                                                                                         
+    FieldIDList = []                                                                                                                                                                                                                                                                     
+    DigitizerList = []   
+
+    ProcessName =  am.ProcessDict[7].keys()[0] + Digitizer
+    ScopeProcessName =am.ProcessDict[2].keys()[0] + "LecroyScope"
+
+    if not doScope: ProcessName = am.ProcessDict[8].keys()[0] + Digitizer
+    if RunNumber == -1:
+
+        #### For doScope: want AND of (xrdcpRawTOFHIR == Complete, TimingDAQLecroyScope == Complete)
+        xrdcpDone = pf.ORFunc([am.ProcessDict[6].keys()[0] + Digitizer],[am.StatusDict[0]])   
+
+        ScopeRecoDone = pf.ORFunc([am.ProcessDict[2].keys()[0] + "LecroyScope"],[am.StatusDict[0]])   
+        TOFHIRRecoNotYetDone = pf.ORFunc([ProcessName, ProcessName],[am.StatusDict[3], am.StatusDict[5]])
+
+        FilterByFormula = 'AND(' + xrdcpDone + ',' + TOFHIRRecoNotYetDone   
+        if doScope: FilterByFormula = FilterByFormula + ',' + ScopeRecoDone 
+        FilterByFormula = FilterByFormula + ')'
+
+        headers = {'Authorization': 'Bearer %s' % MyKey, }                                                                                                                                                                                                                                
+        if pf.QueryGreenSignal(True): response = am.requests.get(am.CurlBaseCommand  + '?filterByFormula=' + FilterByFormula, headers=headers)                                                                                                                                                                               
+        ResponseDict = am.ast.literal_eval(response.text)         
+
+        for i in ResponseDict["records"]:                                                                                                                                                                                                                                   
+            RunList.append(i['fields'][am.QueryFieldsDict[0]])                                                                                                                                                                                                                                        
+            FieldIDList.append(i['id'])
+    else:
+        RunList.append(RunNumber)
+        FieldIDList.append(pf.GetFieldID(am.QueryFieldsDict[0], RunNumber, False, MyKey))
+    
+    print "RecoTOFHIRRuns wants to reco these runs:"
+    print RunList
+    return RunList, FieldIDList  
 
 def WatchCondorRuns(RunNumber, DoTracking, Digitizer, MyKey, False):
     RunNumber = RunNumber

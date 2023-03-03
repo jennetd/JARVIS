@@ -9,7 +9,7 @@ Configuration = 122   ##not used except in BTL mode
 LongAcquisitionMode = False #True
 
 
-numEvents = 25000 ## not used in Long mode
+numEvents = 25 ## not used in Long mode
 numPoints = 25 ##MSa, only used in Long mode
 sampleRate = 10 #GSa/s
 horizontalWindow = 50 #ns
@@ -42,7 +42,7 @@ timeoffset = 75#100 ##75 scintillator trigger
 ############### Remember to source the otsdaq environment
 ############### Assuming the directory structure in the KeySightScope repository is the same as on this computer
 
-AutoPilotStatusFile = '%s/Acquisition/ScopeStatus.txt' % LecroyScopeControlDir
+AutoPilotStatusFile = LecroyScopeCommFileName
 #AgilentScopeCommand = 'python %sAcquisition/acquisition.py --numEvents %d --sampleRate %d --horizontalWindow %d --trigCh %s --trig %f --vScale1 %f --vScale2 %f --vScale3 %f --vScale4 %f --timeoffset %i --trigSlope POS' % (ScopeControlDir, numEvents, sampleRate, horizontalWindow, trigCh, trig, vScale1, vScale2, vScale3, vScale4, timeoffset) 
 #print AgilentScopeCommand
 print "####################################"

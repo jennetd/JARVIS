@@ -16,14 +16,14 @@ trigCh = "AUX"
 #trigCh = "4" 
 #trig =  -0.020 # V
 #trig =  -0.070 # V
-trig = 0.150 # V
+trig = 0.500 # V
 
-vScale1 = 0.05 
-vScale2 = 0.05
-vScale3 = 0.05
-vScale4 = 0.05
+vScale1 = 0.2
+vScale2 = 0.1
+vScale3 = 0.1
+vScale4 = 0.1
 
-timeoffset = -207#-207 #-207 #ns
+timeoffset = 0#-207 #-207 #ns
 TimeOut= 23 #Max run duration [s]. Use -1 for no timeout. 38 for telescope, 23 for photek mode
 
 ############### Remember to source the otsdaq environment

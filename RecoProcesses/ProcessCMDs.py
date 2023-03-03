@@ -27,6 +27,7 @@ def TrackingCMDs(RunNumber, MyKey, Debug):
     else:
         return None,None,None,None   
 
+
 def xrdcpRawCMDs(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer, MyKey, False):
     RunList, FieldIDList = pr.xrdcpRawRuns(RunNumber, Digitizer, MyKey, False)
     cpCMDList = []
@@ -147,6 +148,27 @@ def TimingDAQCMDs(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer, M
     else:
         return None,None,None,None   
 
+def RecoTOFHIRCMDs(RunNumber, Version, doScope, Digitizer, MyKey):
+    
+    #MyKey = MyKey
+    #Digitizer = Digitizer
+    #RunNumber = RunNumber
+
+    RunList, FieldIDList = pr.RecoTOFHIRRuns(RunNumber, doScope, Digitizer, MyKey)
+    DatToRootCMDList = []
+    ResultFileLocationList = []
+    RunsNotPresent = []
+
+    return DatToRootCMDList, ResultFileLocationList, RunList, FieldIDList
+
+
+    #if RunList != None:
+    #    for run in RunList: 
+
+
+
+
+
 
 def WatchCondorCMDs(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer, MyKey, False):
     RunList, FieldIDList,ProcessList = pr.WatchCondorRuns(RunNumber, DoTracking, Digitizer, MyKey, False)
@@ -157,7 +179,10 @@ def WatchCondorCMDs(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer,
 
     for i,run in enumerate(RunList):
         if(ProcessList[i]==2):
-            RecoLocalPath = RecoBaseLocalPath + am.TwoStageRecoDigitizers[Digitizer]['FinalFileNameFormat']+ str(run) + '_info.root' 
+            if Digitizer == "KeySightScope":
+                RecoLocalPath = RecoBaseLocalPath + am.TwoStageRecoDigitizers[Digitizer]['FinalFileNameFormat']+ str(run) + '.root'
+            else:
+                RecoLocalPath = RecoBaseLocalPath + am.TwoStageRecoDigitizers[Digitizer]['FinalFileNameFormat']+ str(run) + '_info.root' 
             RecoEOSpath = RecoLocalPath.replace(am.BaseTestbeamDir,am.eosBaseDir)
             WatchCMDList.append("TimingDAQ")
         if(ProcessList[i]==1):

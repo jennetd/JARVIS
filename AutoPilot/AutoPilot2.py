@@ -42,6 +42,7 @@ print "Stopping after %i runs." % maxRuns
 ############ Getting the digitizer list from the configuration table #############
 DigitizerList = pf.GetDigiFromConfig(Configuration, False, key)
 
+print(DigitizerList)
 
 not_applicable = ['N/A']
 not_started = ['Not started']
@@ -60,13 +61,31 @@ default_run_info["ConversionLecroyScope"] = not_applicable
 default_run_info["TimingDAQLecroyScope"] = not_applicable
 default_run_info["TimingDAQNoTracksLecroyScope"] = not_applicable
 
+##VME defaults
+default_run_info["TimingDAQVME"] = not_applicable
+default_run_info["xrdcpRawTOFHIR"] = not_applicable
+default_run_info["BTLRecoTOFHIR"] = not_applicable
+default_run_info["BTLRecoNoScopeTOFHIR"] = not_applicable
+
+
 ############ Initialize progress fields on run table ################
 if IsTelescope: default_run_info["Tracking"] = not_started
 
 IncludesKeySightScope=False
 IncludesLecroyScope = False
+IncludesVME = False
+IncludesTOFHIR = False
 if 'KeySightScope' in DigitizerList: IncludesKeySightScope = True
 if 'LecroyScope' in DigitizerList: IncludesLecroyScope = True
+if 'VME' in DigitizerList: 
+	IncludesVME = True
+	default_run_info["TimingDAQVME"] = not_started
+if 'TOFHIR' in DigitizerList: 
+	IncludesTOFHIR = True
+	default_run_info["xrdcpRawTOFHIR"] = not_started
+	default_run_info["BTLRecoTOFHIR"] = not_started
+	default_run_info["BTLRecoNoScopeTOFHIR"] = not_started
+
 
 
 # Check if specified configuration exists
@@ -79,9 +98,10 @@ if not ConfigID:
 
 ###Update local copy of configurations
 ConfigDict, LecroyDict,KeySightDict, CAENDict,SensorDict = pf.DownloadConfigs(False, key)
-lecroyConfID,caenConfID = pf.getConfigsByGConf(ConfigDict,Configuration)
-simpleLecroyDict= pf.getSimpleLecroyDict(LecroyDict,SensorDict,lecroyConfID)
-simpleCAENDict= pf.getSimpleCAENDict(CAENDict,SensorDict,caenConfID)
+if IncludesLecroyScope:
+	lecroyConfID,caenConfID = pf.getConfigsByGConf(ConfigDict,Configuration)
+	simpleLecroyDict= pf.getSimpleLecroyDict(LecroyDict,SensorDict,lecroyConfID)
+	simpleCAENDict= pf.getSimpleCAENDict(CAENDict,SensorDict,caenConfID)
 
 
 # print caenConfID
@@ -113,6 +133,10 @@ if IncludesKeySightScope:
 	print "Keysight Scope readout Included"
 if IncludesLecroyScope:
 	print "Lecroy Scope readout Included"
+if IncludesVME:
+	print "VME readout Included, but is controlled by OTSDAQ"
+if IncludesTOFHIR:
+	print "TOFHIR readout Included, but is controlled by OTSDAQ"
 print ""
 print ""
 print "*********************************************************************"
@@ -210,7 +234,12 @@ while (AutoPilotStatus == 1 and iteration < maxRuns):
 		this_run_info["ConversionLecroyScope"] = not_started
 		this_run_info["TimingDAQNoTracksLecroyScope"] = not_started
 		this_run_info["TimingDAQLecroyScope"] = not_started
+	
 
+	if IncludesVME:
+		DigiListThisRun.append("VME")
+	if IncludesTOFHIR:
+		DigiListThisRun.append("TOFHIR")
 
 	## Minimum run duration
 	time.sleep(60*(NumSpillsPerRun-1))
@@ -279,14 +308,15 @@ while (AutoPilotStatus == 1 and iteration < maxRuns):
 		##### These fields are NOT added to airtable, but saved for post processing
 
 		this_run_info["Configuration"]=Configuration
-		this_run_info.update(simpleLecroyDict)
-		this_run_info.update(simpleCAENDict)
+		if IncludesLecroyScope:
+			this_run_info.update(simpleLecroyDict)
+			this_run_info.update(simpleCAENDict)
 
-		runLogFileName = LocalConfigPath+"/Runs/info_%i.json"%RunNumber
+			runLogFileName = LocalConfigPath+"/Runs/info_%i.json"%RunNumber
 
-		a_file = open(runLogFileName, "w")
-		js.dump(this_run_info, a_file)
-		a_file.close()
+			a_file = open(runLogFileName, "w")
+			js.dump(this_run_info, a_file)
+			a_file.close()
 
 
 		#################################################
