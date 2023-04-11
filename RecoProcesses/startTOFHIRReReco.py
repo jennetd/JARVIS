@@ -1,9 +1,13 @@
 from ProcessExec import *
 import ProcessRuns as pr
-
+import time
 ExecutionOrder = 0 #This is descending Run number order, Refer to the dictionary in all modules
 PID = 8 #2 means Timingdaq, Refer to the dictionary in all modules
-GetRunListEachTime = True 
+GetRunListEachTime = True #Could be true also for this case.
+
+#Give the range of run numbers to process
+StartRunNumber = 66356
+StopRunNumber = 68078
 
 ############ Doesn't matter for tracking ###########
 SaveWaveForms = True
@@ -16,8 +20,9 @@ key = am.GetKey()
 print "\n##############################"
 print "## Starting Data processing ##"
 print "##############################\n"
-
-ProcessExec(ExecutionOrder,PID, SaveWaveForms, ConfigVersion,-1,DigitizerKey,key,GetRunListEachTime, True)
+for run in range (StartRunNumber, StopRunNumber + 1):	
+	ProcessExec(ExecutionOrder,PID, SaveWaveForms, ConfigVersion,run,DigitizerKey,key,GetRunListEachTime, True)
+	time.sleep(0.25)
 
 print "\n##############################"
 print "## Completed Data processing ##"
