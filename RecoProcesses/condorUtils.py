@@ -199,6 +199,8 @@ def CheckExistsLogs(PID,digitizer_key,run,CMD):
 		procname = "Conversion"
 	if PID==2: 
 		procname = "TimingDAQ"
+        if PID==8:
+                procname = "BTLRecoNoScope"
 	
 	logname =  am.CondorDir+"logs/%s_%i_%i.stdout"%(procname,digitizer_key,run) 
 	if os.path.exists(logname): return True
@@ -266,10 +268,13 @@ def prepareJDLTOFHIR(PID,digitizer_key,run,CMD,frequency=0):
 	jdlfile = am.CondorDir+"jdl/condor_"+procname+"_"+str(digitizer_key)+"_"+str(PID)+"_"+str(run)+".jdl"
 	exec_file = am.CondorDir+"exec/condor_"+procname+"_"+str(digitizer_key)+"_"+str(PID)+"_"+str(run)+".sh"
 	
+
+        buildDir = "%sBTLReco/sw_daq_tofhir2/build/" % am.BaseTestbeamDir
+
 	f = open(jdlfile,"w+")
 	f.write("universe = vanilla\n")
-	f.write("Executable = %s\n"%exec_file)
-	f.write("Transfer_Input_Files = %sBTLReco/BTLRecoScript.sh, " % (am.BaseTestbeamDir) ) #SX: need to figure out the full list of executables for the BTL Reco and need to transfer it via condor
+	f.write("Executable = %s\n"%(exec_file))
+	f.write("Transfer_Input_Files = %sBTLReco/BTLRecoScript.sh, %s/convert.py, %s/convert_raw_to_event, %s/convert_raw_to_singles\n" % (am.BaseTestbeamDir, buildDir, buildDir, buildDir) )
 	f.write("should_transfer_files = YES\n")
 	f.write("when_to_transfer_output = ON_EXIT\n")
 	f.write("Output = logs/%s_%i_%i.stdout\n"%(procname,digitizer_key,run))
@@ -405,17 +410,16 @@ def prepareExecutableTOFHIR(PID,digitizer_key,run,CMD,frequency=0):
 
 	if PID==8: 
 		procname = "BTLRecoNoScope"
-		inputfile = CMD.split("--input_file=")[1].split()[0].replace(am.BaseTestbeamDir,am.eosBaseDir)
-		tracksfile = CMD.split("--pixel_input_file=")[1].split()[0].replace(am.BaseTestbeamDir,am.eosBaseDir)
-		config = CMD.split("--config_file=")[1].split()[0].replace(am.TimingDAQDir,am.eosBaseDir+"condor/")
-		outputfile = CMD.split("--output_file=")[1].split()[0].replace(am.BaseTestbeamDir,am.eosBaseDir)
+		inputfile = ""#CMD.split("--input_file=")[1].split()[0].replace(am.BaseTestbeamDir,am.eosBaseDir)
+		tracksfile = ""#CMD.split("--pixel_input_file=")[1].split()[0].replace(am.BaseTestbeamDir,am.eosBaseDir)
+		config = ""#CMD.split("--config_file=")[1].split()[0].replace(am.TimingDAQDir,am.eosBaseDir+"condor/")
+		outputfile = ""#CMD.split("--output_file=")[1].split()[0].replace(am.BaseTestbeamDir,am.eosBaseDir)
 		if frequency != 0:
-			inputfile = CMD.split("--input_file=")[1].split()[0].replace(am.BaseTestbeamDir,am.eosBaseDir).replace(".root","_%i.root"%frequency).replace("ConversionRECO","FilterConversionRECO")
-			outputfile = CMD.split("--output_file=")[1].split()[0].replace(am.BaseTestbeamDir,am.eosBaseDir).replace("run_scope","run_scope_dat2root_").replace(".root","_%i.root"%frequency).replace("TimingDAQRECO","FilterTimingDAQRECO").replace("_converted","")
+			inputfile = ""#CMD.split("--input_file=")[1].split()[0].replace(am.BaseTestbeamDir,am.eosBaseDir).replace(".root","_%i.root"%frequency).replace("ConversionRECO","FilterConversionRECO")
+			outputfile = ""#CMD.split("--output_file=")[1].split()[0].replace(am.BaseTestbeamDir,am.eosBaseDir).replace("run_scope","run_scope_dat2root_").replace(".root","_%i.root"%frequency).replace("TimingDAQRECO","FilterTimingDAQRECO").replace("_converted","")
 
 			# if not os.path.exists(os.path.dirname(outputfile)):
 			# 	os.system("eosmkdir %s" %os.path.dirname(outputfile))
-
 
 	exec_file = am.CondorDir+"exec/condor_"+procname+"_"+str(digitizer_key)+"_"+str(PID)+"_"+str(run)+".sh"
 	if frequency != 0: exec_file = am.CondorDir+"exec/condor_"+procname+"_"+str(digitizer_key)+"_"+str(PID)+"_"+str(run)+"_"+str(frequency)+".sh"
@@ -453,6 +457,11 @@ def prepareExecutableTOFHIR(PID,digitizer_key,run,CMD,frequency=0):
 		f.write("rm *.config\n")
                 f.write("rm *.json\n")
                 f.write("rm *.py\n")
+
+        if PID==8:
+                f.write("chmod +x BTLRecoScript.sh\n")
+                f.write("./BTLRecoScript.sh %i\n" % run)
+
 
 	f.write("echo '##### HOST DETAILS #####\n'")
 	f.write("echo 'I ran on'\n")

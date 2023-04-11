@@ -57,6 +57,10 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 			ProcessName = am.ProcessDict[PID].keys()[0] + Digitizer	
 			DoTracking = True
 			CMDList, ResultFileLocationList, RunList, FieldIDList = pc.TimingDAQCMDs(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer, MyKey, False, condor)
+                        print CMDList
+                        print ResultFileLocationList
+                        print RunList
+                        print FieldIDList
 			SizeCut = am.ProcessDict[PID][am.ProcessDict[PID].keys()[0]]['SizeCut']
 		elif PID == 3:
 			ProcessName = am.ProcessDict[PID].keys()[0] + Digitizer
@@ -85,6 +89,10 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 			ProcessName = am.ProcessDict[PID].keys()[0] + Digitizer	
 			DoScope = False
 			CMDList, ResultFileLocationList, RunList, FieldIDList = pc.RecoTOFHIRCMDs(RunNumber, Version, DoScope, Digitizer, MyKey)
+                        print CMDList
+                        print ResultFileLocationList
+                        print RunList
+                        print FieldIDList
 			SizeCut = am.ProcessDict[PID][am.ProcessDict[PID].keys()[0]]['SizeCut']
 
 
@@ -102,7 +110,7 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 			for run in RunListInt: 
 				# if run > 27363: continue 
 				if PID!=0: ProcessName = am.ProcessDict[PID].keys()[0] + Digitizer	
-				index = RunList.index(run)      
+				index = RunList.index(run)
 				CMD = CMDList[index]  
 				if RunNumber != -1 and len(FieldIDList[index])>0: 
 					FieldID = FieldIDList[index][0]
@@ -259,6 +267,10 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 
 					ProcessName = am.ProcessDict[this_proc_key].keys()[0] + Digitizer
 					
+                                        if "TOFHIR" in CMD:
+                                                ProcessName = "BTLRecoNoScopeTOFHIR"
+                                                this_proc_key = 8
+
 					if cu.CheckExistsLogs(this_proc_key,DigitizerKey,run,CMD):
 						if cu.CheckExistsEOS(ResultFileLocation,SizeCut):
 							if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[0], False, MyKey)
@@ -348,10 +360,12 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 						print run
 						session = am.subprocess.Popen('cd %s; condor_submit %s; cd -' % (am.CondorDir,jdlname),stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT, shell=True)                                                                                                                                                                                   			
 				
+                                                print 'ciao'
 						#			# print 'condor_submit %s; cd -' % (jdlname)
 						# print am.CondorDir
 						## wait for submission
 						line = session.stdout.readline()
+                                                print line
 						am.ProcessLog(ProcessName, run, line)
 						if not line and session.poll() != None:
 							break
@@ -402,8 +416,6 @@ def ProcessExecBTLForTOFHIRTracks(OrderOfExecution, PID, SaveWaveformBool = None
 			RunListInt.sort() #Ascending Sorting
 		else:
 			RunListInt.sort(reverse = True)
-
-		print RunListInt
 
 		if CMDList1 != []:	
 

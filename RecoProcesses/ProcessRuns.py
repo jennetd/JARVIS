@@ -129,6 +129,7 @@ def TimingDAQRuns(RunNumber, DoTracking, Digitizer, MyKey, Debug, condor=False):
         RunList.append(RunNumber)
         FieldIDList.append(pf.GetFieldID(am.QueryFieldsDict[0], RunNumber, False, MyKey))
 
+    print "TimingDAQRuns wants to reco these runs:"
     print RunList
     return RunList, FieldIDList                                            
 
@@ -183,32 +184,57 @@ def WatchCondorRuns(RunNumber, DoTracking, Digitizer, MyKey, False):
 
     # condition = pf.ORFunc([am.ProcessDict[2].keys()[0]],[am.StatusDict[8]])
    
-    ### Get TimingDAQ condor runs
-    Condition = pf.EqualToFunc(pf.Curly(am.ProcessDict[2].keys()[0]+ Digitizer), pf.DoubleQuotes(am.StatusDict[8]))
 
-    # print am.CurlBaseCommand  + '?filterByFormula=' + Condition
-    headers = {'Authorization': 'Bearer %s' % MyKey, }                                                                                                                                                                                                                                
-    if pf.QueryGreenSignal(True): response = am.requests.get(am.CurlBaseCommand  + '?filterByFormula=' + Condition, headers=headers)                                                                                                                                                                               
-    ResponseDict = am.ast.literal_eval(response.text) 
-  #  print ResponseDict
-    for i in ResponseDict["records"]:                                                                                                                                                                                                                                   
-        RunList.append(i['fields'][am.QueryFieldsDict[0]])                                                                                                                                                                                                                                        
-        FieldIDList.append(i['id'])
-        ProcessList.append(2)
 
-    am.time.sleep(1)
-
-    ### Get Conversion condor runs
-    Condition = pf.EqualToFunc(pf.Curly(am.ProcessDict[1].keys()[0]+ Digitizer), pf.DoubleQuotes(am.StatusDict[8]))
-    # print am.CurlBaseCommand  + '?filterByFormula=' + Condition
-    headers = {'Authorization': 'Bearer %s' % MyKey, }                                                                                                                                                                                                                                
-    if pf.QueryGreenSignal(True): response = am.requests.get(am.CurlBaseCommand  + '?filterByFormula=' + Condition, headers=headers)                                                                                                                                                                               
-    ResponseDict = am.ast.literal_eval(response.text) 
-    # print ResponseDict
-    for i in ResponseDict["records"]:                                                                                                                                                                                                                                   
-        RunList.append(i['fields'][am.QueryFieldsDict[0]])                                                                                                                                                                                                                                        
-        FieldIDList.append(i['id'])
-        ProcessList.append(1)
+    print Digitizer
+    ######################################################################################
+    if Digitizer == "TOFHIR":
+        ### Get TOFHIR condor runs
+        Condition = pf.EqualToFunc(pf.Curly("BTLRecoNoScopeTOFHIR"), pf.DoubleQuotes(am.StatusDict[8]))
+            
+        # print am.CurlBaseCommand  + '?filterByFormula=' + Condition
+        headers = {'Authorization': 'Bearer %s' % MyKey, }                                                                                                                                                                                                                                
+        if pf.QueryGreenSignal(True): response = am.requests.get(am.CurlBaseCommand  + '?filterByFormula=' + Condition, headers=headers)                                                                                                                                                                               
+        ResponseDict = am.ast.literal_eval(response.text) 
+        #print ResponseDict
+        for i in ResponseDict["records"]:                                                                                                                                                                                                                                   
+            RunList.append(i['fields'][am.QueryFieldsDict[0]])                                                                                                                                                                                                                                        
+            FieldIDList.append(i['id'])
+            ProcessList.append(8)
+            
+        am.time.sleep(1)
+    else:
+        ######################################################################################
+        ### Get TimingDAQ condor runs
+        Condition = pf.EqualToFunc(pf.Curly(am.ProcessDict[2].keys()[0]+ Digitizer), pf.DoubleQuotes(am.StatusDict[8]))
+        
+        # print am.CurlBaseCommand  + '?filterByFormula=' + Condition
+        headers = {'Authorization': 'Bearer %s' % MyKey, }                                                                                                                                                                                                                                
+        if pf.QueryGreenSignal(True): response = am.requests.get(am.CurlBaseCommand  + '?filterByFormula=' + Condition, headers=headers)                                                                                                                                                                               
+        ResponseDict = am.ast.literal_eval(response.text) 
+        #  print ResponseDict
+        for i in ResponseDict["records"]:                                                                                                                                                                                                                                   
+            RunList.append(i['fields'][am.QueryFieldsDict[0]])                                                                                                                                                                                                                                        
+            FieldIDList.append(i['id'])
+            ProcessList.append(2)
+        
+        am.time.sleep(1)
+        
+        ######################################################################################
+        
+        ### Get Conversion condor runs
+        Condition = pf.EqualToFunc(pf.Curly(am.ProcessDict[1].keys()[0]+ Digitizer), pf.DoubleQuotes(am.StatusDict[8]))
+        # print am.CurlBaseCommand  + '?filterByFormula=' + Condition
+        headers = {'Authorization': 'Bearer %s' % MyKey, }                                                                                                                                                                                                                                
+        if pf.QueryGreenSignal(True): response = am.requests.get(am.CurlBaseCommand  + '?filterByFormula=' + Condition, headers=headers)                                                                                                                                                                               
+        ResponseDict = am.ast.literal_eval(response.text) 
+        # print ResponseDict
+        for i in ResponseDict["records"]:                                                                                                                                                                                                                                   
+            RunList.append(i['fields'][am.QueryFieldsDict[0]])                                                                                                                                                                                                                                        
+            FieldIDList.append(i['id'])
+            ProcessList.append(1)
+        
+        am.time.sleep(1)
 
     # print RunList,ProcessList,FieldIDList
     return RunList, FieldIDList, ProcessList    

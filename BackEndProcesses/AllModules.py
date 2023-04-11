@@ -182,6 +182,16 @@ TwoStageRecoDigitizers = {
                                            'FinalFileNameFormat' : 'run',
                                           
                                            },
+                         'TOFHIR'     :  {  'ConfigFileBasePath'     : '%sConfig_v' % (TOFHIRConfigFileBasePath), ### Set this
+                                            'DatToROOTExec'          : 'convert_raw_to_trigger', ### Set this
+                                            'DatToROOTExec1'         : 'convert_raw_to_singles',
+                                            'DatToROOTExec2'         : 'ConvertTOFPETSinglesToEvents', #With Tracks
+                                            'RawTimingDAQLocalPath'  : '%sTOFHIR/RawData/'  % (BaseTestbeamDir),
+                                            'RecoTimingDAQLocalPath' : '%sTOFHIR/RecoData/v1/' % (BaseTestbeamDir),
+                                            'TimingDAQLocalPath' : '%sTOFHIR/RecoData/v1/' % (BaseTestbeamDir), # Path for both raw and reco of tofhir timingdaqwithtracks
+                                            'RawTimingDAQFileNameFormat' : 'run', #reco --> run<RunNumber>.root
+                                            'RecoTOFHIRPath' : '%sTOFHIR/RecoData/' % (BaseTestbeamDir)
+                                            }    
   
 
                         }
@@ -199,7 +209,7 @@ OneStageRecoDigitizers = {
                                             'RawTimingDAQLocalPath'  : '%sDT5742/RawData/'  % (BaseTestbeamDir),
                                             'RecoTimingDAQLocalPath' : '%sDT5742/RecoData/' % (BaseTestbeamDir),
                                             },
-
+ 
                          'TOFHIR'     :  {  'ConfigFileBasePath'     : '%sConfig_v' % (TOFHIRConfigFileBasePath), ### Set this
                                             'DatToROOTExec'          : 'convert_raw_to_trigger', ### Set this
                                             'DatToROOTExec1'         : 'convert_raw_to_singles',
@@ -207,9 +217,11 @@ OneStageRecoDigitizers = {
                                             'RawTimingDAQLocalPath'  : '%sTOFHIR/RawData/'  % (BaseTestbeamDir),
                                             'RecoTimingDAQLocalPath' : '%sTOFHIR/RecoData/v1/' % (BaseTestbeamDir),
                                             'TimingDAQLocalPath' : '%sTOFHIR/RecoData/v1/' % (BaseTestbeamDir), # Path for both raw and reco of tofhir timingdaqwithtracks
-                                            'RawTimingDAQFileNameFormat' : 'run', #reco --> run<RunNumber>.root 
+                                            'RawTimingDAQFileNameFormat' : 'run', #reco --> run<RunNumber>.root
+                                            'RecoTOFHIRPath' : '%sTOFHIR/RecoData/' % (BaseTestbeamDir),
+                                            'RawTOFHIRFileNameFormat' : '_e', #reco --> run<RunNumber><thisThing>.root
                                             }    
-                        }
+                       }
 
 
 DigitizerDict = {
