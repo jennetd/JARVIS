@@ -3,6 +3,8 @@ import visa
 import time
 import sys
 from datetime import datetime
+import os
+import signal
 
 tempCMD = "MEAS:TEMP?"
 resCMD  = "MEAS:RES?"
@@ -114,14 +116,24 @@ def main():
 
     try:
         while True:
+
+            ################# HV Logger #################################################
+
+            code = os.system("ReadAll -c ~/power_supply/config/CAEN1527_PowerSupply_Timing.xml -d 10 -n 10000")
+            #if code == signal.SIGINT: break #### should automatically break on keyboardInterrupt
+
+
+
+            ################## DMM Logger ###############################################
+        
             fileName = "tempLogs/lab_meas_unsync_{:.3f}.txt".format((datetime.now() - datetime.strptime("2000-01-01 00:00:00", "%Y-%m-%d %H:%M:%S")).total_seconds())
             print("-"*50)
             print("Sending measured temperature to: {}".format(fileName))
-            
+        
     
             lineCounter = 0
             for lineCounter in progressbar(range(entriesPerLogFile), "  Filling log file: ", 40):
-            #for lineCounter in range(entriesPerLogFile):
+                #for lineCounter in range(entriesPerLogFile):
                 #queryVal(my_instrument, 'MEAS:TEMP? (@112)','temp')
                 #my_instrument.write("TEMP:TRAN FRTD")
                 #line = queryMultiVal(my_instrument, 'MEAS:TEMP?', allChannels, "temp")
@@ -133,15 +145,15 @@ def main():
                 f = open(fileName,"a")
                 f.write(line+"\n")
                 f.close()
-
+            
                 fActive = open("temp_dew_active.txt","w")
                 fActive.write(line+"\n")
                 fActive.close()
-
+                
                 time.sleep(1)
-            
+                
     except KeyboardInterrupt:
-        print("\nStopped the logging of temperature")
+        print("\nStopped the logging of HV and DMM")
         if f:
             f.close()
         pass
