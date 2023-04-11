@@ -7,7 +7,7 @@ GetRunListEachTime = True
 
 ############ Doesn't matter for tracking ###########
 SaveWaveForms = True
-ConfigVersion = "v11"
+ConfigVersion = "v1"
 DigitizerKey = 5 #key=3 for KeySightScope, Refer Allmodules
 
 ########### Get Key ###########
