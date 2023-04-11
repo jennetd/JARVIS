@@ -86,8 +86,6 @@ if 'TOFHIR' in DigitizerList:
 	default_run_info["BTLRecoTOFHIR"] = not_started
 	default_run_info["BTLRecoNoScopeTOFHIR"] = not_started
 
-
-
 # Check if specified configuration exists
 if pf.QueryGreenSignal(True):
 	ConfigID = pf.GetFieldIDOtherTable('Config', 'Configuration number', str(Configuration), False, key)
@@ -97,17 +95,16 @@ if not ConfigID:
 	##### Exit the program ######
 
 ###Update local copy of configurations
-ConfigDict, LecroyDict,KeySightDict, CAENDict,SensorDict = pf.DownloadConfigs(False, key)
+ConfigDict, LecroyDict,KeySightDict, TOFHIRDict,CAENDict,SensorDict = pf.DownloadConfigs(False, key)
 if IncludesLecroyScope:
 	lecroyConfID,caenConfID = pf.getConfigsByGConf(ConfigDict,Configuration)
 	simpleLecroyDict= pf.getSimpleLecroyDict(LecroyDict,SensorDict,lecroyConfID)
 	simpleCAENDict= pf.getSimpleCAENDict(CAENDict,SensorDict,caenConfID)
 
-
-# print caenConfID
-# print ConfigDict
-# print simpleLecroyDict
-# print simpleCAENDict
+TOFHIRConfigDict = None
+if 'TOFHIR' in DigitizerList: 
+	tofhirConfID = pf.getConfigsByGConfTOFHIR(ConfigDict,Configuration)
+	TOFHIRConfigDict = pf.getSimpleLecroyDict(TOFHIRDict,SensorDict,tofhirConfID)
 
 #### Set multiplexer channels for this config
 if SetMux: ConfigureMux(Configuration)
@@ -148,7 +145,8 @@ iteration = 0
 while (AutoPilotStatus == 1 and iteration < maxRuns):
 
 	if iteration % 5 == 0:
-		if IsTelescope: StartSeconds,StopSeconds = GetStartAndStopSeconds(36, 0) #33,22
+		#if IsTelescope: StartSeconds,StopSeconds = GetStartAndStopSeconds(36, 0) #33,22
+		if IsTelescope: StartSeconds,StopSeconds = GetStartAndStopSeconds(30, 10) #33,22
 		else: StartSeconds,StopSeconds = GetStartAndStopSeconds(50, 22)
 		print StartSeconds, StopSeconds
 
@@ -212,6 +210,23 @@ while (AutoPilotStatus == 1 and iteration < maxRuns):
 	StartTime = datetime.now()  
 	print "\nRun %i started at %s" % (RunNumber,StartTime)
 	print ""
+
+	# Get desired TOFHIR configuration from AirTable and construct corresponding config file, copy into TOFHIR PC via the TOFHIRMount directory
+	TOFHIRConfigFile = open("/home/daq/TOFHIRMount/raw/runSettingConfig_run" + str(RunNumber) + ".txt","w") 
+	TOFHIRConfigFile.write(str(TOFHIRConfigDict["VTH1"]) + " " 
+						 + str(TOFHIRConfigDict["VTH2"]) + " " 
+						 + str(TOFHIRConfigDict["VTHE"]) + " " 
+						 + str(TOFHIRConfigDict["OV"]) + " "
+						 + str(TOFHIRConfigDict["DELAYE"])
+						)
+	TOFHIRConfigFile.close()
+	print("Writing TOFHIR Config to : " + "/home/daq/TOFHIRMount/raw/runSettingConfig_run" + str(RunNumber) + ".txt")
+	print("Settings: ith1 = " + str(TOFHIRConfigDict["VTH1"]) 
+		+ " ith2 = "          + str(TOFHIRConfigDict["VTH2"])
+		+ " ithe = "          + str(TOFHIRConfigDict["VTHE"])
+		+ " ov = "            + str(TOFHIRConfigDict["OV"])
+		+ " delaE = "         + str(TOFHIRConfigDict["DELAYE"])
+		)
 
 	#Start the otsdaq run here (scopes already started)
 	if not Debug and IsTelescope: tp.start_ots(RunNumber,False)
