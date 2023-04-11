@@ -52,44 +52,89 @@ def xrdcpRaw(run,Digitizer):
 	return True
 
 def xrdcpTOFHIR(run):
-	mountDir = "/home/daq/TOFHIRMount/"
-	#am.BaseTestbeamDir + "/T"
-	print "Looking for files at ",mountDir
-	LocalDir = am.BaseTestbeamDir + "TOFHIR"+"/RawData/" 	
-	destination = am.eosBaseDir+"TOFHIR"+"/RawData/" 
+    mountDir = "/home/daq/TOFHIRMount/"
+    #am.BaseTestbeamDir + "/T"
+    print "Looking for files at ",mountDir
+    LocalDir = am.BaseTestbeamDir + "TOFHIR"+"/RawData/" 	
+    destination = am.eosBaseDir+"TOFHIR"+"/RawData/" 
+
+    time.sleep(5) #This number needs to be tuned to allow TOFHIR enough time to finish writing the file between run stop commands
+
+    rawFileList = []
+    rawFileList.append("/run%i.rawf" %(run))
+    rawFileList.append("/run%i.modf" %(run))
+    rawFileList.append("/run%i.idxf" %(run))
+    
+    for f in rawFileList:
+    	raw_filename = f
+
+        cmd = ["cp",mountDir+"/raw/"+raw_filename,LocalDir]
+        print cmd
+        session = am.subprocess.Popen(cmd,stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT)
+        while True:
+            line = session.stdout.readline()
+            # am.ProcessLog(ProcessName, run, line)
+            if not line and session.poll() != None:
+                break
+
+
+        #To help with future cleanup
+        cmd = ["mv",mountDir+"/raw/"+raw_filename,mountDir+"/raw/to_delete/"] #make sure this directory exists on the mount dir
+        print cmd
+        session3 = am.subprocess.Popen(cmd,stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT)
+        while True:
+            line = session3.stdout.readline()
+            # am.ProcessLog(ProcessName, run, line)
+            if not line and session3.poll() != None:
+                break
+
+
+        cmd = ["xrdcp", "-f",LocalDir+raw_filename, destination]
+        print cmd
+        session2 = am.subprocess.Popen(cmd,stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT)
+        while True:
+            line = session2.stdout.readline()
+            # am.ProcessLog(ProcessName, run, line)
+            if not line and session2.poll() != None:
+                break
+    
+    # copy calibration directory associated with the run (needed for reco)
+    calibDir = "/config_run%i" %(run)
+    cmd = ["cp","-r",mountDir+"/raw/"+calibDir,LocalDir]
+    print cmd
+    session = am.subprocess.Popen(cmd,stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT)
+    while True:
+        line = session.stdout.readline()
+        if not line and session.poll() != None:
+            break
+
+    cmd = ["mv",mountDir+"/raw/"+calibDir,mountDir+"/raw/to_delete/"] #make sure this directory exists on the mount dir
+    print cmd
+    session2 = am.subprocess.Popen(cmd,stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT)
+    while True:
+        line = session2.stdout.readline()
+        if not line and session2.poll() != None:
+            break
+
+    xrdReDirector = "root://cmseos.fnal.gov/"
+    relDestination = destination.split(xrdReDirector)[1]
+    cmd = ["xrdfs", xrdReDirector, "mkdir", relDestination+calibDir]
+    print cmd
+    session3 = am.subprocess.Popen(cmd,stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT)
+    while True:
+        line = session3.stdout.readline()
+        if not line and session3.poll() != None:
+            break
+
+    cmd = ["xrdcp", "-rf",LocalDir+calibDir,destination]
+    print cmd
+    session4 = am.subprocess.Popen(cmd,stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT)
+    while True:
+        line = session4.stdout.readline()
+        if not line and session4.poll() != None:
+            break
 	
-	time.sleep(5) #This number needs to be tuned to allow TOFHIR enough time to finish writing the file between run stop commands
-	raw_filename =  mountDir+"TOFHIR_Singles_Run%i.dat" %(run) #Note: need to look up the correct file name for the TOFHIR data
-	cmd = ["cp",raw_filename,LocalDir]
-	print cmd
-	session = am.subprocess.Popen(cmd,stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT)
-	while True:
-		line = session.stdout.readline()
-		# am.ProcessLog(ProcessName, run, line)
-		if not line and session.poll() != None:
-			break
-
-	#To help with future cleanup
-	cmd = ["mv",raw_filename,mountDir+"/to_delete"] #make sure this directory exists on the mount dir
-	print cmd
-	session3 = am.subprocess.Popen(cmd,stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT)
-	while True:
-		line = session3.stdout.readline()
-		# am.ProcessLog(ProcessName, run, line)
-		if not line and session3.poll() != None:
-			break
-
-
-	cmd = ["xrdcp", "-f",LocalDir+"TOFHIR_Singles_Run%i.dat" %(run),destination]
-	print cmd
-	session2 = am.subprocess.Popen(cmd,stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT)
-	while True:
-		line = session2.stdout.readline()
-		# am.ProcessLog(ProcessName, run, line)
-		if not line and session2.poll() != None:
-			break
-	
-	return True
+    return True
 
 
 def xrdcpRaw2(run,Digitizer):
@@ -384,6 +429,7 @@ def prepareExecutable(PID,digitizer_key,run,CMD,frequency=0):
 
 def prepareExecutableTOFHIR(PID,digitizer_key,run,CMD,frequency=0):
 	
+	#Bryan/Chris: Put line to call BTLReco.sh in this code here
 
 	if PID==7: 
 		procname = "BTLReco"
@@ -391,7 +437,7 @@ def prepareExecutableTOFHIR(PID,digitizer_key,run,CMD,frequency=0):
 
 
 		TOFHIRRawFile =  am.eosBaseDir + ("/TOFHIR/RawData/TOFHIR_Singles_Run%i.dat" % run)
-		ScopeRecoFile = am.eosBaseDir + ("/LecroyScope/")
+		ScopeRecoFile = am.eosBaseDir + ("/KeysightScope/") #SX: need to check if this directory is the correct name
 		tracksfile = CMD.split("--pixel_input_file=")[1].split()[0].replace(am.BaseTestbeamDir,am.eosBaseDir)
 		config = CMD.split("--config_file=")[1].split()[0].replace(am.TimingDAQDir,am.eosBaseDir+"condor/")
 		outputfile = CMD.split("--output_file=")[1].split()[0].replace(am.BaseTestbeamDir,am.eosBaseDir)

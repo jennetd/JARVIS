@@ -7,7 +7,7 @@ import sys
 acnet_webString = 'http://www-bd.fnal.gov/cgi-bin/acl.pl?acl=logger_get/start='
 
 # output file name
-acnet_results = "/home/daq/SensorBeam2023/JARVIS/SlowControl/acnet_buffer.txt"
+acnet_results = "/home/daq/2023_03_cmstiming_BTL/JARVIS/SlowControl/acnet_buffer.txt"
 
 # Function to construct URL and write results to text file
 def get_acnet_data(T1, T2, device):
@@ -36,8 +36,8 @@ def return_acnet_data():
 	MT61AV = 'E:1AV'
 
 	### For first bias config, (387,388,389)
-	startTime = '4-jan-2023-00:00:00' #38372
-	endTime = '11-jan-2023-00:00:00' #39422
+	startTime = '20-mar-2023-00:00:00' #38372
+	endTime = '30-mar-2023-00:00:00' #39422
 
 	counts1_buff = get_acnet_data(startTime, endTime, counts1)
 	counts2_buff = get_acnet_data(startTime, endTime, counts2)

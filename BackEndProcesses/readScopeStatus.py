@@ -8,7 +8,7 @@ UsingAutoPilot = True
 Configuration = 122   ##not used except in BTL mode
 
 
-numEvents = 20000
+numEvents = 10000
 sampleRate = 20 #GSa/s 10
 horizontalWindow = 40 #ns 20000
 ### if sample rate or horizontal window is changed, TimingDAQ must be recompiled to account for new npoints.
@@ -21,9 +21,9 @@ trig = 0.500 # V
 vScale1 = 0.2
 vScale2 = 0.1
 vScale3 = 0.1
-vScale4 = 0.1
+vScale4 = 0.15
 
-timeoffset = 0#-207 #-207 #ns
+timeoffset = -70 #-207 #-207 #ns
 TimeOut= 23 #Max run duration [s]. Use -1 for no timeout. 38 for telescope, 23 for photek mode
 
 ############### Remember to source the otsdaq environment
