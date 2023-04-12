@@ -51,6 +51,91 @@ def xrdcpRaw(run,Digitizer):
 
 	return True
 
+def xrdcpTOFHIR(run):
+    mountDir = "/home/daq/TOFHIRMount/"
+    #am.BaseTestbeamDir + "/T"
+    print "Looking for files at ",mountDir
+    LocalDir = am.BaseTestbeamDir + "TOFHIR"+"/RawData/" 	
+    destination = am.eosBaseDir+"TOFHIR"+"/RawData/" 
+
+    time.sleep(5) #This number needs to be tuned to allow TOFHIR enough time to finish writing the file between run stop commands
+
+    rawFileList = []
+    rawFileList.append("/run%i.rawf" %(run))
+    rawFileList.append("/run%i.modf" %(run))
+    rawFileList.append("/run%i.idxf" %(run))
+    
+    for f in rawFileList:
+    	raw_filename = f
+
+        cmd = ["cp",mountDir+"/raw/"+raw_filename,LocalDir]
+        print cmd
+        session = am.subprocess.Popen(cmd,stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT)
+        while True:
+            line = session.stdout.readline()
+            # am.ProcessLog(ProcessName, run, line)
+            if not line and session.poll() != None:
+                break
+
+
+        #To help with future cleanup
+        cmd = ["mv",mountDir+"/raw/"+raw_filename,mountDir+"/raw/to_delete/"] #make sure this directory exists on the mount dir
+        print cmd
+        session3 = am.subprocess.Popen(cmd,stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT)
+        while True:
+            line = session3.stdout.readline()
+            # am.ProcessLog(ProcessName, run, line)
+            if not line and session3.poll() != None:
+                break
+
+
+        cmd = ["xrdcp", "-f",LocalDir+raw_filename, destination]
+        print cmd
+        session2 = am.subprocess.Popen(cmd,stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT)
+        while True:
+            line = session2.stdout.readline()
+            # am.ProcessLog(ProcessName, run, line)
+            if not line and session2.poll() != None:
+                break
+    
+    # copy calibration directory associated with the run (needed for reco)
+    calibDir = "/config_run%i" %(run)
+    cmd = ["cp","-r",mountDir+"/raw/"+calibDir,LocalDir]
+    print cmd
+    session = am.subprocess.Popen(cmd,stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT)
+    while True:
+        line = session.stdout.readline()
+        if not line and session.poll() != None:
+            break
+
+    cmd = ["mv",mountDir+"/raw/"+calibDir,mountDir+"/raw/to_delete/"] #make sure this directory exists on the mount dir
+    print cmd
+    session2 = am.subprocess.Popen(cmd,stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT)
+    while True:
+        line = session2.stdout.readline()
+        if not line and session2.poll() != None:
+            break
+
+    xrdReDirector = "root://cmseos.fnal.gov/"
+    relDestination = destination.split(xrdReDirector)[1]
+    cmd = ["xrdfs", xrdReDirector, "mkdir", relDestination+calibDir]
+    print cmd
+    session3 = am.subprocess.Popen(cmd,stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT)
+    while True:
+        line = session3.stdout.readline()
+        if not line and session3.poll() != None:
+            break
+
+    cmd = ["xrdcp", "-rf",LocalDir+calibDir,destination]
+    print cmd
+    session4 = am.subprocess.Popen(cmd,stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT)
+    while True:
+        line = session4.stdout.readline()
+        if not line and session4.poll() != None:
+            break
+	
+    return True
+
 
 def xrdcpRaw2(run,Digitizer):
 	mountDir = am.TwoStageRecoDigitizers[Digitizer]['RawConversionLocalPath']
@@ -159,6 +244,8 @@ def CheckExistsLogs(PID,digitizer_key,run,CMD):
 		procname = "Conversion"
 	if PID==2: 
 		procname = "TimingDAQ"
+        if PID==8:
+                procname = "BTLRecoNoScope"
 	
 	logname =  am.CondorDir+"logs/%s_%i_%i.stdout"%(procname,digitizer_key,run) 
 	if os.path.exists(logname): return True
@@ -193,7 +280,7 @@ def prepareJDL(PID,digitizer_key,run,CMD,frequency=0):
 	f = open(jdlfile,"w+")
 	f.write("universe = vanilla\n")
 	f.write("Executable = %s\n"%exec_file)
-        f.write("Transfer_Input_Files = %sConversion/conversion.py, %sNetScopeStandaloneDat2Root, %s, %s/add_branches_TimingDAQ.py\n"%(am.LecroyScopeControlDir, am.TimingDAQDir, config, am.LecroyScopeControlDir))
+        f.write("Transfer_Input_Files = %sConversion/conversion.py, %sNetScopeStandaloneDat2Root, %s, %s/add_branches_TimingDAQ.py, %sConversion/conversion_bin_fast.py\n"%(am.LecroyScopeControlDir, am.TimingDAQDir, config, am.LecroyScopeControlDir, am.ScopeControlDir))
 	f.write("should_transfer_files = YES\n")
 	f.write("when_to_transfer_output = ON_EXIT\n")
 	if frequency==0:
@@ -209,6 +296,39 @@ def prepareJDL(PID,digitizer_key,run,CMD,frequency=0):
 	f.write("Queue 1\n")
 	f.close()
 	return jdlfile
+
+def prepareJDLTOFHIR(PID,digitizer_key,run,CMD,frequency=0):
+
+	doScope = True
+	if PID==8: 
+		doScope = False
+
+	procname = "BTLReco"
+	if (not doScope):
+		procname = "BTLRecoNoScope"	
+
+	logname = am.CondorDir+"logs/%s_%i_%i.stdout"%(procname,digitizer_key,run) 
+	if os.path.exists(logname): os.remove(logname) ### must delete log, since WatchCondor looks for this file to see if job is done. This way, retry can be used.
+	
+	jdlfile = am.CondorDir+"jdl/condor_"+procname+"_"+str(digitizer_key)+"_"+str(PID)+"_"+str(run)+".jdl"
+	exec_file = am.CondorDir+"exec/condor_"+procname+"_"+str(digitizer_key)+"_"+str(PID)+"_"+str(run)+".sh"
+	
+
+        buildDir = "%sBTLReco/sw_daq_tofhir2/build/" % am.BaseTestbeamDir
+
+	f = open(jdlfile,"w+")
+	f.write("universe = vanilla\n")
+	f.write("Executable = %s\n"%(exec_file))
+	f.write("Transfer_Input_Files = %sBTLReco/BTLRecoScript.sh, %s/convert.py, %s/convert_raw_to_event, %s/convert_raw_to_singles\n" % (am.BaseTestbeamDir, buildDir, buildDir, buildDir) )
+	f.write("should_transfer_files = YES\n")
+	f.write("when_to_transfer_output = ON_EXIT\n")
+	f.write("Output = logs/%s_%i_%i.stdout\n"%(procname,digitizer_key,run))
+	f.write("Error = logs/%s_%i_%i.stderr\n"%(procname,digitizer_key,run))
+	f.write("Log = logs/%s_%i_%i.log\n"%(procname,digitizer_key,run))	
+	f.write("Queue 1\n")
+	f.close()
+	return jdlfile
+
 
 def prepareExecutable(PID,digitizer_key,run,CMD,frequency=0):
 	if PID==1: 
@@ -250,7 +370,7 @@ def prepareExecutable(PID,digitizer_key,run,CMD,frequency=0):
 		f.write("cd -\n")		# f.write("source /cvmfs/sft.cern.ch/lcg/views/LCG_89/x86_64-slc6-gcc62-opt/setup.sh\n")
 		if frequency == 0: 
 			if digitizer_key==3:
-				f.write("xrdcp %scondor/conversion_bin_fast.py .\n"%am.eosBaseDir)
+				#f.write("xrdcp %scondor/conversion_bin_fast.py .\n"%am.eosBaseDir)
 				f.write("chmod 755 conversion_bin_fast.py\n")
                         elif digitizer_key==6:
 				#f.write("xrdcp %scondor/conversion.py .\n"%am.eosBaseDir)
@@ -291,6 +411,88 @@ def prepareExecutable(PID,digitizer_key,run,CMD,frequency=0):
 		if digitizer_key==6:
 			f.write("./NetScopeStandaloneDat2Root --input_file=%s --pixel_input_file=%s  --config=%s --output_file=out_%s --save_meas --correctForTimeOffsets=true\n" % (os.path.basename(inputfile),os.path.basename(tracksfile),os.path.basename(config),os.path.basename(outputfile)))
 
+                if digitizer_key==3:
+                        f.write("ls\n")
+                        f.write("xrdcp -fs out_%s %s\n" % (os.path.basename(outputfile), outputfile))
+                if digitizer_key==6:
+                        f.write("python add_branches_TimingDAQ.py %i %i %s\n" % (run,9999,"out_"+os.path.basename(outputfile)))
+                        f.write("ls\n")
+                        f.write("xrdcp -fs out_%s %s\n" % (os.path.basename(outputfile).replace(".root","_info.root"), outputfile.replace(".root","_info.root")))
+
+		# f.write("scp out_%s daq@ti\n" % (os.path.basename(outputfile)))
+
+		f.write("rm *.root\n")
+		f.write("rm NetScopeStandaloneDat2Root*\n")
+		f.write("rm *.config\n")
+                f.write("rm *.json\n")
+                f.write("rm *.py\n")
+
+	f.write("echo '##### HOST DETAILS #####\n'")
+	f.write("echo 'I ran on'\n")
+	f.write("hostname\n")
+	f.write("date\n")
+
+def prepareExecutableTOFHIR(PID,digitizer_key,run,CMD,frequency=0):
+	
+	#Bryan/Chris: Put line to call BTLReco.sh in this code here
+
+	if PID==7: 
+		procname = "BTLReco"
+
+
+
+		TOFHIRRawFile =  am.eosBaseDir + ("/TOFHIR/RawData/TOFHIR_Singles_Run%i.dat" % run)
+		ScopeRecoFile = am.eosBaseDir + ("/KeysightScope/") #SX: need to check if this directory is the correct name
+		tracksfile = CMD.split("--pixel_input_file=")[1].split()[0].replace(am.BaseTestbeamDir,am.eosBaseDir)
+		config = CMD.split("--config_file=")[1].split()[0].replace(am.TimingDAQDir,am.eosBaseDir+"condor/")
+		outputfile = CMD.split("--output_file=")[1].split()[0].replace(am.BaseTestbeamDir,am.eosBaseDir)
+		if frequency != 0:
+			inputfile = CMD.split("--input_file=")[1].split()[0].replace(am.BaseTestbeamDir,am.eosBaseDir).replace(".root","_%i.root"%frequency).replace("ConversionRECO","FilterConversionRECO")
+			outputfile = CMD.split("--output_file=")[1].split()[0].replace(am.BaseTestbeamDir,am.eosBaseDir).replace("run_scope","run_scope_dat2root_").replace(".root","_%i.root"%frequency).replace("TimingDAQRECO","FilterTimingDAQRECO").replace("_converted","")
+
+			# if not os.path.exists(os.path.dirname(outputfile)):
+			# 	os.system("eosmkdir %s" %os.path.dirname(outputfile))
+
+
+	if PID==8: 
+		procname = "BTLRecoNoScope"
+		inputfile = ""#CMD.split("--input_file=")[1].split()[0].replace(am.BaseTestbeamDir,am.eosBaseDir)
+		tracksfile = ""#CMD.split("--pixel_input_file=")[1].split()[0].replace(am.BaseTestbeamDir,am.eosBaseDir)
+		config = ""#CMD.split("--config_file=")[1].split()[0].replace(am.TimingDAQDir,am.eosBaseDir+"condor/")
+		outputfile = ""#CMD.split("--output_file=")[1].split()[0].replace(am.BaseTestbeamDir,am.eosBaseDir)
+		if frequency != 0:
+			inputfile = ""#CMD.split("--input_file=")[1].split()[0].replace(am.BaseTestbeamDir,am.eosBaseDir).replace(".root","_%i.root"%frequency).replace("ConversionRECO","FilterConversionRECO")
+			outputfile = ""#CMD.split("--output_file=")[1].split()[0].replace(am.BaseTestbeamDir,am.eosBaseDir).replace("run_scope","run_scope_dat2root_").replace(".root","_%i.root"%frequency).replace("TimingDAQRECO","FilterTimingDAQRECO").replace("_converted","")
+
+			# if not os.path.exists(os.path.dirname(outputfile)):
+			# 	os.system("eosmkdir %s" %os.path.dirname(outputfile))
+
+	exec_file = am.CondorDir+"exec/condor_"+procname+"_"+str(digitizer_key)+"_"+str(PID)+"_"+str(run)+".sh"
+	if frequency != 0: exec_file = am.CondorDir+"exec/condor_"+procname+"_"+str(digitizer_key)+"_"+str(PID)+"_"+str(run)+"_"+str(frequency)+".sh"
+
+
+
+	f = open(exec_file,"w+")
+	f.write("#!/bin/bash\n")
+
+	
+	if PID==2:
+		f.write("source /cvmfs/cms.cern.ch/cmsset_default.sh\n")
+		f.write("cd /cvmfs/cms.cern.ch/slc7_amd64_gcc530/cms/cmssw/CMSSW_8_0_20/src/\n")
+		f.write("eval `scramv1 runtime -sh`\n")
+		f.write("cd -\n")
+                f.write("chmod 755 NetScopeStandaloneDat2Root\n")
+                f.write("chmod 755 add_branches_TimingDAQ.py\n")
+		f.write("xrdcp -s %s .\n" % inputfile)
+		f.write("xrdcp -s %s .\n" % tracksfile)
+                f.write("xrdcp %s/ConfigInfo/Runs/info_%i.json .\n"%(am.eosBaseDir,run))
+
+		f.write("ls\n")
+		if digitizer_key==3:
+			f.write("./NetScopeStandaloneDat2Root --input_file=%s --pixel_input_file=%s  --config=%s --output_file=out_%s --save_meas\n" % (os.path.basename(inputfile),os.path.basename(tracksfile),os.path.basename(config),os.path.basename(outputfile)))
+		if digitizer_key==6:
+			f.write("./NetScopeStandaloneDat2Root --input_file=%s --pixel_input_file=%s  --config=%s --output_file=out_%s --save_meas --correctForTimeOffsets=true\n" % (os.path.basename(inputfile),os.path.basename(tracksfile),os.path.basename(config),os.path.basename(outputfile)))
+
                 f.write("python add_branches_TimingDAQ.py %i %i %s\n" % (run,9999,"out_"+os.path.basename(outputfile)))
 		f.write("ls\n")
 		f.write("xrdcp -fs out_%s %s\n" % (os.path.basename(outputfile).replace(".root","_info.root"), outputfile.replace(".root","_info.root")))
@@ -301,6 +503,11 @@ def prepareExecutable(PID,digitizer_key,run,CMD,frequency=0):
 		f.write("rm *.config\n")
                 f.write("rm *.json\n")
                 f.write("rm *.py\n")
+
+        if PID==8:
+                f.write("chmod +x BTLRecoScript.sh\n")
+                f.write("./BTLRecoScript.sh %i\n" % run)
+
 
 	f.write("echo '##### HOST DETAILS #####\n'")
 	f.write("echo 'I ran on'\n")
