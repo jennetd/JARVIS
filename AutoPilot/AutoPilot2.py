@@ -212,21 +212,22 @@ while (AutoPilotStatus == 1 and iteration < maxRuns):
 	print ""
 
 	# Get desired TOFHIR configuration from AirTable and construct corresponding config file, copy into TOFHIR PC via the TOFHIRMount directory
-	TOFHIRConfigFile = open("/home/daq/TOFHIRMount/raw/runSettingConfig_run" + str(RunNumber) + ".txt","w") 
-	TOFHIRConfigFile.write(str(TOFHIRConfigDict["VTH1"]) + " " 
-						 + str(TOFHIRConfigDict["VTH2"]) + " " 
-						 + str(TOFHIRConfigDict["VTHE"]) + " " 
-						 + str(TOFHIRConfigDict["OV"]) + " "
-						 + str(TOFHIRConfigDict["DELAYE"])
-						)
-	TOFHIRConfigFile.close()
-	print("Writing TOFHIR Config to : " + "/home/daq/TOFHIRMount/raw/runSettingConfig_run" + str(RunNumber) + ".txt")
-	print("Settings: ith1 = " + str(TOFHIRConfigDict["VTH1"]) 
-		+ " ith2 = "          + str(TOFHIRConfigDict["VTH2"])
-		+ " ithe = "          + str(TOFHIRConfigDict["VTHE"])
-		+ " ov = "            + str(TOFHIRConfigDict["OV"])
-		+ " delaE = "         + str(TOFHIRConfigDict["DELAYE"])
-		)
+	if IncludesTOFHIR:
+		TOFHIRConfigFile = open("/home/daq/TOFHIRMount/raw/runSettingConfig_run" + str(RunNumber) + ".txt","w") 
+		TOFHIRConfigFile.write(str(TOFHIRConfigDict["VTH1"]) + " " 
+							 + str(TOFHIRConfigDict["VTH2"]) + " " 
+							 + str(TOFHIRConfigDict["VTHE"]) + " " 
+							 + str(TOFHIRConfigDict["OV"]) + " "
+							 + str(TOFHIRConfigDict["DELAYE"])
+							)
+		TOFHIRConfigFile.close()
+		print("Writing TOFHIR Config to : " + "/home/daq/TOFHIRMount/raw/runSettingConfig_run" + str(RunNumber) + ".txt")
+		print("Settings: ith1 = " + str(TOFHIRConfigDict["VTH1"]) 
+			+ " ith2 = "          + str(TOFHIRConfigDict["VTH2"])
+			+ " ithe = "          + str(TOFHIRConfigDict["VTHE"])
+			+ " ov = "            + str(TOFHIRConfigDict["OV"])
+			+ " delaE = "         + str(TOFHIRConfigDict["DELAYE"])
+			)
 
 	#Start the otsdaq run here (scopes already started)
 	if not Debug and IsTelescope: tp.start_ots(RunNumber,False)

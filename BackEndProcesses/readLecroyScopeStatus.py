@@ -9,18 +9,18 @@ Configuration = 122   ##not used except in BTL mode
 LongAcquisitionMode = False #True
 
 
-numEvents = 25 ## not used in Long mode
+numEvents = 2500 ## not used in Long mode
 numPoints = 25 ##MSa, only used in Long mode
 sampleRate = 10 #GSa/s
 horizontalWindow = 50 #ns
 
 ### if sample rate or horizontal window is changed, TimingDAQ must be recompiled to account for new npoints.
-#trigCh = "C8"
-#trig   = 0.15
+trigCh = "C8"
+trig   = -0.05
 
-trigCh = "EX"
+#trigCh = "EX"
 #trigCh = "LINE" 
-trig = 0.41 #0.15 # V
+#trig = 0.41 #0.15 # V
 
 vScale1 = 0.05  
 vScale2 = 0.05
@@ -35,7 +35,7 @@ vPos1 = 3
 vPos2 = 3
 vPos3 = 3
 
-timeoffset = 75#100 ##75 scintillator trigger
+timeoffset = 0#75#100 ##75 scintillator trigger
 
 #2022 values  #105 ns (50D) 30 ns (SiPM self trigger) 85 (Lorenzo scin) 105 (SiPM telescope trigger)
 

@@ -17,21 +17,23 @@ active_temp_base_path = am.BaseTestbeamDir+'/JARVIS/SlowControl/temp_dew_active.
 active_CAEN_base_path = am.BaseTestbeamDir+'/JARVIS/SlowControl/CAEN_HV_active.txt'
 
 def GetACNetYield(run_info_dict):
-    startTime = '20-mar-2023-00:00:00'
-    endTime = '30-mar-2023-00:00:00'
+    startTime = '12-apr-2023-00:00:00'
+    endTime = '30-apr-2023-00:00:00'
 
     try:
-        run_info_dict["MT6SC2 [ppp]"]=(float(get_acnet_data(startTime, endTime, "F:MT6SC1")))
+        run_info_dict["MT6SC1 [ppp]"]=(float(get_acnet_data(startTime, endTime, "F:MT6SC1")))
+        run_info_dict["MT6SC2 [ppp]"]=(float(get_acnet_data(startTime, endTime, "F:MT6SC2")))
         #run_info_dict["MW1SEM [ppp]"]=(float(get_acnet_data(startTime, endTime, "F:MW1SEM"))
         run_info_dict["M6p1AH [mm]"]=(float(get_acnet_data(startTime, endTime, "E:1AH")))
         run_info_dict["M6p1AV [mm]"]=(float(get_acnet_data(startTime, endTime, "E:1AV")))
     except:
+        run_info_dict["MT6SC1 [ppp]"]=-999
         run_info_dict["MT6SC2 [ppp]"]=-999
         #run_info_dict["MW1SEM [ppp]"]=-999
         run_info_dict["M6p1AH [mm]"]=-990
         run_info_dict["M6p1AV [mm]"]=-999
 
-    print run_info_dict["MT6SC2 [ppp]"], run_info_dict["M6p1AH [mm]"], run_info_dict["M6p1AV [mm]"]
+    print run_info_dict["MT6SC1 [ppp]"], run_info_dict["MT6SC2 [ppp]"], run_info_dict["M6p1AH [mm]"], run_info_dict["M6p1AV [mm]"]
 
 def GetTemperaturesSimple(run_info_dict):
     infile = open(active_temp_base_path,'r')
@@ -39,8 +41,12 @@ def GetTemperaturesSimple(run_info_dict):
 
     run_info_dict["Dew point"]="%0.2f"%float(temps[-1])
     run_info_dict["TempSlot1"]="%0.2f"%float(temps[14])
-    run_info_dict["TempSlot2"]="%0.2f"%float(temps[15])
-    run_info_dict["TempSlot3"]="%0.2f"%min(float(temps[16]),100.0)
+    #run_info_dict["TempSlot2"]="%0.2f"%float(temps[15])
+    #run_info_dict["TempSlot3"]="%0.2f"%min(float(temps[16]),100.0)
+
+    run_info_dict["TempSlot2"]="%0.2f"%min(float(temps[16]),100.0)
+    run_info_dict["TempSlot3"]="%0.2f"%float(temps[15])
+
     run_info_dict["TempSlot4"]="%0.2f"%float(temps[17])
     run_info_dict["TempSlot5"]="%0.2f"%float(temps[18])
     run_info_dict["TempSlot6"]="%0.2f"%float(temps[19])

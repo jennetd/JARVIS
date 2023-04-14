@@ -6,8 +6,9 @@ from array import array
 import numpy as np
 
 outputtag= "batch3install"
-StartDate_ = '[2022-04-25T12:00:00]:'
-EndDate_ = '[2022-04-26T20:00:00]:'
+#StartDate_ = '[2023-04-12T21:00:00]:'
+StartDate_ = '[2023-04-13T20:00:00]:'
+EndDate_ = '[2023-04-13T23:00:00]:'
 
 
 # outputtag = "batch_one_set_one"
@@ -16,7 +17,7 @@ EndDate_ = '[2022-04-26T20:00:00]:'
 
 ROOT.gROOT.SetBatch(True)
 
-colors = {16:ROOT.kBlue+2,17:ROOT.kGreen+2,18:ROOT.kCyan+1,19:ROOT.kMagenta+2,14:ROOT.kBlack,15:ROOT.kYellow+1,20:ROOT.kOrange+1,21:ROOT.kPink,22:ROOT.kBlue+2}
+colors = {9:ROOT.kGreen+2,16:ROOT.kGreen+2,17:ROOT.kGreen+2,18:ROOT.kCyan+1,19:ROOT.kMagenta+2,14:ROOT.kBlack,15:ROOT.kYellow+1,20:ROOT.kOrange+1,21:ROOT.kWhite,22:ROOT.kWhite}
 
 def getDateTime(date):
     return datetime.strptime(date, "[%Y-%m-%dT%H:%M:%S]:")
@@ -60,7 +61,7 @@ def parseDewPointline(l):
     boardTemps = {}
     for i in range(1,len(data)-1):
         val = float(data[i])
-        if val != 0.0:
+        if val != 0.0 and val < 1000.0:
             boardTemps[i] = [val]
     #ETLTimeStamp = getDateTime(data[0])
     #StartDate = getDateTime(StartDate_)
@@ -125,8 +126,8 @@ def drawTimeHisto(Ymax, Yname, plotLog, pdfName, startTime, endTime, plotDict=No
     for channel in plotDict.keys():
         g1 = None
         try:
-            for i in range(len(plotDict[channel])):
-                plotDict[channel][i] = Temp_calc(plotDict[channel][i])
+            #for i in range(len(plotDict[channel])):
+            #    plotDict[channel][i] = Temp_calc(plotDict[channel][i])
             g1 = plotTGraph(len(plotLog['ch1']['x']), array('d', plotLog['ch1']['x']), array('d', plotDict[channel]), ROOT.kBlack)
         except:
             print("Broken lol")
