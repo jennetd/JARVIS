@@ -30,17 +30,16 @@ if isLPC:
 
 ################### Run Table Information #################
 MyKey = '' #Read MyKey from key file in RecoProcesses
-RunTableName = 'tblqnb6rMcKgZqag4'
-SensorTableName = 'tbloddXPVn6egE4QB'
-ConfigTableName = 'tblD3IDPtgn0RBxWQ'
-KeySightScopeConfigTableName = 'tblSQnH4GS7oVErMs'
-LecroyScopeConfigTableName = 'tblbYqOXp84DMaiPz'
-TOFHIRConfigTableName = 'tblCvWAN0b5kZhxvz'
-CAENConfigTableName = 'tblHWTTYAsnn9NVIt'
-VMEConfigTableName = 'tbl2vprcJ6GcRHrzb'
-TOFHIRConfigTableName = 'tblCvWAN0b5kZhxvz'
+RunTableName = 'tbln8yfc00PSPiGoK'
+SensorTableName = 'tbllYA6A9bbQ6wAYh'
+ConfigTableName = 'tblAO5MAH4sCHt34w'
+KeySightScopeConfigTableName = 'tblPBKQPUGc0LwXU8'
+LecroyScopeConfigTableName = 'tbl8JNXIDW9fC2OXf'
+TOFHIRConfigTableName = 'tblzgjJyeZaWP93Df'
+CAENConfigTableName = 'tblEHg2JOgsZZFrQ9'
+VMEConfigTableName = 'tblZgMAXXULOHzXHR'
 
-BaseID = 'app1rYg9RIb3cKJD4'
+BaseID = 'appYclpU5wgF2CfLK'
 CurlBaseCommandWithoutTable = 'https://api.airtable.com/v0/%s' % (BaseID)
 CurlBaseCommand = 'https://api.airtable.com/v0/%s/%s' % (BaseID, RunTableName)
 CurlBaseCommandSensor = 'https://api.airtable.com/v0/%s/%s' % (BaseID, SensorTableName)
@@ -66,18 +65,19 @@ ResultTrackFileNameAfterRunNumberSlow = '_CMSTiming_SlowTriggerStream_converted.
 ResultTrackFileNameAfterRunNumberFast = '_CMSTiming_FastTriggerStream_converted.root'
 
 ############## For timingdaq02 ############
-BaseTestbeamDir = '/home/daq/2023_03_cmstiming_BTL/' 
+BaseDirName = '2023_04_ETL_ACLGAD'
+BaseTestbeamDir = '/home/daq/{}/'.format(BaseDirName) 
 if isLPC:
     if 'rheller' in user:
-        BaseTestbeamDir = '/uscms/home/rheller/nobackup/2023_03_cmstiming_BTL/'
+        BaseTestbeamDir = '/uscms/home/rheller/nobackup/{}/'.format(BaseDirName)
     elif 'cmadrid' in user:
-        BaseTestbeamDir = '/uscms/home/cmadrid/nobackup/ana/2023_03_cmstiming_BTL/'
+        BaseTestbeamDir = '/uscms/home/cmadrid/nobackup/ana/{}/'.format(BaseDirName)
     elif 'apresyan' in user:
-        BaseTestbeamDir = '/uscms/home/apresyan/nobackup/2023_03_cmstiming_BTL/'
+        BaseTestbeamDir = '/uscms/home/apresyan/nobackup/{}/'.format(BaseDirName)
     else:
         raise ValueError("\"{}\" please define your code path above for the lpc in JARVIS/BackEndProcesses/AllModules.py".format(user))
 
-eosBaseDir = 'root://cmseos.fnal.gov//store/group/cmstestbeam/2023_03_cmstiming_BTL/'
+eosBaseDir = 'root://cmseos.fnal.gov//store/group/cmstestbeam/{}/'.format(BaseDirName)
 BaseTrackDirLocal = '%sTracks/v1/' % BaseTestbeamDir
 LocalSSH = 'daq@timingdaq01.dhcp.fnal.gov'
 EnvSetupPath = '/home/daq/setup.sh' ############### Remember to change ProcessExec accordingly

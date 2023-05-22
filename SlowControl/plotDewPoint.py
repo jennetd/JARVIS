@@ -6,17 +6,18 @@ from array import array
 import numpy as np
 
 outputtag= "batch3install"
-StartDate_ = '[2022-04-25T12:00:00]:'
-EndDate_ = '[2022-04-26T20:00:00]:'
+#StartDate_ = '[2023-04-12T21:00:00]:'
+StartDate_ = '[2023-04-18T05:00:00]:'
+EndDate_ = None
 
-
-# outputtag = "batch_one_set_one"
-# StartDate_ = '[2021-03-26T18:00:00]:'
-# EndDate_ = None
+#The cool Down
+#outputtag= "CoolDown"
+#StartDate_ = '[2023-04-14T04:10:00]:'
+#EndDate_ = '[2023-04-14T23:10:00]:'
 
 ROOT.gROOT.SetBatch(True)
 
-colors = {16:ROOT.kBlue+2,17:ROOT.kGreen+2,18:ROOT.kCyan+1,19:ROOT.kMagenta+2,14:ROOT.kBlack,15:ROOT.kYellow+1,20:ROOT.kOrange+1,21:ROOT.kPink,22:ROOT.kBlue+2}
+colors = {9:ROOT.kGreen+2,16:ROOT.kGreen+2,17:ROOT.kGreen+2,18:ROOT.kCyan+1,19:ROOT.kMagenta+2,14:ROOT.kBlack,15:ROOT.kYellow+1,20:ROOT.kOrange+1,21:ROOT.kWhite,22:ROOT.kWhite}
 
 def getDateTime(date):
     return datetime.strptime(date, "[%Y-%m-%dT%H:%M:%S]:")
@@ -60,7 +61,7 @@ def parseDewPointline(l):
     boardTemps = {}
     for i in range(1,len(data)-1):
         val = float(data[i])
-        if val != 0.0:
+        if val != 0.0 and val < 1000.0:
             boardTemps[i] = [val]
     #ETLTimeStamp = getDateTime(data[0])
     #StartDate = getDateTime(StartDate_)
@@ -80,7 +81,7 @@ def plotTGraph(l, x, y, color):
     return g
 
 def drawTimeHisto(Ymax, Yname, plotLog, pdfName, startTime, endTime, plotDict=None):
-    c1 = ROOT.TCanvas("c1","c1",1000,1000)
+    c1 = ROOT.TCanvas("c1","c1",1500,1000)
     ROOT.gPad.SetGridy(); ROOT.gPad.SetGridx()
     ROOT.gPad.SetTopMargin(0.15)
     ROOT.gPad.SetLeftMargin(0.15)
@@ -91,7 +92,7 @@ def drawTimeHisto(Ymax, Yname, plotLog, pdfName, startTime, endTime, plotDict=No
     
     Xmin = 0.0
     Xmax = (endTime - startTime)/3600.
-    Ymin = -60.0
+    Ymin = -45.0
     h = ROOT.TH1F("dummy","dummy",1, Xmin, Xmax)
     h.SetMaximum(Ymax)
     h.SetMinimum(Ymin)
@@ -125,8 +126,8 @@ def drawTimeHisto(Ymax, Yname, plotLog, pdfName, startTime, endTime, plotDict=No
     for channel in plotDict.keys():
         g1 = None
         try:
-            for i in range(len(plotDict[channel])):
-                plotDict[channel][i] = Temp_calc(plotDict[channel][i])
+            #for i in range(len(plotDict[channel])):
+            #    plotDict[channel][i] = Temp_calc(plotDict[channel][i])
             g1 = plotTGraph(len(plotLog['ch1']['x']), array('d', plotLog['ch1']['x']), array('d', plotDict[channel]), ROOT.kBlack)
         except:
             print("Broken lol")
@@ -143,7 +144,7 @@ def main():
     dewPointLocalPath = "tempLogs"
     files = glob(dewPointLocalPath+"/*.txt")
     startTime = to_seconds(getDateTime(StartDate_))
-    endTime = to_seconds(getDateTime(EndDate_)) if EndDate_ else to_seconds(datetime.now()) + 2*3600
+    endTime = to_seconds(getDateTime(EndDate_)) if EndDate_ else to_seconds(datetime.now()) + 6*3600
 
     # Loop through all log files and collect the data
     data = []
@@ -175,7 +176,7 @@ def main():
             allBoardTemps = d['boardTemps']
 
     # Draw histograms
-    drawTimeHisto(50.0, "Temp. [C]", dewpointLog, "dewPoint_%s.png"%outputtag, startTime, endTime, allBoardTemps)
+    drawTimeHisto(30.0, "Temp. [C]", dewpointLog, "dewPoint_%s.png"%outputtag, startTime, endTime, allBoardTemps)
 
 if __name__ == '__main__':
     main()
