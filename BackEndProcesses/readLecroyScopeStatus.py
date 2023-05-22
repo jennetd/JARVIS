@@ -9,18 +9,21 @@ Configuration = 122   ##not used except in BTL mode
 LongAcquisitionMode = False #True
 
 
-numEvents = 2500 ## not used in Long mode
+numEvents = 28000 ## not used in Long mode #Max with math mode off is 32000 for Lecroy
 numPoints = 25 ##MSa, only used in Long mode
 sampleRate = 10 #GSa/s
 horizontalWindow = 50 #ns
 
 ### if sample rate or horizontal window is changed, TimingDAQ must be recompiled to account for new npoints.
-trigCh = "C8"
-trig   = -0.05
+#trigCh = "C8"
+#trig   = -0.05
+#slope = "NEG"
 
-#trigCh = "EX"
+
+trigCh = "EX"
 #trigCh = "LINE" 
-#trig = 0.41 #0.15 # V
+trig = 0.41 #0.15 # V
+slope = "POS"
 
 vScale1 = 0.05  
 vScale2 = 0.05
@@ -35,7 +38,7 @@ vPos1 = 3
 vPos2 = 3
 vPos3 = 3
 
-timeoffset = 0#75#100 ##75 scintillator trigger
+timeoffset = 75 #100 ##75 scintillator trigger
 
 #2022 values  #105 ns (50D) 30 ns (SiPM self trigger) 85 (Lorenzo scin) 105 (SiPM telescope trigger)
 
@@ -68,7 +71,7 @@ while True:
             
             #### Reading run number ####
             #RunNumber = tp.GetRunNumber()
-            ScopeCommand = 'python %s/Acquisition/acquisition.py --runNum %s --numEvents %d --sampleRate %d --horizontalWindow %d --trigCh %s --trig %f --vScale1 %f --vScale2 %f --vScale3 %f --vScale4 %f --timeoffset %i --trigSlope POS --vPos1 %f --vPos2 %f --vPos3 %f ' % (LecroyScopeControlDir,runNumber, numEvents, sampleRate, horizontalWindow, trigCh, trig, vScale1, vScale2, vScale3, vScale4, timeoffset, vPos1, vPos2, vPos3) 
+            ScopeCommand = 'python %s/Acquisition/acquisition.py --runNum %s --numEvents %d --sampleRate %d --horizontalWindow %d --trigCh %s --trig %f --vScale1 %f --vScale2 %f --vScale3 %f --vScale4 %f --timeoffset %i --trigSlope %s --vPos1 %f --vPos2 %f --vPos3 %f ' % (LecroyScopeControlDir,runNumber, numEvents, sampleRate, horizontalWindow, trigCh, trig, vScale1, vScale2, vScale3, vScale4, timeoffset, slope, vPos1, vPos2, vPos3) 
             print ScopeCommand
             #### Starting the acquisition script ####
             os.system(ScopeCommand)
@@ -94,7 +97,7 @@ while True:
             print "\n ####################### Running the scope acquisition ##################################\n"
             
             if not LongAcquisitionMode: 
-                ScopeCommand = 'python %s/Acquisition/acquisition.py --runNum %s --numEvents %d --sampleRate %d --horizontalWindow %d --trigCh %s --trig %f --vScale1 %f --vScale2 %f --vScale3 %f --vScale4 %f --vScale5 %f --vScale6 %f --vScale7 %f --vScale8 %f --timeoffset %i --trigSlope POS' % (LecroyScopeControlDir,runNumber, numEvents, sampleRate, horizontalWindow, trigCh, trig, vScale1, vScale2, vScale3, vScale4,vScale5, vScale6, vScale7, vScale8, timeoffset) 
+                ScopeCommand = 'python %s/Acquisition/acquisition.py --runNum %s --numEvents %d --sampleRate %d --horizontalWindow %d --trigCh %s --trig %f --vScale1 %f --vScale2 %f --vScale3 %f --vScale4 %f --vScale5 %f --vScale6 %f --vScale7 %f --vScale8 %f --timeoffset %i --trigSlope %s' % (LecroyScopeControlDir,runNumber, numEvents, sampleRate, horizontalWindow, trigCh, trig, vScale1, vScale2, vScale3, vScale4,vScale5, vScale6, vScale7, vScale8, timeoffset, slope) 
             else: 
                 newtimeoffset = -0.5*(int(runNumber) % 8)-0.25
                 ScopeCommand = 'python %s/Acquisition/acquisition_one_event.py --display 1 --runNum %s --numPoints %d --sampleRate %d --trigCh %s --trig %f --vScale1 %f --vScale2 %f --vScale3 %f --vScale4 %f --vScale5 %f --vScale6 %f --vScale7 %f --vScale8 %f --timeoffset %0.2f --trigSlope NEG' % (LecroyScopeControlDir,runNumber, numPoints, sampleRate, trigCh, trig, vScale1, vScale2, vScale3, vScale4,vScale5, vScale6, vScale7, vScale8, newtimeoffset) 
