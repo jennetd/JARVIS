@@ -30,20 +30,24 @@ if isLPC:
 
 ################### Run Table Information #################
 MyKey = '' #Read MyKey from key file in RecoProcesses
-RunTableName = 'tblf6RYlowYIrnGrG'
-SensorTableName = 'tbldWTPJxHkGIBA1d'
-ConfigTableName = 'tblsMovJ5ABsjy37s'
-KeySightScopeConfigTableName = 'tblHz3zYiclQnBXX4'
-LecroyScopeConfigTableName = 'tbl0H6GR1si5e7O0b'
-CAENConfigTableName = 'tblwFzLScMBPBKrT5'
+RunTableName = 'tblqnb6rMcKgZqag4'
+SensorTableName = 'tbloddXPVn6egE4QB'
+ConfigTableName = 'tblD3IDPtgn0RBxWQ'
+KeySightScopeConfigTableName = 'tblSQnH4GS7oVErMs'
+LecroyScopeConfigTableName = 'tblbYqOXp84DMaiPz'
+TOFHIRConfigTableName = 'tblCvWAN0b5kZhxvz'
+CAENConfigTableName = 'tblHWTTYAsnn9NVIt'
+VMEConfigTableName = 'tbl2vprcJ6GcRHrzb'
+TOFHIRConfigTableName = 'tblCvWAN0b5kZhxvz'
 
-BaseID = 'appQaE83t2pvEHfOG'
+BaseID = 'app1rYg9RIb3cKJD4'
 CurlBaseCommandWithoutTable = 'https://api.airtable.com/v0/%s' % (BaseID)
 CurlBaseCommand = 'https://api.airtable.com/v0/%s/%s' % (BaseID, RunTableName)
 CurlBaseCommandSensor = 'https://api.airtable.com/v0/%s/%s' % (BaseID, SensorTableName)
 CurlBaseCommandConfig = 'https://api.airtable.com/v0/%s/%s' % (BaseID, ConfigTableName)
 CurlBaseCommandKeySight = 'https://api.airtable.com/v0/%s/%s' % (BaseID, KeySightScopeConfigTableName)
 CurlBaseCommandLecroy = 'https://api.airtable.com/v0/%s/%s' % (BaseID, LecroyScopeConfigTableName)
+CurlBaseCommandTOFHIR = 'https://api.airtable.com/v0/%s/%s' % (BaseID, TOFHIRConfigTableName)
 CurlBaseCommandCAEN = 'https://api.airtable.com/v0/%s/%s' % (BaseID, CAENConfigTableName)
 CurlBaseCommandRunTable = 'https://api.airtable.com/v0/%s/%s' % (BaseID, RunTableName)
 QueryFilePath ="../QueryLog.txt" # Don't care about this
@@ -53,26 +57,28 @@ QueryFilePath ="../QueryLog.txt" # Don't care about this
 #############################################################
 
 ############# Tracking Paths ##############
-HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScript2023.sh'
+HyperscriptPath = '/home/otsdaq/CMSTiming/HyperScriptBTL2023.sh'
 RulinuxSSH = 'otsdaq@teddy01.dhcp.fnal.gov'#'otsdaq@rulinux04.dhcp.fnal.gov'
-BaseTrackDirRulinux = '/data/TestBeam/2020_02_February_cmstiming/'
+BaseTrackDirRulinux = '/data/TestBeam/2023_03_March_BTL/'
 ResultTrackFileNameBeforeRunNumber = 'Run' ###########'Run%d_CMSTiming_converted.root'
 ResultTrackFileNameAfterRunNumber = '_CMSTiming_converted.root' 
 ResultTrackFileNameAfterRunNumberSlow = '_CMSTiming_SlowTriggerStream_converted.root'
 ResultTrackFileNameAfterRunNumberFast = '_CMSTiming_FastTriggerStream_converted.root'
 
 ############## For timingdaq02 ############
-BaseTestbeamDir = '/home/daq/SensorBeam2023/' 
+BaseTestbeamDir = '/home/daq/2023_03_cmstiming_BTL/' 
 if isLPC:
     if 'rheller' in user:
-        BaseTestbeamDir = '/uscms/home/rheller/nobackup/SensorBeam2023/'
+        BaseTestbeamDir = '/uscms/home/rheller/nobackup/2023_03_cmstiming_BTL/'
     elif 'cmadrid' in user:
-        BaseTestbeamDir = '/uscms/home/cmadrid/nobackup/ana/SensorBeam2023/'
+        BaseTestbeamDir = '/uscms/home/cmadrid/nobackup/ana/2023_03_cmstiming_BTL/'
+    elif 'apresyan' in user:
+        BaseTestbeamDir = '/uscms/home/apresyan/nobackup/2023_03_cmstiming_BTL/'
     else:
         raise ValueError("\"{}\" please define your code path above for the lpc in JARVIS/BackEndProcesses/AllModules.py".format(user))
 
-eosBaseDir = 'root://cmseos.fnal.gov//store/group/cmstestbeam/SensorBeam2023/'
-BaseTrackDirLocal = '%sTracks/v12/' % BaseTestbeamDir
+eosBaseDir = 'root://cmseos.fnal.gov//store/group/cmstestbeam/2023_03_cmstiming_BTL/'
+BaseTrackDirLocal = '%sTracks/v1/' % BaseTestbeamDir
 LocalSSH = 'daq@timingdaq01.dhcp.fnal.gov'
 EnvSetupPath = '/home/daq/setup.sh' ############### Remember to change ProcessExec accordingly
 EnvSetupPath2 = '/home/daq/otsdaq/setup_ots.sh' ############### Remember to change ProcessExec accordingly
@@ -98,8 +104,8 @@ ScopeCommFileName = '%sAcquisition/ScopeStatus.txt' % ScopeControlDir
 
 ################ Lecroy Scope Control from AutoPilot Paths ################
 LecroyScopeControlDir = '%sScopeHandler/Lecroy/' % BaseTestbeamDir
-LecroyScopeStateFileName = '%sAcquisition/RunLog.txt' % LecroyScopeControlDir
-LecroyScopeCommFileName = '%sAcquisition/ScopeStatus.txt' % LecroyScopeControlDir
+LecroyScopeStateFileName = '%s/JARVIS/BackEndProcesses/RunLog.txt' % BaseTestbeamDir
+LecroyScopeCommFileName = '%s/JARVIS/BackEndProcesses/ScopeStatus.txt' % BaseTestbeamDir
 
 
 ConfigFileBasePath = '%sconfig/' % TimingDAQDir
@@ -139,11 +145,12 @@ TwoStageRecoDigitizers = {
                          'KeySightScope'    :  {
                                             'ConfigFileBasePath'     : '%sKeySightScope_' % (ConfigFileBasePath),
                                             'DatToROOTExec'          : 'NetScopeStandaloneDat2Root',
-                                            'ConversionCMD'          : 'python %sReconstruction/conversion_bin_fast.py --Run ' % (ScopeControlDir), 
+                                            'ConversionCMD'          : 'python %sConversion/conversion_bin_fast.py --Run ' % (ScopeControlDir), 
                                             'RawConversionLocalPath' : '/home/daq/ScopeMount/',
-                                            'RawTimingDAQLocalPath'  : '%sKeySightScope/RecoData/ConversionRECO/'  % (BaseTestbeamDir),
-                                            'RecoTimingDAQLocalPath' : '%sKeySightScope/RecoData/TimingDAQRECO/' % (BaseTestbeamDir),
+                                            'RawTimingDAQLocalPath'  : '%sKeySightScope/ConversionRECO/'  % (BaseTestbeamDir),
+                                            'RecoTimingDAQLocalPath' : '%sKeySightScope/TimingDAQRECO/' % (BaseTestbeamDir),
                                             'RawTimingDAQFileNameFormat' : 'run_scope', ##### run_scope_converted<run>.root
+                                            'FinalFileNameFormat'        : 'run', ##### run_scope_converted<run>.root
                                             },
                          'Sampic'           :  {
                                             'ConfigFileBasePath'     : '',
@@ -177,6 +184,16 @@ TwoStageRecoDigitizers = {
                                            'FinalFileNameFormat' : 'run',
                                           
                                            },
+                         'TOFHIR'     :  {  'ConfigFileBasePath'     : '%sConfig_v' % (TOFHIRConfigFileBasePath), ### Set this
+                                            'DatToROOTExec'          : 'convert_raw_to_trigger', ### Set this
+                                            'DatToROOTExec1'         : 'convert_raw_to_singles',
+                                            'DatToROOTExec2'         : 'ConvertTOFPETSinglesToEvents', #With Tracks
+                                            'RawTimingDAQLocalPath'  : '%sTOFHIR/RawData/'  % (BaseTestbeamDir),
+                                            'RecoTimingDAQLocalPath' : '%sTOFHIR/RecoData/v1/' % (BaseTestbeamDir),
+                                            'TimingDAQLocalPath' : '%sTOFHIR/RecoData/v1/' % (BaseTestbeamDir), # Path for both raw and reco of tofhir timingdaqwithtracks
+                                            'RawTimingDAQFileNameFormat' : 'run', #reco --> run<RunNumber>.root
+                                            'RecoTOFHIRPath' : '%sTOFHIR/RecoData/' % (BaseTestbeamDir)
+                                            }    
   
 
                         }
@@ -194,7 +211,7 @@ OneStageRecoDigitizers = {
                                             'RawTimingDAQLocalPath'  : '%sDT5742/RawData/'  % (BaseTestbeamDir),
                                             'RecoTimingDAQLocalPath' : '%sDT5742/RecoData/' % (BaseTestbeamDir),
                                             },
-
+ 
                          'TOFHIR'     :  {  'ConfigFileBasePath'     : '%sConfig_v' % (TOFHIRConfigFileBasePath), ### Set this
                                             'DatToROOTExec'          : 'convert_raw_to_trigger', ### Set this
                                             'DatToROOTExec1'         : 'convert_raw_to_singles',
@@ -202,9 +219,11 @@ OneStageRecoDigitizers = {
                                             'RawTimingDAQLocalPath'  : '%sTOFHIR/RawData/'  % (BaseTestbeamDir),
                                             'RecoTimingDAQLocalPath' : '%sTOFHIR/RecoData/v1/' % (BaseTestbeamDir),
                                             'TimingDAQLocalPath' : '%sTOFHIR/RecoData/v1/' % (BaseTestbeamDir), # Path for both raw and reco of tofhir timingdaqwithtracks
-                                            'RawTimingDAQFileNameFormat' : 'run', #reco --> run<RunNumber>.root 
+                                            'RawTimingDAQFileNameFormat' : 'run', #reco --> run<RunNumber>.root
+                                            'RecoTOFHIRPath' : '%sTOFHIR/RecoData/' % (BaseTestbeamDir),
+                                            'RawTOFHIRFileNameFormat' : '_e', #reco --> run<RunNumber><thisThing>.root
                                             }    
-                        }
+                       }
 
 
 DigitizerDict = {
@@ -224,7 +243,9 @@ ProcessDict = {
                     3 : {'TimingDAQNoTracks' : {'SizeCut' : 20}},
                     4 : {'LabviewReco' : {'SizeCut' : 20000}},
                     5 : {'WatchCondor' : {'SizeCut' : 20000}},
-                    6 : {'xrdcpRaw' : {'SizeCut' : 20000}}
+                    6 : {'xrdcpRaw' : {'SizeCut' : 20000}},
+                    7 : {'BTLReco' : {'SizeCut' : 20000}},
+                    8 : {'BTLRecoNoScope' : {'SizeCut' : 20000}}
                 }
 StatusDict = {
                     0 : 'Complete',
@@ -302,6 +323,7 @@ def LecroyScopeStatusAutoPilot(runNumber):
     return
 
 def WaitForLecroyScopeStart():
+    print "Looking for ",LecroyScopeCommFileName
     while True:
         LecroyScopeStateHandle = open(LecroyScopeCommFileName, "r")
         LecroyScopeState = str(LecroyScopeStateHandle.read().strip())

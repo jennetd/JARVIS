@@ -119,6 +119,9 @@ def DownloadConfigs(Debug, MyKey):
     KeySightResponse = am.requests.get(am.CurlBaseCommandKeySight, headers=headers)
     KeySightDict = am.ast.literal_eval(KeySightResponse.text)
 
+    TOFHIRResponse = am.requests.get(am.CurlBaseCommandTOFHIR, headers=headers)
+    TOFHIRDict = am.ast.literal_eval(TOFHIRResponse.text)
+
     CAENResponse = am.requests.get(am.CurlBaseCommandCAEN, headers=headers)
     CAENDict = am.ast.literal_eval(CAENResponse.text)
 
@@ -141,6 +144,11 @@ def DownloadConfigs(Debug, MyKey):
     js.dump(KeySightDict, kfile)
     kfile.close()
 
+    TOFHIRDictFileName = am.LocalConfigPath+"TOFHIRConfigurations.txt"
+    kfile = open(TOFHIRDictFileName, "w")
+    js.dump(TOFHIRDict, kfile)
+    kfile.close()
+
     CAENDictFileName = am.LocalConfigPath+"CAENConfigurations.txt"
     cfile = open(CAENDictFileName, "w")
     js.dump(CAENDict, cfile)
@@ -151,7 +159,7 @@ def DownloadConfigs(Debug, MyKey):
     js.dump(SensorDict, sensorfile)
     sensorfile.close()
 
-    return ConfigDict, LecroyDict,KeySightDict, CAENDict,SensorDict
+    return ConfigDict, LecroyDict,KeySightDict, TOFHIRDict,CAENDict,SensorDict
 
 def getSensorById(SensorDict,idnum):
     for item in SensorDict['records']: 
@@ -165,6 +173,11 @@ def getConfigsByGConf(ConfigDict,gconf):
             caenConfID = item['fields']['ConfigurationCAENHV'][0]
             return lecroyConfID,caenConfID
 
+def getConfigsByGConfTOFHIR(ConfigDict,gconf):
+    for item in ConfigDict['records']:
+        if item['fields']['Configuration number']==gconf:
+            tofhirConfID = item['fields']['ConfigurationTOFHIR'][0]
+            return tofhirConfID
 
 def getSimpleLecroyDict(LecroyDict,SensorDict,lecroyConfID):
     for item in LecroyDict['records']: 

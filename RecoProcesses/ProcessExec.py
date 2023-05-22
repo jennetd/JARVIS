@@ -57,6 +57,10 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 			ProcessName = am.ProcessDict[PID].keys()[0] + Digitizer	
 			DoTracking = True
 			CMDList, ResultFileLocationList, RunList, FieldIDList = pc.TimingDAQCMDs(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer, MyKey, False, condor)
+                        print CMDList
+                        print ResultFileLocationList
+                        print RunList
+                        print FieldIDList
 			SizeCut = am.ProcessDict[PID][am.ProcessDict[PID].keys()[0]]['SizeCut']
 		elif PID == 3:
 			ProcessName = am.ProcessDict[PID].keys()[0] + Digitizer
@@ -70,13 +74,27 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 			CMDList, ResultFileLocationList, RunList, FieldIDList = pc.WatchCondorCMDs(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer, MyKey, False)
 			SizeCut = am.ProcessDict[2][am.ProcessDict[2].keys()[0]]['SizeCut']		
 			print ResultFileLocationList, RunList
-
 		elif PID == 6:
 			ProcessName = am.ProcessDict[PID].keys()[0] + Digitizer	
 			DoTracking = True
 			CMDList, ResultFileLocationList, RunList, FieldIDList = pc.xrdcpRawCMDs(RunNumber, SaveWaveformBool, Version, DoTracking, Digitizer, MyKey, False)
 			SizeCut = am.ProcessDict[PID][am.ProcessDict[PID].keys()[0]]['SizeCut']		
 			#print ResultFileLocationList, RunList
+		elif PID == 7:
+			ProcessName = am.ProcessDict[PID].keys()[0] + Digitizer	
+			DoScope = True
+			CMDList, ResultFileLocationList, RunList, FieldIDList = pc.RecoTOFHIRCMDs(RunNumber, Version, DoScope, Digitizer, MyKey)
+			SizeCut = am.ProcessDict[PID][am.ProcessDict[PID].keys()[0]]['SizeCut']
+		elif PID == 8:
+			ProcessName = am.ProcessDict[PID].keys()[0] + Digitizer	
+			DoScope = False
+			CMDList, ResultFileLocationList, RunList, FieldIDList = pc.RecoTOFHIRCMDs(RunNumber, Version, DoScope, Digitizer, MyKey)
+                        print CMDList
+                        print ResultFileLocationList
+                        print RunList
+                        print FieldIDList
+			SizeCut = am.ProcessDict[PID][am.ProcessDict[PID].keys()[0]]['SizeCut']
+
 
 		RunListInt = map(int,RunList)
 		if OrderOfExecution == 1: 
@@ -92,7 +110,7 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 			for run in RunListInt: 
 				# if run > 27363: continue 
 				if PID!=0: ProcessName = am.ProcessDict[PID].keys()[0] + Digitizer	
-				index = RunList.index(run)      
+				index = RunList.index(run)
 				CMD = CMDList[index]  
 				if RunNumber != -1 and len(FieldIDList[index])>0: 
 					FieldID = FieldIDList[index][0]
@@ -157,7 +175,9 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 							jdlname = cu.prepareJDL(PID,DigitizerKey,run,CMD,freq)
 							cu.prepareExecutable(PID,DigitizerKey,run,CMD,freq)
 							## cd and submit to condor
-						#	print CMD
+							print (CMD)
+                                                        print (jdlname)
+                                                        
 							session = am.subprocess.Popen('cd %s; condor_submit %s; cd -' % (am.CondorDir,jdlname),stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT, shell=True)                                                                                                                                                                                   			
 
 							## wait for submission
@@ -224,8 +244,9 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 							jdlname = cu.prepareJDL(PID,DigitizerKey,run,CMD,freq)
 							cu.prepareExecutable(PID,DigitizerKey,run,CMD,freq)
 							## cd and submit to condor
-							#print CMD
-							print run
+							print (CMD)
+							print (run)
+                                                        print (jdlname)
 							session = am.subprocess.Popen('cd %s; condor_submit %s; cd -' % (am.CondorDir,jdlname),stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT, shell=True)                                                                                                                                                                                   			
 
 							# print 'condor_submit %s; cd -' % (jdlname)
@@ -246,6 +267,10 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 
 					ProcessName = am.ProcessDict[this_proc_key].keys()[0] + Digitizer
 					
+                                        if "TOFHIR" in CMD:
+                                                ProcessName = "BTLRecoNoScopeTOFHIR"
+                                                this_proc_key = 8
+
 					if cu.CheckExistsLogs(this_proc_key,DigitizerKey,run,CMD):
 						if cu.CheckExistsEOS(ResultFileLocation,SizeCut):
 							if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[0], False, MyKey)
@@ -308,14 +333,44 @@ def ProcessExec(OrderOfExecution, PID, SaveWaveformBool = None, Version = None, 
 				elif PID == 6:
 					## copy raw scope files
 					if pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[1], False, MyKey)
-					#am.time.sleep(60) ## allow scope to save at least first channel
-					cpstatus = cu.xrdcpRaw2(run,Digitizer)
+					#am.time.sleep(60) ## allow scope to save at least first channel 
+					if (Digitizer == "TOFHIR"):
+						#call special TOFHIR xrdcp function for TOFHIR
+						cpstatus = cu.xrdcpTOFHIR(run)
+					else :
+						cpstatus = cu.xrdcpRaw2(run,Digitizer)
+
 					am.time.sleep(0.5)
 					if cpstatus and pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[0], False, MyKey) 
 					elif not cpstatus and pf.QueryGreenSignal(True): pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[2], False, MyKey)
 					am.time.sleep(0.5) 
 					am.time.sleep(2.0)
+				elif (PID == 7 or PID == 8):
+					if pf.QueryGreenSignal(True) and not ApplyFilter: pf.UpdateAttributeStatus(str(FieldID), ProcessName, am.StatusDict[8], False, MyKey)
+
+					## generate condor jdl and executable
+					cu.prepareDirs()
+					filterList = [0]
+					if ApplyFilter: filterList = am.FrequencyList 
+					for freq in filterList: 
+						jdlname = cu.prepareJDLTOFHIR(PID,DigitizerKey,run,CMD,freq)
+						cu.prepareExecutableTOFHIR(PID,DigitizerKey,run,CMD,freq)
+						## cd and submit to condor
+						#print CMD
+						print run
+						session = am.subprocess.Popen('cd %s; condor_submit %s; cd -' % (am.CondorDir,jdlname),stdout=am.subprocess.PIPE,stderr=am.subprocess.STDOUT, shell=True)                                                                                                                                                                                   			
 				
+                                                print 'ciao'
+						#			# print 'condor_submit %s; cd -' % (jdlname)
+						# print am.CondorDir
+						## wait for submission
+						line = session.stdout.readline()
+                                                print line
+						am.ProcessLog(ProcessName, run, line)
+						if not line and session.poll() != None:
+							break
+
+
 			if RunNumber != -1:
 				break
 			
@@ -361,8 +416,6 @@ def ProcessExecBTLForTOFHIRTracks(OrderOfExecution, PID, SaveWaveformBool = None
 			RunListInt.sort() #Ascending Sorting
 		else:
 			RunListInt.sort(reverse = True)
-
-		print RunListInt
 
 		if CMDList1 != []:	
 
