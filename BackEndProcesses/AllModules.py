@@ -30,16 +30,16 @@ if isLPC:
 
 ################### Run Table Information #################
 MyKey = '' #Read MyKey from key file in RecoProcesses
-RunTableName = 'tbln8yfc00PSPiGoK'
-SensorTableName = 'tbllYA6A9bbQ6wAYh'
-ConfigTableName = 'tblAO5MAH4sCHt34w'
-KeySightScopeConfigTableName = 'tblPBKQPUGc0LwXU8'
-LecroyScopeConfigTableName = 'tbl8JNXIDW9fC2OXf'
-TOFHIRConfigTableName = 'tblzgjJyeZaWP93Df'
-CAENConfigTableName = 'tblEHg2JOgsZZFrQ9'
-VMEConfigTableName = 'tblZgMAXXULOHzXHR'
+BaseID = 'appNwYbGkiBtcgitk'
+RunTableName = 'tblcsb1YfMaGZWJ6k'
+SensorTableName = 'tblaidSmoXwEgaDGR'
+ConfigTableName = 'tblp8IymWQNqR76M6'
+KeySightScopeConfigTableName = 'tblEVnCB9sxOVa0CI'
+LecroyScopeConfigTableName = 'tblX3qJuSIu3MGRFP'
+TOFHIRConfigTableName = 'tbloAWvktLvKZN6lP'
+CAENConfigTableName = 'tblt1TOv32NN9juyJ'
+VMEConfigTableName = 'tblOApmJcG6CRd0pr'
 
-BaseID = 'appYclpU5wgF2CfLK'
 CurlBaseCommandWithoutTable = 'https://api.airtable.com/v0/%s' % (BaseID)
 CurlBaseCommand = 'https://api.airtable.com/v0/%s/%s' % (BaseID, RunTableName)
 CurlBaseCommandSensor = 'https://api.airtable.com/v0/%s/%s' % (BaseID, SensorTableName)
