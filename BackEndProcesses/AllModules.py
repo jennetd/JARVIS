@@ -1,4 +1,4 @@
-import requests
+#import requests
 import ast
 from datetime import datetime
 from datetime import timedelta
@@ -24,9 +24,9 @@ try:
     user = os.environ['USER']
     isLPC = 'cmslpc' in os.environ['HOSTNAME'] 
 except:
-    print "Failed to find environment"
+    print("Failed to find environment")
 if isLPC:
-    print "Found user: {} Running on LPC: {}".format(user, isLPC)
+    print("Found user: {} Running on LPC: {}".format(user, isLPC))
 
 ################### Run Table Information #################
 MyKey = '' #Read MyKey from key file in RecoProcesses
@@ -323,7 +323,7 @@ def LecroyScopeStatusAutoPilot(runNumber):
     return
 
 def WaitForLecroyScopeStart():
-    print "Looking for ",LecroyScopeCommFileName
+    print("Looking for ",LecroyScopeCommFileName)
     while True:
         LecroyScopeStateHandle = open(LecroyScopeCommFileName, "r")
         LecroyScopeState = str(LecroyScopeStateHandle.read().strip())
@@ -416,15 +416,15 @@ def GetTClockTime():
 
 def GetStartAndStopSeconds(TClockStartSeconds, TClockStopSeconds):
     LocalMachineTime = GetTClockTime()
-    print " Local machine time is ", LocalMachineTime
+    print(" Local machine time is ", LocalMachineTime)
     TClockFile = open(TClockFilePath, "r")
     TClockTime = float(TClockFile.read().strip())
     TClockFile.close()  
-    print " TClock time is ", TClockTime
+    print(" TClock time is ", TClockTime)
     deltaTwrtTClock = LocalMachineTime - TClockTime
-    print " Local machine time is ", LocalMachineTime
+    print(" Local machine time is ", LocalMachineTime)
     LocalMachineStartSeconds = (TClockStartSeconds + deltaTwrtTClock) % 60
     LocalMachineStopSeconds = (TClockStopSeconds + deltaTwrtTClock) % 60
-    print cred+"Beam should arrive at %0.1f seconds after minute." % ((deltaTwrtTClock+4)%60)+cend
+    print(cred+"Beam should arrive at %0.1f seconds after minute." % ((deltaTwrtTClock+4)%60)+cend)
     return int(LocalMachineStartSeconds), int(LocalMachineStopSeconds)
 

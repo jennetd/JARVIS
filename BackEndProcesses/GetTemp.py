@@ -33,7 +33,7 @@ def GetACNetYield(run_info_dict):
         run_info_dict["M6p1AH [mm]"]=-990
         run_info_dict["M6p1AV [mm]"]=-999
 
-    print run_info_dict["MT6SC1 [ppp]"], run_info_dict["MT6SC2 [ppp]"], run_info_dict["M6p1AH [mm]"], run_info_dict["M6p1AV [mm]"]
+    print(run_info_dict["MT6SC1 [ppp]"], run_info_dict["MT6SC2 [ppp]"], run_info_dict["M6p1AH [mm]"], run_info_dict["M6p1AV [mm]"])
 
 def GetTemperaturesSimple(run_info_dict):
     infile = open(active_temp_base_path,'r')

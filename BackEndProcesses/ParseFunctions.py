@@ -213,7 +213,7 @@ def ParsingQuery(NumberOfConditions, ConditionAttributeNames, ConditionAttribute
     if NumberOfConditions > 1: FilterByFormula = 'AND(' + FilterByFormula + ')'
     response = am.requests.get(am.CurlBaseCommand  + '?filterByFormula=' + FilterByFormula, headers=headers)
     ResponseDict = am.ast.literal_eval(response.text)
-    if Debug: print FilterByFormula
+    if Debug: print(FilterByFormula)
 
     for i in ResponseDict["records"]: Output.append(i['fields'][QueryAttributeName])   
     for i in ResponseDict["records"]: FieldID.append(i['id'])   
@@ -247,7 +247,7 @@ def ParsingQuery3(NumberOfConditions, ConditionAttributeNameList, ConditionAttri
     if NumberOfConditions > 1: FilterByFormula = 'AND(' + FilterByFormula + ')'
     response = am.requests.get(am.CurlBaseCommand  + '?filterByFormula=' + FilterByFormula, headers=headers)
     ResponseDict = am.ast.literal_eval(response.text)
-    if Debug: print FilterByFormula
+    if Debug: print(FilterByFormula)
     for key,value in OutputDict.items():
         for i in ResponseDict["records"]:
             value.append(i['fields'][QueryAttributeNameList[key]])
@@ -416,7 +416,7 @@ def NewRunRecord2(RunNumber, StartTime, Duration, DigitizerList, Tracking, Conve
         ResponseDict = am.ast.literal_eval(response.text)
         if Debug: return ResponseDict, data
     else:
-        print 'Nothing to log in the run table'
+        print('Nothing to log in the run table')
 
 
 def NewRunRecordSimple(run_info,ConfigID,Debug,MyKey):
@@ -429,8 +429,8 @@ def NewRunRecordSimple(run_info,ConfigID,Debug,MyKey):
 
     response = am.requests.post(am.CurlBaseCommand, headers=header_info, data=string_run_info)
     ResponseDict = am.ast.literal_eval(response.text)
-    print string_run_info
-    print ResponseDict
+    print(string_run_info)
+    print(ResponseDict)
     if Debug: return ResponseDict, run_info
 
 
@@ -457,7 +457,7 @@ def NewRunRecord4(RunNumber, StartTime, Duration, DigitizerList, Tracking, Conve
 
     data = '{"fields":{"Run number": %d,"Start time": "%s", "Duration": "%s", %s, "ETROC baseline": "%s", "ETROC config": "%s" ,"xrdcpRawKeySightScope":["%s"],"xrdcpRawLecroyScope":["%s"], "ConversionSampic": ["%s"], "ConversionTekScope": ["%s"], "ConversionKeySightScope": ["%s"], "ConversionLecroyScope": ["%s"], "TimingDAQVME": ["%s"], "TimingDAQSampic": ["%s"], "TimingDAQTekScope": ["%s"], "TimingDAQKeySightScope": ["%s"], "TimingDAQLecroyScope": ["%s"], "TimingDAQDT5742": ["%s"],"TimingDAQNoTracksVME": ["%s"], "TimingDAQNoTracksSampic": ["%s"], "TimingDAQNoTracksTekScope": ["%s"], "TimingDAQNoTracksKeySightScope": ["%s"], "TimingDAQNoTracksLecroyScope": ["%s"], "TimingDAQNoTracksDT5742": ["%s"], "LabviewRecoVME": ["%s"], "LabviewRecoDT5742": ["%s"], "LabviewRecoKeySightScope": ["%s"], "LabviewRecoSampic": ["%s"], "LabviewRecoTekScope": ["%s"], "Configuration": ["%s"],"BoxTempOlmo": "%s","x_stageOlmo": "%s","y_stageOlmo": "%s","BoxVoltageOlmo": "%s","BarCurrentOlmo": "%s","z_rotationOlmo": "%s","BoxHumOlmo": "%s","BoxCurrentOlmo": "%s", "BarVoltageOlmo": "%s", "Temp13ETL" : "%s", "Temp14ETL" : "%s", "Temp15ETL" : "%s", "Temp16ETL" : "%s", "Temp17ETL" : "%s", "Temp18ETL" : "%s", "Temp19ETL" : "%s", "Temp20ETL" : "%s", "LowVoltage1ETL" : "%s", "LowVoltage2ETL" : "%s", "LowVoltage3ETL" : "%s", "Current1ETL" : "%s", "Current2ETL" : "%s", "Current3ETL" : "%s"}}' % (RunNumber, StartTime, Duration, digitizerListString , ETROC_baseline,ETROC_config, xrdcpRawKeySightScope, xrdcpRawLecroyScope, ConversionSampic, ConversionTekScope, ConversionKeySightScope, ConversionLecroyScope, TimingDAQVME, TimingDAQSampic, TimingDAQTekScope, TimingDAQKeySightScope, TimingDAQLecroyScope, TimingDAQDT5742, TimingDAQNoTracksVME, TimingDAQNoTracksSampic, TimingDAQNoTracksTekScope, TimingDAQNoTracksKeySightScope, TimingDAQNoTracksLecroyScope, TimingDAQNoTracksDT5742, LabviewRecoVME, LabviewRecoDT5742, LabviewRecoKeySightScope, LabviewRecoSampic, LabviewRecoTekScope, ConfigID[0], BoxTemp, x_stage, y_stage, BoxVoltage, BarCurrent, z_rotation, BoxHum, BoxCurrent, BarVoltage, Temp13ETL, Temp14ETL, Temp15ETL, Temp16ETL, Temp17ETL, Temp18ETL, Temp19ETL, Temp20ETL, LowVoltage1ETL, LowVoltage2ETL, LowVoltage3ETL, Current1ETL, Current2ETL, Current3ETL)
 
-    print data
+    print(data)
 
     #Example template of a query response :  {'records': [{'createdTime': '2015-02-12T03:40:42.000Z', 'fields': {'Conversion': ['Complete'], 'Time Resolution 1': 30, 'TimingDAQ': ['Failed'], 'Notes': 'Make test beam great again\n', 'HV 1': ['recJRiQqSHzTNZqal'], 'Run number': 4, 'Tracking': ['Processing'], 'Configuration': ['rectY95k7m19likjW'], 'Sensor': ['recNwdccBdzS7iBa5']}, 'id': 'recNsKOMDvYKrJzXd'}]}
 

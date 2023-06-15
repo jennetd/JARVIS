@@ -21,7 +21,7 @@ def start_ots(RunNumber, Delay=False):
     MESSAGE = "OtherRuns0,Start, %d" % (RunNumber)#(GetRunNumber()+1)
     sock.sendto(MESSAGE, (am.ip_address, am.use_socket))
     #data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes                                                                                                                                                                              
-    print "Start: received message"
+    print("Start: received message")
     return 
     
 def stop_ots(Delay=True):
@@ -29,21 +29,21 @@ def stop_ots(Delay=True):
     MESSAGE = "OtherRuns0,Stop"
     sock.sendto(MESSAGE, (am.ip_address, am.use_socket))
     #data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes                                                                                                                                                                              
-    print "Stop: received message"
+    print("Stop: received message")
     if Delay: time.sleep(5)
 
 def RPComm(RunNumber, message):
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     MESSAGE = "%s, %d" % (message, RunNumber)#(GetRunNumber()+1)
     sock.sendto(MESSAGE, ("192.168.133.220", 10001))
-    print "Sent %s message to raspberry pi" % message
+    print("Sent %s message to raspberry pi" % message)
     return 
 
 def RPGlobalComm(message):
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     MESSAGE = "%s" % (message)#(GetRunNumber()+1)
     sock.sendto(MESSAGE, ("192.168.133.220", 10001))
-    print "Sent %s message to raspberry pi" % message
+    print("Sent %s message to raspberry pi" % message)
     return 
 
 def GetRunNumber():
@@ -58,13 +58,13 @@ def UpdateRunNumber(nextRunNum):
 
 def GetRunFile():
     CMD = 'scp cmstiming@ftbf-daq-06.fnal.gov:' + am.runFileName + ' ' + am.localRunFileName
-    print CMD
+    print(CMD)
     session = am.subprocess.Popen('%s' % CMD,stdout=am.PIPE, stderr=am.subprocess.PIPE, shell=True)       
     stdout = session.communicate()
-    print stdout
+    print(stdout)
 def SendRunFile():
     CMD = 'scp ' + am.localRunFileName +' cmstiming@ftbf-daq-06.fnal.gov:' + am.runFileName
     session = am.subprocess.Popen('%s' % CMD,stdout=am.PIPE, stderr=am.subprocess.PIPE, shell=True) 
     stdout = session.communicate()
-    print stdout    
+    print(stdout)
 
