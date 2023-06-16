@@ -22,27 +22,27 @@ AutoPilotStatus=1
 runsPerConf = 1
 iteration = 0
 
-path_to_xml="./"
-
-RunNumber = tp.GetRunNumber()
+path_to_xml="/home/otsdaq/Ph2_ACF_Irene/settings/PS_Module_v2p1_test.xml"
+my_xml = "./PS_Module_v2p1.xml"
 
 while AutoPilotStatus:
 	
         # make xml for this iteration
         
-        shutil.copy("PS_Module_v2_dummy.xml",path_to_xml+"PS_Module_v2.xml")
-        os.system("sed -i 's/STRIPTHRESHOLD/\""+str(stripThreshold_vals[iteration])+"\"/g' PS_Module_v2.xml")
-        os.system("sed -i 's/PIXELTHRESHOLD/\""+str(pixelThreshold_vals[iteration])+"\"/g' PS_Module_v2.xml")
+        shutil.copy("PS_Module_v2p1_dummy.xml",my_xml)
+        os.system("sed -i 's/STRIPTHRESHOLD/\""+str(stripThreshold_vals[iteration])+"\"/g' " + my_xml)
+        os.system("sed -i 's/PIXELTHRESHOLD/\""+str(pixelThreshold_vals[iteration])+"\"/g' " + my_xml)
+
+        shutil.copy(my_xml,path_to_xml)
 
         print("stripThreshold", stripThreshold_vals[iteration])
         print("pixelThreshold", pixelThreshold_vals[iteration])
 
-        if iteration == 0:
-                shutil.copy(path_to_xml+"PS_Module_v2.xml",path_to_xml+"PS_Module_v2_"+str(RunNumber+iteration+1)+".xml")
-        else:
-                shutil.copy(path_to_xml+"PS_Module_v2.xml",path_to_xml+"PS_Module_v2_"+str(RunNumber+iteration)+".xml")
-
         os.system("python AutoPilot2.py -nruns %i"%(runsPerConf))
+
+        RunNumber = tp.GetRunNumber()
+        print("Saving XML for run ", RunNumber-1)
+        shutil.copy(my_xml,"PS_Module_v2p1_"+str(RunNumber-1)+".xml")
 
 	#################################################
 	#Check for Stop signal in AutoPilot.status file
