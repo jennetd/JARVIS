@@ -20,7 +20,7 @@
                 <StubLogic       mode="2" window="4"/> <!-- Mode (0) pixel-strip, (1) strip-strip, (2) pixel-pixel, (3) strip-pixel  --><!-- Window in half pixels, window will be strictly lower than the set value (ie set 4 -> window is 3.5 pixels) -->
                 <HitLogic        stripMode="0" pixelMode="0" pixelClusterCut="5"/> <!-- (0) edge, (1) level, (2) OR, (3) XOR  -->
                 <Latencies       stripLatency="296" pixelLatency="295" retimePix="4"/>
-                <Thresholds      stripThreshold=JENNET1 stripThresholdHigh="250" pixelThreshold=JENNET2/>  <!-- in DAC units for each chip type - their electron value is different though! -->
+                <Thresholds      stripThreshold=STRIPTHRESHOLD stripThresholdHigh="250" pixelThreshold=PIXELTHRESHOLD/>  <!-- in DAC units for each chip type - their electron value is different though! -->
                 <HipLogic        stripCut="1" pixelCut="0"/> <!-- HipCut defines the max number of clock cycles with a hit in level mode -->
                 <SamplingDelay   stripCoarse="0" stripFine="0" pixelCoarse="0" pixelFine="0"/> <!-- Coarse delay for sampling [when in edge mode] in units of 3.12 ns --><!-- Fine delay for sample [when in edge mode] in units of 200 ps -->
                 <InjectedCharge  stripCharge="0" pixelCharge="0"/> <!-- in DAC units for each chip type - their electron value is different though! -->

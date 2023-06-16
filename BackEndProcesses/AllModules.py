@@ -116,11 +116,10 @@ FrequencyList=[500,750,1000]
 
 ############# OTSDAQ Information ################
 #ip_address = "192.168.133.48" #ftbf-daq-06
-ip_address = "192.168.133.10" #athenanu 
+ip_address = '192.168.133.10' #athenanu 
 #ip_address = "131.225.179.70" #athenanu internet
 use_socket = 17000
 runFileName ="/data-08/TestBeam/Users/RunNumber/OtherRuns0NextRunNumber.txt"
-#runFileName ="/data/TestBeam/Users/RunNumber/OtherRuns0NextRunNumber.txt"
 localRunFileName = "../AutoPilot/otsdaq_runNumber.txt"
 TClockFilePath = "../AutoPilot/TClock"
 

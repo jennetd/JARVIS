@@ -23,7 +23,7 @@ parser = argparse.ArgumentParser(description='Information for running the AutoPi
 parser.add_argument('-nruns', '--maxIterations', type=int,default=999999, help = 'Number of runs to take',required=False)
 
 args = parser.parse_args()
-Debug = True # Jennet change this
+Debug = False
 IsTelescope = True
 maxRuns = int(args.maxIterations)
 
@@ -58,15 +58,14 @@ iteration = 0
 while (AutoPilotStatus == 1 and iteration < maxRuns):
 
 	if iteration % 5 == 0:
-		#if IsTelescope: StartSeconds,StopSeconds = GetStartAndStopSeconds(36, 0) #33,22
 		if IsTelescope: StartSeconds,StopSeconds = GetStartAndStopSeconds(30, 10) #33,22
 		else: StartSeconds,StopSeconds = GetStartAndStopSeconds(50, 22)
 		print("start seconds", StartSeconds, "stop seconds", StopSeconds)
 
 	##sync local run number file with ftbf-daq-06
-#	tp.GetRunFile() # Jennet add this
+	tp.GetRunFile()
 	time.sleep(5)
-	RunNumber = 999 #tp.GetRunNumber() # Jennet will fix later
+	RunNumber = tp.GetRunNumber() 
 	print("Next Run %i " % (RunNumber))
 	print("")
 
@@ -75,19 +74,19 @@ while (AutoPilotStatus == 1 and iteration < maxRuns):
 
 	### Preparing to start run
 
-	RunNumber += 1 #tp.UpdateRunNumber(RunNumber+1) ## Jennet you have to do this too
-#	tp.SendRunFile() # will need to enable later Jennet
+	tp.UpdateRunNumber(RunNumber+1)
+	tp.SendRunFile() 
 
 	################### Starting the run ###################
 	StartTime = datetime.now()  
 	print("\nRun %i started at %s" % (RunNumber,StartTime))
-	print("")
+	print("RunNumber",RunNumber)
 
 	#Start the otsdaq run here (scopes already started)
 	if not Debug and IsTelescope: tp.start_ots(RunNumber,False)
 	
 	## Minimum run duration
-	time.sleep(60*(NumSpillsPerRun-1))
+	time.sleep(60*NumSpillsPerRun)
 
 	### Don't stop run until scope has acquired all events (OK if still writing events disk, though)
 	tclock_finished=time.time()

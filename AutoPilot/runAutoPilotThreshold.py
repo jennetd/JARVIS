@@ -1,3 +1,6 @@
+import sys
+sys.path.append('../BackEndProcesses/')
+import TCP_com as tp
 import shutil
 import os
 
@@ -26,29 +29,28 @@ while AutoPilotStatus:
         # make xml for this iteration
         
         shutil.copy("PS_Module_v2_dummy.xml",path_to_xml+"PS_Module_v2.xml")
-        os.system("sed -i 's/JENNET1/\""+str(stripThreshold_vals[iteration])+"\"/g' PS_Module_v2.xml")
-        os.system("sed -i 's/JENNET2/\""+str(pixelThreshold_vals[iteration])+"\"/g' PS_Module_v2.xml")
+        os.system("sed -i 's/STRIPTHRESHOLD/\""+str(stripThreshold_vals[iteration])+"\"/g' PS_Module_v2.xml")
+        os.system("sed -i 's/PIXELTHRESHOLD/\""+str(pixelThreshold_vals[iteration])+"\"/g' PS_Module_v2.xml")
 
         print("stripThreshold", stripThreshold_vals[iteration])
         print("pixelThreshold", pixelThreshold_vals[iteration])
 
-        RunNumber = 999 #tp.GetRunNumber() # Jennet will fix later
+        RunNumber = tp.GetRunNumber() 
         
         shutil.copy(path_to_xml+"PS_Module_v2.xml",path_to_xml+"PS_Module_v2_"+str(RunNumber)+".xml")
-
-#	os.system("python AutoPilot2.py -nruns %i"%(runsPerConf))
+        os.system("python AutoPilot2.py -nruns %i"%(runsPerConf))
 
 	#################################################
 	#Check for Stop signal in AutoPilot.status file
 	#################################################
-#	tmpStatusFile = open("AutoPilot.status","r") 
-#	tmpString = (tmpStatusFile.read().split())[0]
-#	if (tmpString == "STOP" or tmpString == "stop"):
-#		print "Detected stop signal.\nStopping AutoPilot...\n\n"
-#		AutoPilotStatus = 0
-#	tmpStatusFile.close()
+        tmpStatusFile = open("AutoPilot.status","r") 
+        tmpString = (tmpStatusFile.read().split())[0]
+        if tmpString == "STOP" or tmpString == "stop":
+                print("Detected stop signal.\nStopping AutoPilot...\n\n")
+                AutoPilotStatus = 0
+        tmpStatusFile.close()
 
-       iteration += 1
+        iteration += 1
 
-       if iteration > nsteps:
-               AutoPilotStatus = 0
+        if iteration >= nsteps:
+                AutoPilotStatus = 0
