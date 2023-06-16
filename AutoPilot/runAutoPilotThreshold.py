@@ -24,6 +24,8 @@ iteration = 0
 
 path_to_xml="./"
 
+RunNumber = tp.GetRunNumber()
+
 while AutoPilotStatus:
 	
         # make xml for this iteration
@@ -35,9 +37,11 @@ while AutoPilotStatus:
         print("stripThreshold", stripThreshold_vals[iteration])
         print("pixelThreshold", pixelThreshold_vals[iteration])
 
-        RunNumber = tp.GetRunNumber() 
-        
-        shutil.copy(path_to_xml+"PS_Module_v2.xml",path_to_xml+"PS_Module_v2_"+str(RunNumber)+".xml")
+        if iteration == 0:
+                shutil.copy(path_to_xml+"PS_Module_v2.xml",path_to_xml+"PS_Module_v2_"+str(RunNumber+iteration+1)+".xml")
+        else:
+                shutil.copy(path_to_xml+"PS_Module_v2.xml",path_to_xml+"PS_Module_v2_"+str(RunNumber+iteration)+".xml")
+
         os.system("python AutoPilot2.py -nruns %i"%(runsPerConf))
 
 	#################################################
