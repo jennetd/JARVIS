@@ -24,11 +24,13 @@ AutoPilotStatus = 1
 runsPerConf = 1
 iteration = 0
 
+<<<<<<< HEAD
 path_to_xml = "/home/cmstracker/Ph2_ACF_Irene/settings/PS_Module_v2p1_testMasked.xml"
 my_xml = "./PS_Module_v2p1.xml"
 
 # Make zero to take run number from file
 RunNumber = 28198
+
 
 while AutoPilotStatus:
 	
@@ -51,8 +53,8 @@ while AutoPilotStatus:
         os.system("python AutoPilot2.py -nruns %i -run %i"%(runsPerConf,RunNumber))
 
 #        RunNumber = tp.GetRunNumber()
-        print("Saving XML for Run ", RunNumber)
-        shutil.copy(my_xml,"PS_Module_v2p1_"+str(RunNumber)+".xml")
+        print("Saving XML for run ", RunNumber-1)
+        shutil.copy(my_xml,"PS_Module_v2p1_"+str(RunNumber-1)+".xml")
 
 	#################################################
 	#Check for Stop signal in AutoPilot.status file
