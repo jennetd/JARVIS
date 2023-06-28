@@ -4,12 +4,12 @@ import TCP_com as tp
 import shutil
 import os
 
-stripThreshold_min = 50
-pixelThreshold_min = 50
+stripThreshold_min = 55
+pixelThreshold_min = 55
 hipThreshold_min = 100
 
-stripThreshold_max = 240
-pixelThreshold_max = 240
+stripThreshold_max = 245
+pixelThreshold_max = 245
 
 nsteps = 19
 
@@ -27,8 +27,8 @@ iteration = 0
 path_to_xml = "/home/cmstracker/Ph2_ACF_Irene/settings/PS_Module_v2p1_testMasked.xml"
 my_xml = "./PS_Module_v2p1.xml"
 
-# Make zero to take run number from file
-RunNumber = 28198
+# make zero to read run number from file
+RunNumber = 28219
 
 while AutoPilotStatus:
 	
