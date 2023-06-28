@@ -35,7 +35,7 @@ maxRuns = int(args.maxIterations)
 RunNumber = int(args.runNumber)
 
 read_run = True
-if RunNumber == 0:
+if RunNumber > 0:
     read_run = False
 
 print("Stopping after %i runs." % maxRuns)
