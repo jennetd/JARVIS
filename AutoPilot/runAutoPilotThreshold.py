@@ -63,7 +63,9 @@ while AutoPilotStatus:
                 print("Detected stop signal.\nStopping AutoPilot...\n\n")
                 AutoPilotStatus = 0
         tmpStatusFile.close()
-
+		
+	os.system("ssh otsdaq@teddy01 /home/otsdaq/TestBeamPSModule/Megascript/HyperScript.sh " + RunNumber)
+	
         iteration += 1
 
         if iteration > nsteps:
